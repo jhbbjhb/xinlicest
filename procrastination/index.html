@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>你为什么总是拖到最后一刻？</title>
+  <meta name="description" content="12题拖延模式自测，识别你的拖延底层原因，并给出可执行的破局建议。">
+  <style>
+    :root {
+      --bg: #faf7f2;
+      --card: #ffffff;
+      --text: #2c2a28;
+      --text-light: #6b6764;
+      --primary: #b8824a;
+      --primary-light: #f4e9d8;
+      --accent: #6b8e7f;
+      --accent-light: #e6efe9;
+      --danger: #b5564a;
+      --danger-light: #f6e4e0;
+      --warning: #d4a04a;
+      --warning-light: #faf0dc;
+      --info: #5a7a9a;
+      --info-light: #e6eef6;
+      --radius: 20px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.06);
+      --shadow-lg: 0 14px 40px rgba(0,0,0,0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--bg);
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+    }
+
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #page-result.active {
+      position: relative;
+      height: auto;
+      min-height: 100vh;
+      justify-content: flex-start;
+      padding-top: 24px;
+      padding-bottom: 40px;
+      overflow: visible;
+    }
+
+    #page-result { position: absolute; overflow-y: auto; }
+
+    /* Intro */
+    .intro-visual {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 24px;
+      position: relative;
+      aspect-ratio: 1;
+    }
+
+    .clock-circle {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .clock-circle.main {
+      width: 70%;
+      height: 70%;
+      background: var(--primary-light);
+      color: var(--primary);
+      top: 15%;
+      left: 15%;
+      z-index: 2;
+      font-size: 48px;
+    }
+
+    .clock-circle.tag {
+      width: 36%;
+      height: 36%;
+      background: white;
+      color: var(--accent);
+      font-size: 14px;
+      padding: 8px;
+      line-height: 1.3;
+    }
+
+    .clock-circle.tag.t1 { top: 2%; right: 0; }
+    .clock-circle.tag.t2 { bottom: 8%; left: 0; }
+
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      padding: 0 8px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 6px 18px rgba(184, 130, 74, 0.3);
+    }
+
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      margin-top: 12px;
+    }
+
+    .btn-accent { background: var(--accent); color: white; box-shadow: 0 6px 18px rgba(107, 142, 127, 0.3); }
+    .btn-danger { background: var(--danger); color: white; box-shadow: 0 6px 18px rgba(181, 86, 74, 0.3); }
+    .btn-info { background: var(--info); color: white; box-shadow: 0 6px 18px rgba(90, 122, 154, 0.3); }
+    .btn-warning { background: var(--warning); color: white; box-shadow: 0 6px 18px rgba(212, 160, 74, 0.3); }
+
+    .tagline {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .tagline span {
+      background: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* Quiz */
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 3px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .quiz-step { font-size: 13px; color: var(--text-light); font-weight: 600; }
+
+    .quiz-category {
+      font-size: 12px;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .question {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 28px;
+      min-height: 64px;
+    }
+
+    .option {
+      background: var(--card);
+      border: 1.5px solid transparent;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .option:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+    .option-letter {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .option-text { font-size: 15px; line-height: 1.5; color: var(--text); }
+
+    /* Loading */
+    .loading-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+
+    .loading-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-ring:nth-child(2) { inset: 10px; border-top-color: var(--accent); animation: spin 1.4s linear infinite reverse; }
+    .loading-ring:nth-child(3) { inset: 20px; border-top-color: var(--info); animation: spin 1.8s linear infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { text-align: center; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .loading-sub { text-align: center; font-size: 14px; color: var(--text-light); }
+
+    /* Result */
+    .result-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 20px;
+    }
+
+    .result-type {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .result-title { font-size: 24px; font-weight: 800; line-height: 1.3; margin-bottom: 8px; }
+    .result-desc { font-size: 15px; color: var(--text-light); line-height: 1.7; }
+
+    .score-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 6px;
+      margin: 24px 0 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .radar-wrap {
+      width: 100%;
+      max-width: 260px;
+      margin: 20px auto;
+      aspect-ratio: 1;
+      position: relative;
+    }
+
+    .radar-svg { width: 100%; height: 100%; }
+
+    .section-title { font-size: 17px; font-weight: 700; margin: 24px 0 12px; }
+
+    .tip-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .tip-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .tip-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .tip-content p { font-size: 14px; color: var(--text-light); line-height: 1.6; }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .action-card .emoji { font-size: 28px; margin-bottom: 8px; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .action-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .action-card p { font-size: 12px; color: var(--text-light); }
+
+    .disclaimer {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.7;
+      text-align: center;
+      margin-top: 20px;
+      padding: 0 8px;
+    }
+
+    .suggestion-box {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .suggestion-box h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .suggestion-box p {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .result-actions { margin-top: 8px; }
+    .result-actions .btn { margin-bottom: 10px; }
+
+    /* Type colors */
+    .type-action .result-type, .type-action .result-title { color: var(--accent); }
+    .type-action .score-fill { background: linear-gradient(90deg, var(--accent), #8fae9f); }
+    .type-action .tip-icon { background: var(--accent-light); }
+
+    .type-fear .result-type, .type-fear .result-title { color: var(--danger); }
+    .type-fear .score-fill { background: linear-gradient(90deg, var(--danger), #d4786a); }
+    .type-fear .tip-icon { background: var(--danger-light); }
+
+    .type-perfect .result-type, .type-perfect .result-title { color: var(--warning); }
+    .type-perfect .score-fill { background: linear-gradient(90deg, var(--warning), #e8b96a); }
+    .type-perfect .tip-icon { background: var(--warning-light); }
+
+    .type-energy .result-type, .type-energy .result-title { color: var(--info); }
+    .type-energy .score-fill { background: linear-gradient(90deg, var(--info), #7a9ab8); }
+    .type-energy .tip-icon { background: var(--info-light); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 开场页 -->
+  <div class="page active" id="page-intro">
+    <div class="intro-visual">
+      <div class="clock-circle main">⏰</div>
+      <div class="clock-circle tag t1">截止日<br>明天</div>
+      <div class="clock-circle tag t2">再刷<br>5分钟</div>
+    </div>
+
+    <h1 class="title">你为什么<br>总是拖到最后一刻？</h1>
+    <p class="subtitle">
+      12 道题，从行动启动、完美主义、恐惧回避、能量管理 4 个维度，
+      识别你拖延的真正底层原因，并给出能立刻用的破局方法。
+    </p>
+
+    <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+
+    <div class="tagline">
+      <span>12 题</span>
+      <span>4 维度</span>
+      <span>1 套行动方案</span>
+    </div>
+  </div>
+
+  <!-- 答题页 -->
+  <div class="page" id="page-quiz">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="quiz-header">
+      <span class="quiz-step" id="quiz-step">01 / 12</span>
+      <span class="quiz-category" id="quiz-category">行动启动</span>
+    </div>
+    <div class="question" id="question-text"></div>
+    <div id="options-container"></div>
+  </div>
+
+  <!-- 加载页 -->
+  <div class="page" id="page-loading">
+    <div class="loading-icon">
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+    </div>
+    <div class="loading-text" id="loading-text">正在分析你的拖延模式…</div>
+    <div class="loading-sub">行动启动 · 完美主义 · 恐惧回避 · 能量管理</div>
+  </div>
+
+  <!-- 结果页 -->
+  <div class="page" id="page-result">
+    <div id="result-container"></div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { category: "行动启动", text: "面对一项重要任务，你的第一反应是？", options: [
+    { label: "A", text: "立刻开始做", score: 0 },
+    { label: "B", text: "先准备一下环境，再开始", score: 1 },
+    { label: "C", text: "先做点别的轻松一下，等会儿再开始", score: 2 },
+    { label: "D", text: "一想到要做就焦虑，反而刷起手机", score: 3 }
+  ]},
+  { category: "行动启动", text: "你开始一项任务通常需要？", options: [
+    { label: "A", text: "几分钟内就能进入状态", score: 0 },
+    { label: "B", text: "十几分钟热身", score: 1 },
+    { label: "C", text: "拖到下午/晚上才动", score: 2 },
+    { label: "D", text: "经常拖到截止前一晚才动", score: 3 }
+  ]},
+  { category: "行动启动", text: "当你对自己说'再做5分钟就开始'时，结果是？", options: [
+    { label: "A", text: "真的5分钟后开始", score: 0 },
+    { label: "B", text: "通常半小时内能开始", score: 1 },
+    { label: "C", text: "经常拖到1小时以上", score: 2 },
+    { label: "D", text: "能拖一下午甚至一整天", score: 3 }
+  ]},
+  { category: "完美主义", text: "你对'做得差不多就行'的态度是？", options: [
+    { label: "A", text: "可以接受，先完成再完美", score: 0 },
+    { label: "B", text: "有点别扭，但能说服自己", score: 1 },
+    { label: "C", text: "很难接受，总想再改改", score: 2 },
+    { label: "D", text: "完全做不到，要么做好要么不做", score: 3 }
+  ]},
+  { category: "完美主义", text: "你迟迟不开始一项任务，最常见的原因是？", options: [
+    { label: "A", text: "单纯忘了或没排上", score: 0 },
+    { label: "B", text: "觉得还没准备好", score: 1 },
+    { label: "C", text: "怕做出来不够好被人评", score: 2 },
+    { label: "D", text: "觉得必须状态最佳才能开始", score: 3 }
+  ]},
+  { category: "完美主义", text: "任务做到一半发现不够完美，你会？", options: [
+    { label: "A", text: "继续推进，之后再调整", score: 0 },
+    { label: "B", text: "稍微卡一下，但还是往下走", score: 1 },
+    { label: "C", text: "反复修改这一处，进度卡住", score: 2 },
+    { label: "D", text: "推翻重来，或者干脆放弃", score: 3 }
+  ]},
+  { category: "恐惧回避", text: "想到任务做不好可能的后果，你的感受是？", options: [
+    { label: "A", text: "没什么，尽力就好", score: 0 },
+    { label: "B", text: "有点压力，但不影响行动", score: 1 },
+    { label: "C", text: "明显焦虑，会反复想", score: 2 },
+    { label: "D", text: "恐惧到想逃，宁愿假装这事不存在", score: 3 }
+  ]},
+  { category: "恐惧回避", text: "面对不确定能不能做好的事，你会？", options: [
+    { label: "A", text: "先试了再说", score: 0 },
+    { label: "B", text: "评估一下风险再决定", score: 1 },
+    { label: "C", text: "尽量推脱或让别人做", score: 2 },
+    { label: "D", text: "直接回避，连试都不试", score: 3 }
+  ]},
+  { category: "恐惧回避", text: "当你拖延时，内心最常出现的声音是？", options: [
+    { label: "A", text: "休息一下也没事", score: 0 },
+    { label: "B", text: "等会儿就做", score: 1 },
+    { label: "C", text: "万一做不好怎么办", score: 2 },
+    { label: "D", text: "我就是不行，做了也没用", score: 3 }
+  ]},
+  { category: "能量管理", text: "你一天的精力分布大概是？", options: [
+    { label: "A", text: "全天比较稳定", score: 0 },
+    { label: "B", text: "上午好，下午犯困", score: 1 },
+    { label: "C", text: "下午晚上才有状态", score: 2 },
+    { label: "D", text: "整天都累，提不起劲", score: 3 }
+  ]},
+  { category: "能量管理", text: "你做'不想做但必须做'的事时，身体感受是？", options: [
+    { label: "A", text: "没什么特别感受", score: 0 },
+    { label: "B", text: "有点累但能撑", score: 1 },
+    { label: "C", text: "明显疲惫，注意力涣散", score: 2 },
+    { label: "D", text: "像被抽空，脑子完全转不动", score: 3 }
+  ]},
+  { category: "能量管理", text: "你一天能进入'深度专注'状态的时间大概是？", options: [
+    { label: "A", text: "3 小时以上", score: 0 },
+    { label: "B", text: "1-3 小时", score: 1 },
+    { label: "C", text: "不到 1 小时", score: 2 },
+    { label: "D", text: "几乎没有，一直被打断", score: 3 }
+  ]}
+];
+
+let currentQuestion = 0;
+let totalScore = 0;
+let dimensionScores = [0, 0, 0, 0];
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  currentQuestion = 0;
+  totalScore = 0;
+  dimensionScores = [0, 0, 0, 0];
+  showPage('page-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestion];
+  document.getElementById('quiz-step').textContent = `${String(currentQuestion + 1).padStart(2, '0')} / ${questions.length}`;
+  document.getElementById('quiz-category').textContent = q.category;
+  document.getElementById('question-text').textContent = q.text;
+  document.getElementById('progress-fill').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+
+  q.options.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `
+      <div class="option-letter">${opt.label}</div>
+      <div class="option-text">${opt.text}</div>
+    `;
+    div.onclick = () => selectOption(idx);
+    container.appendChild(div);
+  });
+}
+
+function selectOption(idx) {
+  const q = questions[currentQuestion];
+  const score = q.options[idx].score;
+  totalScore += score;
+
+  const dimMap = { "行动启动": 0, "完美主义": 1, "恐惧回避": 2, "能量管理": 3 };
+  dimensionScores[dimMap[q.category]] += score;
+
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    renderQuestion();
+  } else {
+    document.getElementById('progress-fill').style.width = '100%';
+    showLoading();
+  }
+}
+
+const loadingTexts = [
+  "正在分析你的拖延模式…",
+  "正在评估行动启动阈值…",
+  "正在检测完美主义倾向…",
+  "正在识别恐惧回避回路…",
+  "正在生成你的破局方案…"
+];
+
+function showLoading() {
+  showPage('page-loading');
+  let i = 0;
+  const el = document.getElementById('loading-text');
+  el.textContent = loadingTexts[0];
+  const interval = setInterval(() => {
+    i++;
+    if (i < loadingTexts.length) {
+      el.textContent = loadingTexts[i];
+    } else {
+      clearInterval(interval);
+      showResult();
+    }
+  }, 700);
+}
+
+function getResultType(score) {
+  if (score <= 6) return 'action';
+  if (score <= 14) return 'perfect';
+  if (score <= 24) return 'fear';
+  return 'energy';
+}
+
+const results = {
+  action: {
+    type: "行动派",
+    title: "你的拖延主要是'启动摩擦力'",
+    desc: "你不怕任务，也不追求完美，只是开始那一刻总有一股说不出的阻力。这不是懒，是大脑的多巴胺启动阈值偏高。",
+    brain: "启动阈值偏高 · 多巴胺激发不足",
+    tips: [
+      { icon: "play", title: "2 分钟法则", text: "告诉自己只做 2 分钟，做完想停就停。大脑一旦启动，90% 的情况会继续做下去。" },
+      { icon: "target", title: "把任务切到'弱智级'", text: "把'写报告'拆成'打开文档写下标题'。第一步越小，启动阻力越小。" },
+      { icon: "clock", title: "固定启动仪式", text: "比如泡一杯咖啡、戴上耳机、放一首固定音乐。仪式感会形成条件反射。" }
+    ],
+    actions: [
+      { icon: "list", title: "番茄工作法", desc: "25分钟专注+5分钟休息" },
+      { icon: "refresh", title: "重新测试", desc: "观察变化" }
+    ],
+    mainBtn: { text: "查看我的破局行动卡", class: "btn-accent" }
+  },
+  perfect: {
+    type: "完美主义型",
+    title: "你不是拖延，是不敢开始",
+    desc: "你对自己要求很高，总觉得'还没准备好'、'还能更好'。结果是：你宁愿不开始，也不愿面对一个'不够好'的自己。",
+    brain: "前额叶过度调控 · 失败恐惧激活",
+    tips: [
+      { icon: "edit", title: "先写一版'垃圾草稿'", text: "允许自己先产出一版很差的东西。完美主义最大的敌人是'完成'，而完成是完美的前提。" },
+      { icon: "clock", title: "设时间上限，不设质量上限", text: "规定自己 30 分钟内必须交出来，时间到就发。逼自己接受'足够好'。" },
+      { icon: "heart", title: "把'我做的不够好'换成'我做完了'", text: "每次完成后只庆祝'完成'这个事实，不评价质量。重新训练大脑的奖励回路。" }
+    ],
+    actions: [
+      { icon: "book", title: "完成主义练习", desc: "连续7天每天完成一件小事" },
+      { icon: "refresh", title: "重新测试", desc: "观察变化" }
+    ],
+    mainBtn: { text: "查看我的破局行动卡", class: "btn-warning" }
+  },
+  fear: {
+    type: "恐惧回避型",
+    title: "你的拖延，本质是逃避",
+    desc: "你不是不想做，是不敢做。任务背后藏着'万一失败怎么办'、'别人会怎么看我'的恐惧。拖延成了你保护自己的方式。",
+    brain: "杏仁核过度激活 · 回避回路强化",
+    tips: [
+      { icon: "eye", title: "把恐惧写下来", text: "把'如果做不好会发生什么'逐条写出来。大部分恐惧一经写明就会缩水。" },
+      { icon: "shield", title: "设'最坏情况底线'", text: "问自己：最坏的结果是什么？我能承受吗？通常答案比你想象的轻得多。" },
+      { icon: "chat", title: "把任务变'小到不可怕'", text: "不要想'完成整个项目'，只想'今天打开那个文件'。把恐惧拆碎。" }
+    ],
+    actions: [
+      { icon: "book", title: "恐惧暴露练习", desc: "每天做一件害怕的小事" },
+      { icon: "refresh", title: "重新测试", desc: "观察变化" }
+    ],
+    mainBtn: { text: "查看我的破局行动卡", class: "btn-danger" }
+  },
+  energy: {
+    type: "能量耗竭型",
+    title: "你不是拖延，是没电了",
+    desc: "你的意志力储备已经见底。不是不想做，是大脑真的转不动了。继续逼自己只会更耗能、更拖延。",
+    brain: "前额叶疲劳 · 能量分配失衡",
+    tips: [
+      { icon: "battery", title: "先充电，再谈效率", text: "连续睡足 7 小时 × 3 天。意志力是生理资源，没电的时候谈自律是耍流氓。" },
+      { icon: "sun", title: "把最难的事放在精力高峰", text: "记录自己一天状态最好的 2 小时，把最重要的事放在那个时段。" },
+      { icon: "minus", title: "主动删掉 50% 待办", text: "能量不够时，少做就是赚。把不重要的事直接划掉，给大脑减负。" }
+    ],
+    actions: [
+      { icon: "moon", title: "睡眠优化", desc: "重建精力基础" },
+      { icon: "refresh", title: "重新测试", desc: "观察变化" }
+    ],
+    mainBtn: { text: "查看我的破局行动卡", class: "btn-info" }
+  }
+};
+
+const icons = {
+  play: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+  target: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 8.5-8.5 8.38 8.38 0 0 1 3.8.9h.5a8.48 8.48 0 0 1 4.2 1.6z"/></svg>',
+  battery: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/><line x1="6" y1="10" x2="6" y2="14"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+  minus: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  list: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+  book: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+};
+
+function getIconSvg(name) {
+  return icons[name] || icons['heart'];
+}
+
+function showResult() {
+  const type = getResultType(totalScore);
+  const result = results[type];
+  const maxScore = 36;
+  const percentage = Math.round((totalScore / maxScore) * 100);
+
+  const maxDim = 9;
+  const radarValues = dimensionScores.map(s => Math.min(100, Math.round((s / maxDim) * 100)));
+  const radarPoly = getRadarPolygon(radarValues, 120, 120, 90);
+
+  const container = document.getElementById('result-container');
+  container.innerHTML = `
+    <div class="result-card type-${type}">
+      <div class="result-type">${result.type}</div>
+      <div class="result-title">${result.title}</div>
+      <div class="result-desc">${result.desc}</div>
+
+      <div class="score-bar">
+        <div class="score-fill" style="width: 0%"></div>
+      </div>
+      <div class="score-label">
+        <span>拖延指数</span>
+        <span>${percentage}%</span>
+      </div>
+
+      <div class="radar-wrap">
+        <svg class="radar-svg" viewBox="0 0 240 240">
+          <polygon points="120,30 200,120 120,210 40,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,50 180,120 120,190 60,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,70 160,120 120,170 80,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,90 140,120 120,150 100,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <line x1="120" y1="30" x2="120" y2="210" stroke="#e5e5e5" stroke-width="1"/>
+          <line x1="40" y1="120" x2="200" y2="120" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="${radarPoly}" fill="rgba(184,130,74,0.2)" stroke="var(--primary)" stroke-width="2"/>
+          <text x="120" y="22" text-anchor="middle" font-size="12" fill="#888">行动启动</text>
+          <text x="210" y="124" text-anchor="start" font-size="12" fill="#888">完美主义</text>
+          <text x="120" y="224" text-anchor="middle" font-size="12" fill="#888">恐惧回避</text>
+          <text x="30" y="124" text-anchor="end" font-size="12" fill="#888">能量管理</text>
+        </svg>
+      </div>
+
+      <div style="text-align: center; font-size: 13px; color: var(--text-light); margin-top: -8px; margin-bottom: 8px;">
+        脑区状态：${result.brain}
+      </div>
+    </div>
+
+    <div class="section-title">3 个能立刻用的破局方法</div>
+    ${result.tips.map(tip => `
+      <div class="tip-card">
+        <div class="tip-icon">${getIconSvg(tip.icon)}</div>
+        <div class="tip-content">
+          <h4>${tip.title}</h4>
+          <p>${tip.text}</p>
+        </div>
+      </div>
+    `).join('')}
+
+    <div class="suggestion-box">
+      <h4>给你的下一步建议</h4>
+      <p>${getSuggestion(type)}</p>
+    </div>
+
+    <div class="section-title">配套工具</div>
+    <div class="action-grid">
+      ${result.actions.map(a => `
+        <div class="action-card">
+          <div class="emoji">${getIconSvg(a.icon)}</div>
+          <h4>${a.title}</h4>
+          <p>${a.desc}</p>
+        </div>
+      `).join('')}
+    </div>
+
+    <button class="btn ${result.mainBtn.class}" onclick="handleMainAction('${type}')">${result.mainBtn.text}</button>
+    <button class="btn btn-outline" onclick="startQuiz()">重新测试</button>
+
+    <p class="disclaimer">
+      本测试为行为模式科普工具，结果仅供参考。如果你长期因拖延严重影响生活和工作，
+      建议阅读《拖延心理学》《掌控习惯》等经典书籍，或参加相关训练营系统训练。
+    </p>
+  `;
+
+  showPage('page-result');
+
+  setTimeout(() => {
+    document.querySelector('.score-fill').style.width = `${percentage}%`;
+  }, 300);
+}
+
+function getSuggestion(type) {
+  const suggestions = {
+    action: "今晚睡前，挑一件明天必须做的小事，写在便签上贴在手机旁边。明天醒来第一件事就做它，不开手机、不刷消息。坚持 7 天，你的'启动摩擦力'会明显下降。",
+    perfect: "从今天开始，每天强迫自己'交出一版不完美的草稿'。可以是工作邮件、健身计划、读书笔记。连续 14 天，你会重新建立'完成比完美更重要'的神经回路。",
+    fear: "找一张纸，把你现在最拖延的那件事的所有恐惧写下来。然后对每一条问自己：'这是真的吗？发生了我能承受吗？'你会发现 80% 的恐惧是想象出来的。",
+    energy: "未来 3 天，不做任何'效率提升'，只做一件事：晚上 11 点前睡觉，白天不喝咖啡因。等你精力恢复到 70% 以上，再谈怎么做事。"
+  };
+  return suggestions[type];
+}
+
+function getRadarPolygon(values, cx, cy, r) {
+  const angles = [-Math.PI / 2, 0, Math.PI / 2, Math.PI];
+  return values.map((v, i) => {
+    const radius = r * (v / 100);
+    const x = cx + radius * Math.cos(angles[i]);
+    const y = cy + radius * Math.sin(angles[i]);
+    return `${x},${y}`;
+  }).join(' ');
+}
+
+function handleMainAction(type) {
+  const cards = {
+    action: "【你的破局行动卡】\n\n本周任务：\n✅ 每天用 2 分钟法则启动 1 件拖延的事\n✅ 把 3 个大任务各拆成 5 个'弱智级'小步骤\n✅ 固定一个启动仪式（如泡咖啡+戴耳机）\n\n7 天后回来重测，看启动摩擦力是否下降。",
+    perfect: "【你的破局行动卡】\n\n本周任务：\n✅ 每天产出 1 版'垃圾草稿'（邮件/笔记/方案都行）\n✅ 给每个任务设时间上限，到点必交\n✅ 完成后只庆祝'做完了'，不评价'做得多好'\n\n14 天后回来重测，看完美主义倾向是否缓解。",
+    fear: "【你的破局行动卡】\n\n本周任务：\n✅ 把最拖延的事的恐惧逐条写下来\n✅ 对每条恐惧问'这是真的吗？我能承受吗？'\n✅ 每天做一件'害怕但能做'的小事（如发一条消息、打一个电话）\n\n21 天后回来重测，看恐惧回避是否减少。",
+    energy: "【你的破局行动卡】\n\n本周任务：\n✅ 连续 3 天 23 点前睡觉，不熬夜\n✅ 记录自己一天精力最好的 2 小时\n✅ 把待办清单砍掉 50%，只留最重要的 3 件\n\n能量恢复后再回来重测，看是否还是能量型拖延。"
+  };
+  alert(cards[type]);
+}
+</script>
+</body>
+</html>

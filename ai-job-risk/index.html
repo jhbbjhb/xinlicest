@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>你的工作会被AI取代吗？｜职业替代风险诊断</title>
+  <meta name="description" content="12题测出你的岗位被AI替代的风险概率，4维度精准定位饭碗安全区，给保住饭碗的具体动作。">
+  <style>
+    :root {
+      --bg: #f2f6fb;
+      --card: #ffffff;
+      --text: #1c2b3a;
+      --text-light: #6a7a8c;
+      --primary: #2f6fb0;
+      --primary-light: #e4eefb;
+      --accent: #4a9d8c;
+      --accent-light: #e3f3ef;
+      --danger: #c0392b;
+      --danger-light: #fdecea;
+      --warning: #d6892b;
+      --warning-light: #fdf3e3;
+      --safe: #2e8b57;
+      --safe-light: #e6f5ec;
+      --radius: 20px;
+      --shadow: 0 8px 24px rgba(31,58,95,0.06);
+      --shadow-lg: 0 14px 40px rgba(31,58,95,0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+    }
+
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #page-result.active {
+      position: relative;
+      height: auto;
+      min-height: 100vh;
+      justify-content: flex-start;
+      padding-top: 24px;
+      padding-bottom: 40px;
+      overflow: visible;
+    }
+
+    #page-result { position: absolute; overflow-y: auto; }
+
+    /* Intro */
+    .intro-visual {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 28px;
+      position: relative;
+      aspect-ratio: 1;
+    }
+
+    .robot-emoji {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 96px;
+      filter: drop-shadow(0 10px 20px rgba(47,111,176,0.25));
+    }
+
+    .float-chip {
+      position: absolute;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      white-space: nowrap;
+    }
+
+    .float-chip.c1 { top: 4%; left: -4%; color: var(--primary); }
+    .float-chip.c2 { top: 18%; right: -6%; color: var(--accent); }
+    .float-chip.c3 { bottom: 22%; left: -6%; color: var(--warning); }
+    .float-chip.c4 { bottom: 6%; right: -4%; color: var(--danger); }
+
+    .intro-title {
+      font-size: 26px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .intro-sub {
+      font-size: 14px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .stat-box {
+      flex: 1;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-box .num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-box .label {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 17px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #1e4f85);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(47,111,176,0.3);
+    }
+
+    .btn-ghost {
+      background: var(--card);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+      margin-top: 12px;
+    }
+
+    /* Quiz */
+    .progress-wrap {
+      margin-bottom: 20px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e1e9f2;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      width: 0%;
+    }
+
+    .question-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .q-dim {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      border-radius: 8px;
+      padding: 4px 10px;
+      margin-bottom: 14px;
+    }
+
+    .q-text {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 2px solid #eef2f7;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fafcfe;
+    }
+
+    .option:active { transform: scale(0.98); }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .option .opt-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid #d0d8e2;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      transition: all 0.15s;
+    }
+
+    .option.selected .opt-dot {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .option .opt-text {
+      font-size: 14.5px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    /* Loading */
+    .loading-visual {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .loading-robot {
+      font-size: 72px;
+      display: inline-block;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.7; }
+    }
+
+    .loading-text {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .loading-step {
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: center;
+      margin-top: 16px;
+      min-height: 20px;
+    }
+
+    /* Result */
+    .result-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 6px 16px;
+      margin-bottom: 12px;
+    }
+
+    .risk-percent {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .risk-label {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-top: 6px;
+    }
+
+    .result-type-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 14px 0 6px;
+    }
+
+    .result-type-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.7;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .radar-wrap {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .radar-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .dim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .dim-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .dim-card .dim-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .dim-card .dim-score {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .dim-card .dim-desc {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .action-card {
+      background: linear-gradient(135deg, var(--primary-light), #eaf2fc);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .action-card h3 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      color: var(--primary);
+    }
+
+    .action-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .action-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .action-text {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .action-text b { color: var(--primary); }
+
+    .suggestion-box {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .suggestion-box h3 {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .suggestion-box p {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--text-light);
+    }
+
+    .disclaimer {
+      font-size: 11.5px;
+      color: #9aa7b5;
+      text-align: center;
+      line-height: 1.6;
+      margin-top: 8px;
+      padding: 0 10px;
+    }
+
+    .share-card {
+      background: linear-gradient(135deg, #1e4f85, var(--primary));
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      color: #fff;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .share-card .sc-title {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-bottom: 8px;
+    }
+
+    .share-card .sc-result {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .share-card .sc-sub {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .result-actions .btn { font-size: 14px; padding: 14px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Intro Page -->
+  <div class="page active" id="page-intro">
+    <div class="intro-visual">
+      <div class="robot-emoji">🤖</div>
+      <div class="float-chip c1">AI 已替代 6 类岗位</div>
+      <div class="float-chip c2">3 年内冲击 40%</div>
+      <div class="float-chip c3">你处于安全区吗</div>
+      <div class="float-chip c4">还是高危名单</div>
+    </div>
+
+    <h1 class="intro-title">你的工作<br>会被 AI 取代吗？</h1>
+    <p class="intro-sub">2026 年，AI 替代已从传闻变成现实。<br>12 道诊断题，算出你的<b>岗位替代风险概率</b>，<br>并告诉你哪一步能保住饭碗。</p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="num">12</div>
+        <div class="label">精准诊断题</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">4</div>
+        <div class="label">风险维度</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">4</div>
+        <div class="label">饭碗类型</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startQuiz()">开始诊断</button>
+    <button class="btn btn-ghost" onclick="alert('本测试基于 2026 年公开的 AI 职业替代研究报告提炼而成，结果仅供职业参考，不构成职业规划建议。')">这是什么测试？</button>
+  </div>
+
+  <!-- Quiz Page -->
+  <div class="page" id="page-quiz">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="progress-label">第 1 / 12 题</span>
+        <span id="progress-pct">8%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="question-card" id="question-card"></div>
+  </div>
+
+  <!-- Loading Page -->
+  <div class="page" id="page-loading">
+    <div class="loading-visual">
+      <div class="loading-robot">🤖</div>
+    </div>
+    <div class="loading-text">AI 正在分析你的职业数据…</div>
+    <div class="loading-step" id="loading-step">扫描岗位特征中</div>
+  </div>
+
+  <!-- Result Page -->
+  <div class="page" id="page-result">
+    <div class="result-header">
+      <div class="risk-badge" id="risk-badge"></div>
+      <div class="risk-percent" id="risk-percent">0%</div>
+      <div class="risk-label">未来 3 年内岗位被 AI 显著替代的概率</div>
+      <div class="result-type-title" id="result-type-title"></div>
+      <div class="result-type-desc" id="result-type-desc"></div>
+    </div>
+
+    <div class="radar-wrap">
+      <div class="radar-title">你的 4 维职业安全雷达</div>
+      <div id="radar-container"></div>
+    </div>
+
+    <div class="dim-grid" id="dim-grid"></div>
+
+    <div class="action-card">
+      <h3>🛡️ 保住饭碗的 3 个动作</h3>
+      <div id="action-list"></div>
+    </div>
+
+    <div class="suggestion-box">
+      <h3>💡 下一步建议</h3>
+      <p id="suggestion-text"></p>
+    </div>
+
+    <div class="share-card">
+      <div class="sc-title">我测出来是</div>
+      <div class="sc-result" id="share-result"></div>
+      <div class="sc-sub">扫码或点下方按钮，测测你的饭碗安全度</div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="shareResult()">分享给同事</button>
+      <button class="btn btn-ghost" onclick="restart()">再测一次</button>
+    </div>
+
+    <p class="disclaimer">本测试基于 2026 年 AI 职业替代公开研究数据提炼，结果仅供职业参考，不构成职业规划或就业建议。</p>
+  </div>
+
+</div>
+
+<script>
+// ====== 题目数据 ======
+// 维度: repeat(岗位重复性) skill(技能可替代性) network(人脉护城河) agility(学习敏捷度)
+const QUESTIONS = [
+  {
+    dim: '岗位重复性',
+    dimKey: 'repeat',
+    q: '你日常工作中，有多少比例是"按固定流程、重复执行"的任务？',
+    options: [
+      { t: '几乎全是流程化、重复性的活', s: 3 },
+      { t: '大概一半是重复的', s: 2 },
+      { t: '只有少量重复，大多需要判断', s: 1 },
+      { t: '几乎没有重复，每天都不一样', s: 0 }
+    ]
+  },
+  {
+    dim: '岗位重复性',
+    dimKey: 'repeat',
+    q: '你的工作产出，是否容易被"标准化模板"替代？',
+    options: [
+      { t: '完全可以用模板套，没啥差异', s: 3 },
+      { t: '大部分能套模板，少量要改', s: 2 },
+      { t: '需要针对情况调整，模板只是辅助', s: 1 },
+      { t: '每个项目都高度定制，无法模板化', s: 0 }
+    ]
+  },
+  {
+    dim: '技能可替代性',
+    dimKey: 'skill',
+    q: '你掌握的核心技能，AI 工具现在能做到几分？',
+    options: [
+      { t: 'AI 已经能做 80% 以上', s: 3 },
+      { t: 'AI 能帮我做一半', s: 2 },
+      { t: 'AI 只能做辅助，核心还得靠人', s: 1 },
+      { t: '当前 AI 基本插不上手', s: 0 }
+    ]
+  },
+  {
+    dim: '技能可替代性',
+    dimKey: 'skill',
+    q: '你的工作是否需要"跨领域综合判断"？',
+    options: [
+      { t: '不需要，单一领域就能搞定', s: 3 },
+      { t: '偶尔需要结合其他领域', s: 2 },
+      { t: '经常要综合多个领域做决策', s: 1 },
+      { t: '本质就是整合多领域，做最终拍板', s: 0 }
+    ]
+  },
+  {
+    dim: '人品护城河',
+    dimKey: 'network',
+    q: '你的工作成果，是否高度依赖"你这个人"的信任关系？',
+    options: [
+      { t: '完全不依赖，换谁做都一样', s: 3 },
+      { t: '稍微依赖，但别人也能接', s: 2 },
+      { t: '比较依赖，客户/同事认我这个人', s: 1 },
+      { t: '极度依赖，我是关键信任节点', s: 0 }
+    ]
+  },
+  {
+    dim: '人品护城河',
+    dimKey: 'network',
+    q: '如果明天你离职，公司能多快找到"平替"？',
+    options: [
+      { t: '市场上大把人能干，一周搞定', s: 3 },
+      { t: '招个差不多的得花一两个月', s: 2 },
+      { t: '较难，得找有经验的', s: 1 },
+      { t: '几乎不可替代，走了短期补不上', s: 0 }
+    ]
+  },
+  {
+    dim: '学习敏捷度',
+    dimKey: 'agility',
+    q: '过去一年，你主动学过几个"AI 新工具/新技能"？',
+    options: [
+      { t: '0 个，没怎么关注', s: 3 },
+      { t: '1-2 个，浅尝辄止', s: 2 },
+      { t: '3-4 个，能用在工作中', s: 1 },
+      { t: '5 个以上，持续在学', s: 0 }
+    ]
+  },
+  {
+    dim: '学习敏捷度',
+    dimKey: 'agility',
+    q: '当行业出现新变化，你通常的反应是？',
+    options: [
+      { t: '等别人验证了再说', s: 3 },
+      { t: '观望一阵再跟进', s: 2 },
+      { t: '较快上手试试', s: 1 },
+      { t: '第一时间研究并抢占先机', s: 0 }
+    ]
+  },
+  {
+    dim: '岗位重复性',
+    dimKey: 'repeat',
+    q: '你处理的问题，是不是"规则清晰、边界明确"的？',
+    options: [
+      { t: '都是明确规则，照做就行', s: 3 },
+      { t: '大部分明确，偶尔模糊', s: 2 },
+      { t: '经常模糊，要自己定义问题', s: 1 },
+      { t: '问题本身都要重新界定', s: 0 }
+    ]
+  },
+  {
+    dim: '技能可替代性',
+    dimKey: 'skill',
+    q: '你工作中"创造性输出"（新方案/新内容/新设计）占比？',
+    options: [
+      { t: '几乎没有，都是执行', s: 3 },
+      { t: '不到 20%', s: 2 },
+      { t: '大概一半', s: 1 },
+      { t: '大部分是创造性工作', s: 0 }
+    ]
+  },
+  {
+    dim: '人品护城河',
+    dimKey: 'network',
+    q: '你的岗位，是否需要"线下面对面、复杂的人际协调"？',
+    options: [
+      { t: '完全不需要，线上搞定', s: 3 },
+      { t: '偶尔需要', s: 2 },
+      { t: '经常需要', s: 1 },
+      { t: '核心是高频人际互动', s: 0 }
+    ]
+  },
+  {
+    dim: '学习敏捷度',
+    dimKey: 'agility',
+    q: '面对一个完全陌生的新工具，你学会并上手通常要多久？',
+    options: [
+      { t: '一个月以上，比较吃力', s: 3 },
+      { t: '两三周', s: 2 },
+      { t: '三五天', s: 1 },
+      { t: '一两天就能跑起来', s: 0 }
+    ]
+  }
+];
+
+// ====== 状态 ======
+let current = 0;
+let scores = { repeat: 0, skill: 0, network: 0, agility: 0 };
+let answers = [];
+
+// ====== 页面切换 ======
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ====== 开始测试 ======
+function startQuiz() {
+  current = 0;
+  scores = { repeat: 0, skill: 0, network: 0, agility: 0 };
+  answers = [];
+  renderQuestion();
+  showPage('page-quiz');
+}
+
+// ====== 渲染题目 ======
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  const card = document.getElementById('question-card');
+  card.innerHTML = `
+    <span class="q-dim">${q.dim}</span>
+    <div class="q-text">${q.q}</div>
+    ${q.options.map((opt, i) => `
+      <div class="option" onclick="selectOption(${i}, ${opt.s})">
+        <div class="opt-dot">${String.fromCharCode(65 + i)}</div>
+        <div class="opt-text">${opt.t}</div>
+      </div>
+    `).join('')}
+  `;
+  const pct = Math.round(((current) / QUESTIONS.length) * 100);
+  document.getElementById('progress-label').textContent = `第 ${current + 1} / ${QUESTIONS.length} 题`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+}
+
+// ====== 选择选项 ======
+function selectOption(idx, score) {
+  const q = QUESTIONS[current];
+  scores[q.dimKey] += score;
+  answers[current] = { dim: q.dimKey, score };
+
+  // 视觉反馈
+  document.querySelectorAll('.option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+
+  setTimeout(() => {
+    current++;
+    if (current < QUESTIONS.length) {
+      renderQuestion();
+    } else {
+      showLoading();
+    }
+  }, 280);
+}
+
+// ====== 加载动画 ======
+function showLoading() {
+  showPage('page-loading');
+  const steps = ['扫描岗位特征中', '比对 AI 替代案例库', '计算 4 维安全分', '生成饭碗诊断报告'];
+  let i = 0;
+  document.getElementById('loading-step').textContent = steps[0];
+  const timer = setInterval(() => {
+    i++;
+    if (i < steps.length) {
+      document.getElementById('loading-step').textContent = steps[i];
+    } else {
+      clearInterval(timer);
+      showResult();
+    }
+  }, 650);
+}
+
+// ====== 计算结果 ======
+function getResultType() {
+  // 每个维度满分 9（3题×3分），4维度共36分，分数越高=风险越高
+  const total = scores.repeat + scores.skill + scores.network + scores.agility;
+  const maxTotal = 36;
+  const riskPct = Math.round((total / maxTotal) * 100);
+
+  let type;
+  if (riskPct < 25) {
+    type = 'iron';
+  } else if (riskPct < 50) {
+    type = 'shake';
+  } else if (riskPct < 72) {
+    type = 'high';
+  } else {
+    type = 'endanger';
+  }
+  return { riskPct, type, total };
+}
+
+// ====== 结果文案 ======
+const RESULT_TYPES = {
+  iron: {
+    name: '🛡️ 铁饭碗型',
+    desc: '你的工作高度依赖人际信任、复杂判断和创造性，AI 短期内很难整体替代你。你是组织里的"关键节点"。',
+    badge: '安全区 · 低风险',
+    badgeColor: '#2e8b57',
+    badgeBg: '#e6f5ec',
+    actions: [
+      { t: '把"护城河"显性化：整理你的客户信任清单、独门方法论，让替代成本更高' },
+      { t: '用 AI 给自己加杠杆：让 AI 帮你处理繁琐部分，你专注高价值判断' },
+      { t: '带人、建团队：让自己从"执行者"变成"不可替代的节点"' }
+    ],
+    suggestion: '你目前处于安全区，但别躺平。AI 每年都在进化，建议把"人际信任"和"跨领域判断"继续做深，这是最难的复制项。同时用 AI 放大你的产出，让自己更值钱。'
+  },
+  shake: {
+    name: '⚠️ 震荡型',
+    desc: '你的岗位有一部分会被 AI 重塑，但核心能力还在。如果不主动升级，3 年内会有明显冲击。',
+    badge: '观察区 · 中风险',
+    badgeColor: '#d6892b',
+    badgeBg: '#fdf3e3',
+    actions: [
+      { t: '定位"AI 辅助你"的环节：把重复部分交给工具，腾出时间做高价值事' },
+      { t: '补一个"AI 做不到"的相邻技能：比如复杂沟通、线下协调、最终拍板' },
+      { t: '每季度学 1 个新工具，保持敏捷度不掉队' }
+    ],
+    suggestion: '你处在"不进则退"的临界区。关键是让 AI 成为你的助手而不是对手——把能自动化的交给它，把自己往"需要信任和判断"的方向挪。半年小调整，比三年后被冲击强。'
+  },
+  high: {
+    name: '🔥 高危型',
+    desc: '你的工作有大量可被 AI 标准化的部分，且护城河偏弱。未来 3 年，岗位需求会明显收缩。',
+    badge: '警戒区 · 高风险',
+    badgeColor: '#c0392b',
+    badgeBg: '#fdecea',
+    actions: [
+      { t: '立刻做"能力迁移地图"：你现有的技能，哪些能平移到 AI 难替代的岗位' },
+      { t: '主攻一个"人际+判断"复合型方向，比如项目管理、客户成功、业务操盘' },
+      { t: '用业余时间做 1 个小项目，证明你能干"AI 做不了的事"' }
+    ],
+    suggestion: '别慌，但别拖。高危不等于失业，而是"旧岗位缩水、新岗位出现"。现在就开始转型：把你重复性的经验，包装成"能带人、能拍板、能搞定复杂关系"的能力。越早动，选择越多。'
+  },
+  endanger: {
+    name: '💀 濒危型',
+    desc: '你的工作高度标准化、弱信任、低创造性，是 AI 替代的首要目标。建议立即启动转型规划。',
+    badge: '危险区 · 极高风险',
+    badgeColor: '#fff',
+    badgeBg: '#c0392b',
+    actions: [
+      { t: '马上列"转型清单"：3 个你感兴趣、且 AI 难替代的方向，本周选 1 个深挖' },
+      { t: '用 AI 当杠杆学新技能：让 AI 当你的私教，3 个月攻下一个硬技能' },
+      { t: '找"人和人之间"的岗：销售、运营、服务、协调——这些短期最安全' }
+    ],
+    suggestion: '这是最该行动的信号，不是判死刑。AI 替代的是"任务"不是"人"——你积累的行业认知、职场软技能，平移到相邻岗位依然值钱。建议用 90 天做转型冲刺，别等被裁才动。需要的话可以寻求职业规划师的一对一帮助。'
+  }
+};
+
+// ====== 维度说明 ======
+const DIM_INFO = {
+  repeat: { name: '岗位重复性', desc: '越低越安全：工作越非标、越需定制，越难被模板化' },
+  skill: { name: '技能可替代性', desc: '越低越安全：核心技能 AI 越插不上手，你越珍贵' },
+  network: { name: '人脉护城河', desc: '越低越安全：信任关系越绑定你本人，越难被换掉' },
+  agility: { name: '学习敏捷度', desc: '越低越安全：学新东西越快，越能跑赢变化' }
+};
+
+// ====== 显示结果 ======
+function showResult() {
+  const { riskPct, type } = getResultType();
+  const rt = RESULT_TYPES[type];
+
+  // 风险徽章
+  const badge = document.getElementById('risk-badge');
+  badge.textContent = rt.badge;
+  badge.style.color = rt.badgeColor;
+  badge.style.background = rt.badgeBg;
+
+  document.getElementById('risk-percent').textContent = riskPct + '%';
+  document.getElementById('risk-percent').style.color = rt.badgeColor;
+  document.getElementById('result-type-title').textContent = rt.name;
+  document.getElementById('result-type-desc').textContent = rt.desc;
+
+  // 雷达图
+  const dims = ['repeat', 'skill', 'network', 'agility'];
+  const values = dims.map(d => Math.round((scores[d] / 9) * 100));
+  document.getElementById('radar-container').innerHTML = getRadarSVG(values);
+
+  // 维度卡
+  document.getElementById('dim-grid').innerHTML = dims.map(d => `
+    <div class="dim-card">
+      <div class="dim-name">${DIM_INFO[d].name}</div>
+      <div class="dim-score" style="color:${getScoreColor(scores[d])}">${scores[d]}/9</div>
+      <div class="dim-desc">${DIM_INFO[d].desc}</div>
+    </div>
+  `).join('');
+
+  // 行动卡
+  document.getElementById('action-list').innerHTML = rt.actions.map((a, i) => `
+    <div class="action-item">
+      <div class="action-num">${i + 1}</div>
+      <div class="action-text">${a.t}</div>
+    </div>
+  `).join('');
+
+  // 建议
+  document.getElementById('suggestion-text').textContent = rt.suggestion;
+
+  // 分享卡
+  document.getElementById('share-result').textContent = `${rt.name} · 替代风险 ${riskPct}%`;
+
+  showPage('page-result');
+}
+
+// ====== 分数颜色 ======
+function getScoreColor(s) {
+  const pct = s / 9;
+  if (pct < 0.25) return '#2e8b57';
+  if (pct < 0.5) return '#d6892b';
+  if (pct < 0.72) return '#c0392b';
+  return '#c0392b';
+}
+
+// ====== 雷达图 SVG ======
+function getRadarSVG(values) {
+  const labels = ['重复性', '可替代', '护城河', '敏捷度'];
+  const size = 240, cx = size / 2, cy = size / 2, r = 80;
+  const n = 4;
+  const angle = (i) => (Math.PI * 2 * i / n) - Math.PI / 2;
+  const point = (i, val) => {
+    const rr = r * (val / 100);
+    return [cx + rr * Math.cos(angle(i)), cy + rr * Math.sin(angle(i))];
+  };
+  // 网格
+  let grid = '';
+  [0.25, 0.5, 0.75, 1].forEach(f => {
+    const pts = [];
+    for (let i = 0; i < n; i++) { const p = point(i, f * 100); pts.push(p.join(',')); }
+    grid += `<polygon points="${pts.join(' ')}" fill="none" stroke="#e1e9f2" stroke-width="1"/>`;
+  });
+  // 轴线 + 标签
+  let axes = '', labelsSvg = '';
+  for (let i = 0; i < n; i++) {
+    const p = point(i, 100);
+    axes += `<line x1="${cx}" y1="${cy}" x2="${p[0]}" y2="${p[1]}" stroke="#e1e9f2" stroke-width="1"/>`;
+    const lp = point(i, 122);
+    labelsSvg += `<text x="${lp[0]}" y="${lp[1]}" font-size="11" fill="#6a7a8c" text-anchor="middle" dominant-baseline="middle">${labels[i]}</text>`;
+  }
+  // 数据多边形
+  const dataPts = [];
+  for (let i = 0; i < n; i++) { const p = point(i, values[i]); dataPts.push(p.join(',')); }
+  const dataPoly = `<polygon points="${dataPts.join(' ')}" fill="rgba(47,111,176,0.25)" stroke="#2f6fb0" stroke-width="2"/>`;
+  // 顶点圆
+  let dots = '';
+  for (let i = 0; i < n; i++) { const p = point(i, values[i]); dots += `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#2f6fb0"/>`; }
+
+  return `<svg width="100%" viewBox="0 0 ${size} ${size}" style="max-width:260px;margin:0 auto;display:block">
+    ${grid}${axes}${dataPoly}${dots}${labelsSvg}
+  </svg>`;
+}
+
+// ====== 分享 ======
+function shareResult() {
+  const { riskPct, type } = getResultType();
+  const rt = RESULT_TYPES[type];
+  const text = `我测了"你的工作会被AI取代吗"，结果是【${rt.name}】，3年内被替代风险 ${riskPct}%。\n\n来测测你的饭碗安全度 👉`;
+  if (navigator.share) {
+    navigator.share({ title: 'AI职业风险诊断', text }).catch(() => {});
+  } else {
+    // 复制链接 + 提示
+    const url = window.location.href;
+    if (navigator.clipboard) navigator.clipboard.writeText(url).catch(() => {});
+    alert('结果已生成，链接已复制～\n\n可粘贴到微信/朋友圈发给同事：\n' + url);
+  }
+}
+
+// ====== 重测 ======
+function restart() {
+  startQuiz();
+}
+</script>
+</body>
+</html>

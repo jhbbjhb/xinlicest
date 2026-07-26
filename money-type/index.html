@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>你的搞钱天花板在哪？｜搞钱体质诊断</title>
+  <meta name="description" content="12题测出你的搞钱体质，4维度定位你的赚钱优势，推荐最适合你的副业方向和本周变现动作。">
+  <style>
+    :root {
+      --bg: #fbf7f0;
+      --card: #ffffff;
+      --text: #2c2620;
+      --text-light: #7d7268;
+      --primary: #b8824a;
+      --primary-dark: #8f6333;
+      --primary-light: #f5eadb;
+      --accent: #4a8e6b;
+      --accent-light: #e4f1ea;
+      --danger: #c0392b;
+      --gold: #d4a04a;
+      --radius: 20px;
+      --shadow: 0 8px 24px rgba(184,130,74,0.07);
+      --shadow-lg: 0 14px 40px rgba(184,130,74,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+    }
+
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #page-result.active {
+      position: relative;
+      height: auto;
+      min-height: 100vh;
+      justify-content: flex-start;
+      padding-top: 24px;
+      padding-bottom: 40px;
+      overflow: visible;
+    }
+
+    #page-result { position: absolute; overflow-y: auto; }
+
+    /* Intro */
+    .intro-visual {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 28px;
+      position: relative;
+      aspect-ratio: 1;
+    }
+
+    .money-emoji {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 96px;
+      filter: drop-shadow(0 10px 20px rgba(184,130,74,0.25));
+    }
+
+    .float-chip {
+      position: absolute;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      white-space: nowrap;
+    }
+
+    .float-chip.c1 { top: 4%; left: -6%; color: var(--primary); }
+    .float-chip.c2 { top: 18%; right: -8%; color: var(--accent); }
+    .float-chip.c3 { bottom: 22%; left: -8%; color: var(--gold); }
+    .float-chip.c4 { bottom: 6%; right: -6%; color: var(--primary-dark); }
+
+    .intro-title {
+      font-size: 26px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .intro-sub {
+      font-size: 14px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .stat-box {
+      flex: 1;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-box .num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-box .label {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 17px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(184,130,74,0.32);
+    }
+
+    .btn-ghost {
+      background: var(--card);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+      margin-top: 12px;
+    }
+
+    /* Quiz */
+    .progress-wrap { margin-bottom: 20px; }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #efe7db;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      width: 0%;
+    }
+
+    .question-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .q-dim {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      border-radius: 8px;
+      padding: 4px 10px;
+      margin-bottom: 14px;
+    }
+
+    .q-text {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 2px solid #f4ece2;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fffdf9;
+    }
+
+    .option:active { transform: scale(0.98); }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .option .opt-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid #e0d2c2;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      transition: all 0.15s;
+    }
+
+    .option.selected .opt-dot {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .option .opt-text {
+      font-size: 14.5px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    /* Loading */
+    .loading-visual {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .loading-coin {
+      font-size: 72px;
+      display: inline-block;
+      animation: spin 1.5s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      0%, 100% { transform: rotateY(0deg); }
+      50% { transform: rotateY(180deg); }
+    }
+
+    .loading-text {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .loading-step {
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: center;
+      margin-top: 16px;
+      min-height: 20px;
+    }
+
+    /* Result */
+    .result-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .type-badge {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 6px 16px;
+      margin-bottom: 12px;
+    }
+
+    .potential-score {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+      margin-bottom: 4px;
+    }
+
+    .potential-label {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .result-type-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 16px 0 6px;
+    }
+
+    .result-type-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.7;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .radar-wrap {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .radar-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .dim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .dim-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .dim-card .dim-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .dim-card .dim-score {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .dim-card .dim-desc {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .sidehustle-card {
+      background: linear-gradient(135deg, var(--primary-light), #faf3ea);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .sidehustle-card h3 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      color: var(--primary-dark);
+    }
+
+    .sh-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .sh-icon {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .sh-text {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .action-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .action-card h3 {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .action-card p {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--text-light);
+    }
+
+    .pitfall-box {
+      background: #fff7f5;
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--danger);
+    }
+
+    .pitfall-box h3 {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--danger);
+    }
+
+    .pitfall-box p {
+      font-size: 13px;
+      line-height: 1.65;
+      color: #8a7068;
+    }
+
+    .share-card {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      color: #fff;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .share-card .sc-title {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-bottom: 8px;
+    }
+
+    .share-card .sc-result {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .share-card .sc-sub {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .result-actions .btn { font-size: 14px; padding: 14px; }
+
+    .disclaimer {
+      font-size: 11.5px;
+      color: #b8a99b;
+      text-align: center;
+      line-height: 1.6;
+      margin-top: 8px;
+      padding: 0 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Intro Page -->
+  <div class="page active" id="page-intro">
+    <div class="intro-visual">
+      <div class="money-emoji">💰</div>
+      <div class="float-chip c1">4 种搞钱体质</div>
+      <div class="float-chip c2">搞钱潜力指数</div>
+      <div class="float-chip c3">副业方向</div>
+      <div class="float-chip c4">变现动作</div>
+    </div>
+
+    <h1 class="intro-title">你的搞钱天花板<br>在哪？</h1>
+    <p class="intro-sub">2026 年，人人都想搞钱，但 90% 的人并不清楚<br>自己适合用什么方式赚钱。<br>12 题测出你的<b>搞钱体质</b>，找到最适合你的赛道。</p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="num">100</div>
+        <div class="label">搞钱潜力指数</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">4</div>
+        <div class="label">搞钱维度</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">4</div>
+        <div class="label">体质类型</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startQuiz()">开始诊断</button>
+    <button class="btn btn-ghost" onclick="alert('本测试基于赚钱心理学和行为经济学常见维度设计，结果仅供副业方向参考，不构成投资建议。')">这是什么测试？</button>
+  </div>
+
+  <!-- Quiz Page -->
+  <div class="page" id="page-quiz">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="progress-label">第 1 / 12 题</span>
+        <span id="progress-pct">8%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="question-card" id="question-card"></div>
+  </div>
+
+  <!-- Loading Page -->
+  <div class="page" id="page-loading">
+    <div class="loading-visual">
+      <div class="loading-coin">🪙</div>
+    </div>
+    <div class="loading-text">正在计算你的搞钱体质…</div>
+    <div class="loading-step" id="loading-step">分析风险偏好中</div>
+  </div>
+
+  <!-- Result Page -->
+  <div class="page" id="page-result">
+    <div class="result-header">
+      <div class="type-badge" id="type-badge"></div>
+      <div class="potential-score" id="potential-score">0</div>
+      <div class="potential-label">搞钱潜力指数（满分 100）</div>
+      <div class="result-type-title" id="result-type-title"></div>
+      <div class="result-type-desc" id="result-type-desc"></div>
+    </div>
+
+    <div class="radar-wrap">
+      <div class="radar-title">你的 4 维搞钱雷达</div>
+      <div id="radar-container"></div>
+    </div>
+
+    <div class="dim-grid" id="dim-grid"></div>
+
+    <div class="sidehustle-card">
+      <h3>💼 你最适合的 3 个搞钱方向</h3>
+      <div id="sidehustle-list"></div>
+    </div>
+
+    <div class="action-card">
+      <h3>⚡ 本周变现动作</h3>
+      <p id="action-text"></p>
+    </div>
+
+    <div class="pitfall-box">
+      <h3>🚫 搞钱避坑提醒</h3>
+      <p id="pitfall-text"></p>
+    </div>
+
+    <div class="share-card">
+      <div class="sc-title">我测出来是</div>
+      <div class="sc-result" id="share-result"></div>
+      <div class="sc-sub">扫码或点下方按钮，测测你的搞钱体质</div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="shareResult()">分享给朋友</button>
+      <button class="btn btn-ghost" onclick="restart()">再测一次</button>
+    </div>
+
+    <p class="disclaimer">本测试基于赚钱行为心理学维度设计，结果仅供副业方向参考，不构成投资建议。赚钱有风险，入局需谨慎。</p>
+  </div>
+
+</div>
+
+<script>
+// ====== 题目数据 ======
+// 维度: risk(风险偏好) execute(执行力) resource(资源敏感度) monetize(变现思维)
+const QUESTIONS = [
+  {
+    dim: '风险偏好',
+    dimKey: 'risk',
+    q: '面对一个"可能赚 10 万，也可能亏 5 万"的机会，你会？',
+    options: [
+      { t: '直接拒绝，我承受不了亏损', s: 0 },
+      { t: '最多投入一两个月工资试试', s: 1 },
+      { t: '能承受 6 个月生活费以内的波动', s: 2 },
+      { t: '只要逻辑成立，All in 也值得', s: 3 }
+    ]
+  },
+  {
+    dim: '风险偏好',
+    dimKey: 'risk',
+    q: '你更愿意靠什么赚钱？',
+    options: [
+      { t: '稳定的死工资', s: 0 },
+      { t: '工资 + 低风险理财', s: 1 },
+      { t: '工资 + 副业现金流', s: 2 },
+      { t: '股权/项目分红/自己创业', s: 3 }
+    ]
+  },
+  {
+    dim: '风险偏好',
+    dimKey: 'risk',
+    q: '你的储蓄可以支撑多久没有收入的生活？',
+    options: [
+      { t: '不到 1 个月', s: 0 },
+      { t: '1-3 个月', s: 1 },
+      { t: '3-6 个月', s: 2 },
+      { t: '6 个月以上', s: 3 }
+    ]
+  },
+  {
+    dim: '执行力',
+    dimKey: 'execute',
+    q: '你有一个副业想法后，通常多久会开始行动？',
+    options: [
+      { t: '基本停留在想想阶段', s: 0 },
+      { t: '会先查资料，但很快搁置', s: 1 },
+      { t: '一两周内会开始小规模尝试', s: 2 },
+      { t: '48 小时内就会先干起来', s: 3 }
+    ]
+  },
+  {
+    dim: '执行力',
+    dimKey: 'execute',
+    q: '做副业过程中遇到 3 次失败，你会？',
+    options: [
+      { t: '立刻放弃，说明不适合我', s: 0 },
+      { t: '再试 1 次，不行就算了', s: 1 },
+      { t: '分析原因，调整后再试几次', s: 2 },
+      { t: '失败是迭代的一部分，持续优化', s: 3 }
+    ]
+  },
+  {
+    dim: '执行力',
+    dimKey: 'execute',
+    q: '你每天的"可自由支配时间"有多少？',
+    options: [
+      { t: '几乎没有，下班就瘫了', s: 0 },
+      { t: '半小时到 1 小时', s: 1 },
+      { t: '1-2 小时', s: 2 },
+      { t: '2 小时以上，且能长期坚持', s: 3 }
+    ]
+  },
+  {
+    dim: '资源敏感度',
+    dimKey: 'resource',
+    q: '你平时是否注意身边的"信息差"和"需求缺口"？',
+    options: [
+      { t: '很少注意', s: 0 },
+      { t: '偶尔会发现但没想过变现', s: 1 },
+      { t: '经常留意，偶尔尝试连接资源', s: 2 },
+      { t: '这是我的本能，看到机会就想套利的点', s: 3 }
+    ]
+  },
+  {
+    dim: '资源敏感度',
+    dimKey: 'resource',
+    q: '你身边的人脉/技能/信息资源中，你觉得？',
+    options: [
+      { t: '我好像没什么特别资源', s: 0 },
+      { t: '有一些，但不知道怎么用', s: 1 },
+      { t: '能列出 3-5 个可变现的资源', s: 2 },
+      { t: '已经在用资源产生过收益', s: 3 }
+    ]
+  },
+  {
+    dim: '资源敏感度',
+    dimKey: 'resource',
+    q: '看到一个新平台/新工具火起来，你通常？',
+    options: [
+      { t: '等朋友圈都用了再说', s: 0 },
+      { t: '会去了解一下', s: 1 },
+      { t: '会上手体验，看看有没有红利', s: 2 },
+      { t: '第一时间研究套利空间和变现路径', s: 3 }
+    ]
+  },
+  {
+    dim: '变现思维',
+    dimKey: 'monetize',
+    q: '你觉得自己最值钱的"能力"是？',
+    options: [
+      { t: '时间（靠加班/卖时间）', s: 0 },
+      { t: '体力/手艺', s: 1 },
+      { t: '专业技能/知识', s: 2 },
+      { t: '产品化/规模化复制的能力', s: 3 }
+    ]
+  },
+  {
+    dim: '变现思维',
+    dimKey: 'monetize',
+    q: '你卖一个东西/服务，更看重？',
+    options: [
+      { t: '省事，不想花心思定价', s: 0 },
+      { t: '价格合理，能卖出去就行', s: 1 },
+      { t: '利润率和客户价值', s: 2 },
+      { t: '复购、转介绍、规模化路径', s: 3 }
+    ]
+  },
+  {
+    dim: '变现思维',
+    dimKey: 'monetize',
+    q: '如果现在要月入 5000 块副业，你的第一反应是？',
+    options: [
+      { t: '去找兼职/小时工', s: 0 },
+      { t: '接私单，做一单赚一单', s: 1 },
+      { t: '做自媒体/内容，慢慢变现', s: 2 },
+      { t: '设计一个能卖 100 次的低价产品/服务', s: 3 }
+    ]
+  }
+];
+
+let current = 0;
+let scores = { risk: 0, execute: 0, resource: 0, monetize: 0 };
+let answers = [];
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+  current = 0;
+  scores = { risk: 0, execute: 0, resource: 0, monetize: 0 };
+  answers = [];
+  renderQuestion();
+  showPage('page-quiz');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  const card = document.getElementById('question-card');
+  card.innerHTML = `
+    <span class="q-dim">${q.dim}</span>
+    <div class="q-text">${q.q}</div>
+    ${q.options.map((opt, i) => `
+      <div class="option" onclick="selectOption(${i}, ${opt.s})">
+        <div class="opt-dot">${String.fromCharCode(65 + i)}</div>
+        <div class="opt-text">${opt.t}</div>
+      </div>
+    `).join('')}
+  `;
+  const pct = Math.round(((current) / QUESTIONS.length) * 100);
+  document.getElementById('progress-label').textContent = `第 ${current + 1} / ${QUESTIONS.length} 题`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+}
+
+function selectOption(idx, score) {
+  const q = QUESTIONS[current];
+  scores[q.dimKey] += score;
+  answers[current] = { dim: q.dimKey, score };
+  document.querySelectorAll('.option').forEach((el, i) => el.classList.toggle('selected', i === idx));
+  setTimeout(() => {
+    current++;
+    if (current < QUESTIONS.length) renderQuestion();
+    else showLoading();
+  }, 280);
+}
+
+function showLoading() {
+  showPage('page-loading');
+  const steps = ['分析风险偏好中', '评估执行力指数', '扫描资源敏感度', '构建变现模型', '生成搞钱体质报告'];
+  let i = 0;
+  document.getElementById('loading-step').textContent = steps[0];
+  const timer = setInterval(() => {
+    i++;
+    if (i < steps.length) document.getElementById('loading-step').textContent = steps[i];
+    else { clearInterval(timer); showResult(); }
+  }, 550);
+}
+
+function getResultType() {
+  const total = scores.risk + scores.execute + scores.resource + scores.monetize;
+  const maxTotal = 36;
+  const potential = Math.round((total / maxTotal) * 100);
+
+  // 潜力过低时，先统一归为积累期，避免误导
+  if (potential < 45) {
+    return { potential, type: 'turtle' };
+  }
+
+  // 找出最强维度，决定类型
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const topDim = sorted[0][0];
+
+  let type;
+  if (topDim === 'risk') {
+    type = 'wolf';
+  } else if (topDim === 'execute') {
+    type = 'bee';
+  } else if (topDim === 'resource') {
+    type = 'fox';
+  } else {
+    type = 'turtle';
+  }
+  return { potential, type };
+}
+
+const TYPE_INFO = {
+  wolf: {
+    name: '🦅 狼性猎手型',
+    desc: '你天生敢冒险、敢下注，擅长抓住高回报机会。适合高风险高回报的赛道，但要控制好回撤。',
+    badge: '高风险 · 高回报',
+    color: '#c0392b',
+    bg: '#fdecea',
+    sidehustle: [
+      { t: '<b>创业/做项目</b>：你适合从 0 到 1 做新业务，别怕小市场，怕的是没壁垒' },
+      { t: '<b>投资/交易</b>：股票、期权、Web3 等方向可考虑，但必须先建立交易系统' },
+      { t: '<b>资源整合型中间商</b>：撮合供需、倒卖信息差，赚撮合佣金' }
+    ],
+    action: '本周：找一个"有明确买家需求"的小生意机会，先成交 1 单，验证市场。别想着先完善产品。',
+    pitfall: '你最大的风险是"All in 心态"。记住：高回报必须对应可承受的损失，永远保留 6 个月生活费的安全垫。'
+  },
+  bee: {
+    name: '🐝 勤劳蜜蜂型',
+    desc: '你执行力强、踏实肯干，是能把一件事持续做下去的人。适合靠复利和积累赚钱的赛道。',
+    badge: '稳扎稳打 · 靠积累',
+    color: '#d4a04a',
+    bg: '#fdf4e0',
+    sidehustle: [
+      { t: '<b>内容创作/自媒体</b>：公众号、小红书、短视频，坚持 6-12 个月必出结果' },
+      { t: '<b>技能服务升级</b>：把主业技能打包成咨询/课程/模板，卖给更多人' },
+      { t: '<b>电商/无货源</b>：选品 + 运营，靠执行力跑赢 90% 的同行' }
+    ],
+    action: '本周：选定 1 个副业方向，每天投入 1 小时，连续 7 天。重点不是效果，是建立节奏。',
+    pitfall: '别用"努力"感动自己。蜜蜂型容易陷入"低效勤奋"，要定期复盘：哪个动作真正产生了收入？'
+  },
+  fox: {
+    name: '🦊 狡黠狐狸型',
+    desc: '你对信息和机会极其敏感，擅长发现别人看不到的套利空间。适合靠信息差和资源变现。',
+    badge: '信息差 · 套利型',
+    color: '#b8824a',
+    bg: '#f5eadb',
+    sidehustle: [
+      { t: '<b>私域电商/团购</b>：把低价货源和精准人群连接起来' },
+      { t: '<b>平台搬运/中间服务</b>：A 平台需求对接 B 平台供给，赚差价' },
+      { t: '<b>咨询/撮合业务</b>：成为某个细分领域的"人脉节点"' }
+    ],
+    action: '本周：列出你手机里的 3 个"信息差"——你知道但别人不知道的需求或资源，选一个试运营。',
+    pitfall: '信息差赚钱有窗口期。你要尽快把"单次套利"变成"长期关系"或"系统能力"，否则红利会消失。'
+  },
+  turtle: {
+    name: '🐢 稳健乌龟型',
+    desc: '你当前更适合走稳健路线：先保住基本盘，再用小成本试错。慢不是缺点，稳才是优势。',
+    badge: '低风险 · 长期型',
+    color: '#4a8e6b',
+    bg: '#e4f1ea',
+    sidehustle: [
+      { t: '<b>稳定现金流副业</b>：代运营、家教、翻译、设计接单等技能型服务' },
+      { t: '<b>低风险理财组合</b>：基金定投、可转债、REITs，用时间换复利' },
+      { t: '<b>知识资产积累</b>：写书、做模板、录课程，一次创作多次售卖' }
+    ],
+    action: '本周：开通一个"能稳定收月租/版权费/订阅费"的渠道，哪怕第一笔只有 10 块钱。',
+    pitfall: '过度保守会错失机会。乌龟型要训练自己：拿出 10% 的资金和时间尝试新机会，其余保持稳健。'
+  }
+};
+
+const DIM_INFO = {
+  risk: { name: '风险偏好', desc: '敢不敢下注、能承受多大波动' },
+  execute: { name: '执行力', desc: '从想法到行动的速度和持久度' },
+  resource: { name: '资源敏感度', desc: '发现信息差、人脉、需求缺口的嗅觉' },
+  monetize: { name: '变现思维', desc: '把能力、资源换成钱的底层逻辑' }
+};
+
+function showResult() {
+  const { potential, type } = getResultType();
+  const ti = TYPE_INFO[type];
+
+  const badge = document.getElementById('type-badge');
+  badge.textContent = ti.badge;
+  badge.style.color = ti.color;
+  badge.style.background = ti.bg;
+
+  document.getElementById('potential-score').textContent = potential;
+  document.getElementById('potential-score').style.color = ti.color;
+  document.getElementById('result-type-title').textContent = ti.name;
+  document.getElementById('result-type-desc').textContent = ti.desc;
+
+  const dims = ['risk', 'execute', 'resource', 'monetize'];
+  const values = dims.map(d => Math.round((scores[d] / 9) * 100));
+  document.getElementById('radar-container').innerHTML = getRadarSVG(values, ti.color);
+
+  document.getElementById('dim-grid').innerHTML = dims.map(d => `
+    <div class="dim-card">
+      <div class="dim-name">${DIM_INFO[d].name}</div>
+      <div class="dim-score" style="color:${getScoreColor(scores[d])}">${scores[d]}/9</div>
+      <div class="dim-desc">${DIM_INFO[d].desc}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('sidehustle-list').innerHTML = ti.sidehustle.map((s, i) => `
+    <div class="sh-item"><div class="sh-icon">${i + 1}</div><div class="sh-text">${s.t}</div></div>
+  `).join('');
+
+  document.getElementById('action-text').textContent = ti.action;
+  document.getElementById('pitfall-text').textContent = ti.pitfall;
+
+  document.getElementById('share-result').textContent = `${ti.name} · 搞钱潜力 ${potential}`;
+
+  showPage('page-result');
+}
+
+function getScoreColor(s) {
+  if (s >= 7) return '#2e8b57';
+  if (s >= 4) return '#d4a04a';
+  return '#c0392b';
+}
+
+function getRadarSVG(values, color) {
+  const labels = ['风险', '执行', '资源', '变现'];
+  const size = 240, cx = size / 2, cy = size / 2, r = 80;
+  const n = 4;
+  const angle = (i) => (Math.PI * 2 * i / n) - Math.PI / 2;
+  const point = (i, val) => {
+    const rr = r * (val / 100);
+    return [cx + rr * Math.cos(angle(i)), cy + rr * Math.sin(angle(i))];
+  };
+  let grid = '';
+  [0.25, 0.5, 0.75, 1].forEach(f => {
+    const pts = [];
+    for (let i = 0; i < n; i++) { const p = point(i, f * 100); pts.push(p.join(',')); }
+    grid += `<polygon points="${pts.join(' ')}" fill="none" stroke="#efe7db" stroke-width="1"/>`;
+  });
+  let axes = '', labelsSvg = '';
+  for (let i = 0; i < n; i++) {
+    const p = point(i, 100);
+    axes += `<line x1="${cx}" y1="${cy}" x2="${p[0]}" y2="${p[1]}" stroke="#efe7db" stroke-width="1"/>`;
+    const lp = point(i, 122);
+    labelsSvg += `<text x="${lp[0]}" y="${lp[1]}" font-size="11" fill="#7d7268" text-anchor="middle" dominant-baseline="middle">${labels[i]}</text>`;
+  }
+  const dataPts = [];
+  for (let i = 0; i < n; i++) { const p = point(i, values[i]); dataPts.push(p.join(',')); }
+  const dataPoly = `<polygon points="${dataPts.join(' ')}" fill="${color}33" stroke="${color}" stroke-width="2"/>`;
+  let dots = '';
+  for (let i = 0; i < n; i++) { const p = point(i, values[i]); dots += `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${color}"/>`; }
+
+  return `<svg width="100%" viewBox="0 0 ${size} ${size}" style="max-width:260px;margin:0 auto;display:block">
+    ${grid}${axes}${dataPoly}${dots}${labelsSvg}
+  </svg>`;
+}
+
+function shareResult() {
+  const { potential, type } = getResultType();
+  const ti = TYPE_INFO[type];
+  const text = `我测了"你的搞钱天花板在哪"，结果是【${ti.name}】，搞钱潜力 ${potential} 分。\n\n来测测你适合怎么搞钱 👉`;
+  if (navigator.share) {
+    navigator.share({ title: '搞钱体质诊断', text }).catch(() => {});
+  } else {
+    const url = window.location.href;
+    if (navigator.clipboard) navigator.clipboard.writeText(url).catch(() => {});
+    alert('结果已生成，链接已复制～\n\n可粘贴到微信/朋友圈发给朋友：\n' + url);
+  }
+}
+
+function restart() {
+  startQuiz();
+}
+</script>
+</body>
+</html>

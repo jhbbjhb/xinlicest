@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>你的大脑情绪负荷有多高？</title>
+  <meta name="description" content="12题情绪状态自测，帮你识别当前情绪耗能层级，并提供专业引导。">
+  <style>
+    :root {
+      --bg: #f8f6f3;
+      --card: #ffffff;
+      --text: #2c2c2c;
+      --text-light: #6b6b6b;
+      --primary: #5e7a64;
+      --primary-light: #eaf0ec;
+      --accent: #c78d6b;
+      --accent-light: #f6ece4;
+      --danger: #b95c5c;
+      --danger-light: #f8e8e8;
+      --warning: #d4a35a;
+      --warning-light: #faf2e3;
+      --info: #5a7fa8;
+      --info-light: #e8eff7;
+      --radius: 20px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.06);
+      --shadow-lg: 0 14px 40px rgba(0,0,0,0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--bg);
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+    }
+
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #page-result.active {
+      position: relative;
+      height: auto;
+      min-height: 100vh;
+      justify-content: flex-start;
+      padding-top: 24px;
+      padding-bottom: 40px;
+      overflow: visible;
+    }
+
+    #page-result {
+      position: absolute;
+      overflow-y: auto;
+    }
+
+    /* Intro */
+    .intro-brain {
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto 24px;
+      position: relative;
+      aspect-ratio: 1;
+    }
+
+    .brain-circle {
+      position: absolute;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease;
+    }
+
+    .brain-circle.top {
+      width: 56%;
+      height: 56%;
+      background: var(--primary-light);
+      color: var(--primary);
+      top: 8%;
+      left: 22%;
+      z-index: 2;
+    }
+
+    .brain-circle.left {
+      width: 44%;
+      height: 44%;
+      background: var(--accent-light);
+      color: var(--accent);
+      bottom: 8%;
+      left: 6%;
+      z-index: 1;
+    }
+
+    .brain-circle.right {
+      width: 44%;
+      height: 44%;
+      background: var(--info-light);
+      color: var(--info);
+      bottom: 8%;
+      right: 6%;
+      z-index: 1;
+    }
+
+    .brain-circle span:first-child { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
+    .brain-circle span:last-child { font-size: 18px; }
+
+    .brain-circle.top span:first-child { font-size: 13px; }
+    .brain-circle.top span:last-child { font-size: 24px; }
+
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      padding: 0 8px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 6px 18px rgba(94, 122, 100, 0.3);
+    }
+
+    .btn-primary:active { transform: scale(0.98); box-shadow: 0 3px 10px rgba(94, 122, 100, 0.25); }
+
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      margin-top: 12px;
+    }
+
+    .btn-accent { background: var(--accent); color: white; box-shadow: 0 6px 18px rgba(199, 141, 107, 0.3); }
+    .btn-danger { background: var(--danger); color: white; box-shadow: 0 6px 18px rgba(185, 92, 92, 0.3); }
+    .btn-warning { background: var(--warning); color: white; box-shadow: 0 6px 18px rgba(212, 163, 90, 0.3); }
+    .btn-info { background: var(--info); color: white; box-shadow: 0 6px 18px rgba(90, 127, 168, 0.3); }
+
+    .tagline {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .tagline span {
+      background: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* Quiz */
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 3px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .quiz-step {
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    .quiz-category {
+      font-size: 12px;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .question {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 28px;
+      min-height: 64px;
+    }
+
+    .option {
+      background: var(--card);
+      border: 1.5px solid transparent;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .option:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+    .option-letter {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .option-text { font-size: 15px; line-height: 1.5; color: var(--text); }
+
+    /* Loading */
+    .loading-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+
+    .loading-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-ring:nth-child(2) {
+      inset: 10px;
+      border-top-color: var(--accent);
+      animation: spin 1.4s linear infinite reverse;
+    }
+
+    .loading-ring:nth-child(3) {
+      inset: 20px;
+      border-top-color: var(--info);
+      animation: spin 1.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .loading-sub {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    /* Result */
+    .result-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 20px;
+    }
+
+    .result-type {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .result-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .result-desc {
+      font-size: 15px;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+
+    .score-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 6px;
+      margin: 24px 0 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .radar-wrap {
+      width: 100%;
+      max-width: 260px;
+      margin: 20px auto;
+      aspect-ratio: 1;
+      position: relative;
+    }
+
+    .radar-svg { width: 100%; height: 100%; }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 24px 0 12px;
+    }
+
+    .tip-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .tip-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .tip-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .tip-content p { font-size: 14px; color: var(--text-light); line-height: 1.6; }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .action-card .emoji { font-size: 28px; margin-bottom: 8px; }
+    .action-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .action-card p { font-size: 12px; color: var(--text-light); }
+
+    .disclaimer {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.7;
+      text-align: center;
+      margin-top: 20px;
+      padding: 0 8px;
+    }
+
+    .hotline {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-top: 12px;
+    }
+
+    .hotline-title { font-size: 14px; font-weight: 700; color: var(--danger); margin-bottom: 6px; }
+    .hotline-number { font-size: 20px; font-weight: 800; color: var(--danger); letter-spacing: 1px; }
+    .hotline-desc { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+    .result-actions { margin-top: 8px; }
+
+    .result-actions .btn { margin-bottom: 10px; }
+
+    /* Utilities */
+    .hidden { display: none; }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Type colors */
+    .type-stable .result-type, .type-stable .result-title { color: var(--primary); }
+    .type-stable .score-fill { background: linear-gradient(90deg, var(--primary), #7fa386); }
+    .type-stable .tip-icon { background: var(--primary-light); }
+
+    .type-tired .result-type, .type-tired .result-title { color: var(--accent); }
+    .type-tired .score-fill { background: linear-gradient(90deg, var(--accent), #e0a97e); }
+    .type-tired .tip-icon { background: var(--accent-light); }
+
+    .type-burnout .result-type, .type-burnout .result-title { color: var(--warning); }
+    .type-burnout .score-fill { background: linear-gradient(90deg, #d4a35a, #e8c07d); }
+    .type-burnout .tip-icon { background: var(--warning-light); }
+
+    .type-support .result-type, .type-support .result-title { color: var(--danger); }
+    .type-support .score-fill { background: linear-gradient(90deg, var(--danger), #d47a7a); }
+    .type-support .tip-icon { background: var(--danger-light); }
+
+    .type-support .hotline { border: 1px solid var(--danger-light); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 开场页 -->
+  <div class="page active" id="page-intro">
+    <div class="intro-brain">
+      <div class="brain-circle top">
+        <span>前额叶</span>
+        <span>理性判断</span>
+      </div>
+      <div class="brain-circle left">
+        <span>杏仁核</span>
+        <span>情绪反应</span>
+      </div>
+      <div class="brain-circle right">
+        <span>海马体</span>
+        <span>记忆专注</span>
+      </div>
+    </div>
+
+    <h1 class="title">你的大脑<br>情绪负荷有多高？</h1>
+    <p class="subtitle">
+      12 道题，从情绪反应、精力睡眠、认知注意力、社交与自我评价 4 个维度，
+      识别你当前的情绪耗能状态，并给出下一步引导。
+    </p>
+
+    <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+
+    <div class="tagline">
+      <span>12 题</span>
+      <span>4 个维度</span>
+      <span>1 份引导</span>
+    </div>
+  </div>
+
+  <!-- 答题页 -->
+  <div class="page" id="page-quiz">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="quiz-header">
+      <span class="quiz-step" id="quiz-step">01 / 12</span>
+      <span class="quiz-category" id="quiz-category">情绪反应</span>
+    </div>
+    <div class="question" id="question-text"></div>
+    <div id="options-container"></div>
+  </div>
+
+  <!-- 加载页 -->
+  <div class="page" id="page-loading">
+    <div class="loading-icon">
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+    </div>
+    <div class="loading-text" id="loading-text">正在分析你的情绪脑区状态…</div>
+    <div class="loading-sub">前额叶 · 杏仁核 · 海马体 · 神经递质</div>
+  </div>
+
+  <!-- 结果页 -->
+  <div class="page" id="page-result">
+    <div id="result-container"></div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { category: "情绪反应", text: "最近一周，你的情绪波动频率是？", options: [
+    { label: "A", text: "基本平稳，很少有大的起伏", score: 0 },
+    { label: "B", text: "偶尔会有低落或烦躁，但能自己恢复", score: 1 },
+    { label: "C", text: "经常莫名情绪低落，恢复很慢", score: 2 },
+    { label: "D", text: "几乎每天都难过，很难开心起来", score: 3 }
+  ]},
+  { category: "情绪反应", text: "遇到一件不顺心的小事，你的反应是？", options: [
+    { label: "A", text: "当时有点烦，但很快就过去了", score: 0 },
+    { label: "B", text: "会难受一两个小时，然后能转移注意力", score: 1 },
+    { label: "C", text: "会反复想这件事，影响半天心情", score: 2 },
+    { label: "D", text: "觉得'完了'，小事也被放大成'我很失败'", score: 3 }
+  ]},
+  { category: "情绪反应", text: "你最近一次发自内心开心是什么时候？", options: [
+    { label: "A", text: "就在最近一两天", score: 0 },
+    { label: "B", text: "上周有过，但不多", score: 1 },
+    { label: "C", text: "想不起来具体的开心时刻", score: 2 },
+    { label: "D", text: "已经很久没有开心过了", score: 3 }
+  ]},
+  { category: "精力睡眠", text: "你的身体疲惫感是？", options: [
+    { label: "A", text: "累了睡一觉就能恢复", score: 0 },
+    { label: "B", text: "最近容易累，但休息后有改善", score: 1 },
+    { label: "C", text: "持续疲惫，休息也缓解不了", score: 2 },
+    { label: "D", text: "累到极点，但脑子停不下来，睡不好", score: 3 }
+  ]},
+  { category: "精力睡眠", text: "你的睡眠状态是？", options: [
+    { label: "A", text: "入睡正常，睡眠质量不错", score: 0 },
+    { label: "B", text: "偶尔失眠或睡不够", score: 1 },
+    { label: "C", text: "经常入睡困难、早醒或多梦", score: 2 },
+    { label: "D", text: "几乎每天睡不好，白天昏昏沉沉", score: 3 }
+  ]},
+  { category: "精力睡眠", text: "你白天的精力和动力是？", options: [
+    { label: "A", text: "动力充足，能专注做事", score: 0 },
+    { label: "B", text: "偶尔犯懒，但启动后还能继续", score: 1 },
+    { label: "C", text: "启动困难，很多事拖到最后一刻", score: 2 },
+    { label: "D", text: "完全没有动力，连起床、洗漱都觉得费力", score: 3 }
+  ]},
+  { category: "认知注意", text: "你最近的注意力状态是？", options: [
+    { label: "A", text: "能专注当下，不容易分心", score: 0 },
+    { label: "B", text: "偶尔走神，但能拉回来", score: 1 },
+    { label: "C", text: "经常脑子转不动，做简单决定都难", score: 2 },
+    { label: "D", text: "注意力涣散，看书/工作都集中不了几分钟", score: 3 }
+  ]},
+  { category: "认知注意", text: "你的记忆力或做事效率是？", options: [
+    { label: "A", text: "记忆力正常，做事有条理", score: 0 },
+    { label: "B", text: "偶尔忘事，但不影响生活", score: 1 },
+    { label: "C", text: "经常忘事，丢三落四明显变多", score: 2 },
+    { label: "D", text: "刚发生的事转头就忘，反应也变慢了", score: 3 }
+  ]},
+  { category: "认知注意", text: "面对选择时，你的状态是？", options: [
+    { label: "A", text: "能理性判断，做决定不纠结", score: 0 },
+    { label: "B", text: "有时会犹豫，但最多几分钟", score: 1 },
+    { label: "C", text: "很小的决定都要想很久，很消耗", score: 2 },
+    { label: "D", text: "完全做不了决定，脑子像卡住一样", score: 3 }
+  ]},
+  { category: "社交自我", text: "你最近和朋友的联系是？", options: [
+    { label: "A", text: "正常社交，能享受和人相处", score: 0 },
+    { label: "B", text: "社交减少一点，但和亲近的人还有联系", score: 1 },
+    { label: "C", text: "不太想见人，消息也常拖着不回", score: 2 },
+    { label: "D", text: "完全不想社交，连最好的朋友也不想见", score: 3 }
+  ]},
+  { category: "社交自我", text: "你对自己的评价是？", options: [
+    { label: "A", text: "整体接纳自己，有优点也有不足", score: 0 },
+    { label: "B", text: "偶尔自我怀疑，但不过分", score: 1 },
+    { label: "C", text: "经常自责，觉得自己不够好", score: 2 },
+    { label: "D", text: "觉得自己一无是处，是别人的负担", score: 3 }
+  ]},
+  { category: "社交自我", text: "如果这种状态持续一个月，你会？", options: [
+    { label: "A", text: "相信它自然会过去", score: 0 },
+    { label: "B", text: "想调整一下生活作息", score: 1 },
+    { label: "C", text: "有点担心，想找人聊聊", score: 2 },
+    { label: "D", text: "害怕自己这样下去，觉得需要专业帮助", score: 3 }
+  ]}
+];
+
+let currentQuestion = 0;
+let totalScore = 0;
+let dimensionScores = [0, 0, 0, 0]; // 情绪反应, 精力睡眠, 认知注意, 社交自我
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  currentQuestion = 0;
+  totalScore = 0;
+  dimensionScores = [0, 0, 0, 0];
+  showPage('page-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestion];
+  document.getElementById('quiz-step').textContent = `${String(currentQuestion + 1).padStart(2, '0')} / ${questions.length}`;
+  document.getElementById('quiz-category').textContent = q.category;
+  document.getElementById('question-text').textContent = q.text;
+  document.getElementById('progress-fill').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+
+  q.options.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `
+      <div class="option-letter">${opt.label}</div>
+      <div class="option-text">${opt.text}</div>
+    `;
+    div.onclick = () => selectOption(idx);
+    container.appendChild(div);
+  });
+}
+
+function selectOption(idx) {
+  const q = questions[currentQuestion];
+  const score = q.options[idx].score;
+  totalScore += score;
+
+  const dimMap = { "情绪反应": 0, "精力睡眠": 1, "认知注意": 2, "社交自我": 3 };
+  dimensionScores[dimMap[q.category]] += score;
+
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    renderQuestion();
+  } else {
+    document.getElementById('progress-fill').style.width = '100%';
+    showLoading();
+  }
+}
+
+const loadingTexts = [
+  "正在分析你的情绪脑区状态…",
+  "正在评估杏仁核活跃度…",
+  "正在检测前额叶调控能力…",
+  "正在整合海马体记忆负荷…",
+  "正在生成你的情绪状态报告…"
+];
+
+function showLoading() {
+  showPage('page-loading');
+  let i = 0;
+  const el = document.getElementById('loading-text');
+  el.textContent = loadingTexts[0];
+  const interval = setInterval(() => {
+    i++;
+    if (i < loadingTexts.length) {
+      el.textContent = loadingTexts[i];
+    } else {
+      clearInterval(interval);
+      showResult();
+    }
+  }, 700);
+}
+
+function getResultType(score) {
+  if (score <= 5) return 'stable';
+  if (score <= 14) return 'tired';
+  if (score <= 24) return 'burnout';
+  return 'support';
+}
+
+const icons = {
+  leaf: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.5C14.5 5 17 4 22 2c-1 5-2 7.5-5 12.2a7 7 0 0 1-6 5.8Z"/></svg>',
+  book: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  walk: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/><path d="M17 20l-3-7-3 1-2-2-3 2v3"/><path d="M8 21l2.5-1.5"/><path d="M15 21l-2.5-1.5"/></svg>',
+  list: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  compass: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 8.5-8.5 8.38 8.38 0 0 1 3.8.9h.5a8.48 8.48 0 0 1 4.2 1.6z"/></svg>',
+  hospital: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M6 22v-8h4v8"/><path d="M14 22v-8h4v8"/><path d="M10 6h4"/><path d="M12 4v4"/></svg>',
+  doctor: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  'phone-red': '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.8 12.8 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.8 12.8 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  share: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',
+  clipboard: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>',
+  'user-md': '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M12 3v8"/><path d="M10 5h4"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.8 12.8 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.8 12.8 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  brain: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v0a2.5 2.5 0 0 1 2.5-2.5 3 3 0 0 1 3 3v0a2.5 2.5 0 0 1 2.5 2.5c0 1.06-.5 2.02-1.29 2.64a2.5 2.5 0 0 1 .79 1.86 2.5 2.5 0 0 1-2.5 2.5v0a3 3 0 0 1-3 3 2.5 2.5 0 0 1-2.5-2.5v0A2.5 2.5 0 0 1 12 15v0a2.5 2.5 0 0 1-2.5 2.5 3 3 0 0 1-3-3v0a2.5 2.5 0 0 1-2.5-2.5v0A2.5 2.5 0 0 1 4.5 11v0a3 3 0 0 1 3-3A2.5 2.5 0 0 1 9.5 5.5v0A2.5 2.5 0 0 1 9.5 2z"/></svg>'
+};
+
+function getIconSvg(name) {
+  return icons[name] || icons['heart'];
+}
+
+const results = {
+  stable: {
+    type: "情绪稳定型",
+    title: "你的情绪大脑运转良好",
+    desc: "你目前的状态比较稳定，能够较好地调节情绪、专注当下，也能从日常小事中获得满足感。",
+    brain: "前额叶稳定 · 杏仁核可控 · 海马体正常",
+    tips: [
+      { icon: "leaf", title: "继续保持", text: "规律作息和适度运动是维持这种状态的最佳方式。" },
+      { icon: "book", title: "记录小确幸", text: "每天写下 3 件让自己开心或感激的小事，会进一步增强心理韧性。" },
+      { icon: "heart", title: "分享支持", text: "把这份稳定传递给身边疲惫的朋友，有时候你的陪伴就是他们的解药。" }
+    ],
+    actions: [
+      { icon: "share", title: "分享结果", desc: "让朋友也测一测" },
+      { icon: "refresh", title: "重新测试", desc: "过段时间再测" }
+    ],
+    mainBtn: { text: "分享给朋友", class: "btn-primary" }
+  },
+  tired: {
+    type: "轻度疲劳型",
+    title: "你的情绪系统正在低电量运行",
+    desc: "你并没有出现严重问题，但已经处于情绪耗竭的边缘。这不是矫情，而是身体在提醒你：该充电了。",
+    brain: "多巴胺分泌偏低 · 皮质醇轻度偏高",
+    tips: [
+      { icon: "moon", title: "睡前 1 小时断网", text: "蓝光和资讯过载会进一步消耗神经资源。" },
+      { icon: "walk", title: "每天 15 分钟无产出时间", text: "散步、听音乐、发呆，让大脑从'效率模式'切换到'修复模式'。" },
+      { icon: "list", title: "把待办清单砍到 3 件", text: "减少决策疲劳，把精力留给真正重要的事。" }
+    ],
+    actions: [
+      { icon: "clipboard", title: "PHQ-9 自评", desc: "更专业的筛查量表" },
+      { icon: "user-md", title: "1 对 1 评估", desc: "预约情绪咨询师" }
+    ],
+    mainBtn: { text: "获取 PHQ-9 自评量表", class: "btn-accent" }
+  },
+  burnout: {
+    type: "情绪内耗型",
+    title: "你的大脑正在过度耗能",
+    desc: "你存在明显的反刍思维和自责循环，注意力、记忆力已经受到影响。这些不是软弱，是大脑真实的求救信号。",
+    brain: "杏仁核过度激活 · 前额叶调控疲劳",
+    tips: [
+      { icon: "clock", title: "设定 Worry Time", text: "每天固定 15 分钟处理烦恼，其他时间把焦虑写下来放到 'later'。" },
+      { icon: "compass", title: "5-4-3-2-1  grounding", text: "说出 5 样看到的、4 样摸到的、3 样听到的、2 样闻到的、1 样尝到的。" },
+      { icon: "chat", title: "不要独自扛", text: "找信任的人或专业咨询师聊聊，倾诉本身就能降低杏仁核活跃度。" }
+    ],
+    actions: [
+      { icon: "phone", title: "心理援助资源", desc: "查看本地支持方式" },
+      { icon: "brain", title: "GAD-7 焦虑自评", desc: "更精准评估焦虑程度" }
+    ],
+    mainBtn: { text: "查看附近心理咨询师", class: "btn-warning" }
+  },
+  support: {
+    type: "需要专业支持型",
+    title: "你的情绪负荷已接近临界点",
+    desc: "你长期处于高情绪负荷中，动力缺失、自我评价严重下降。这不是'想开点'就能解决的，是时候请专业人士陪你一起走了。",
+    brain: "神经递质功能可能受影响 · 需医学或心理干预",
+    tips: [
+      { icon: "hospital", title: "这不是你的错", text: "抑郁和焦虑是真实的身心状态，不是性格缺陷或意志力薄弱。" },
+      { icon: "doctor", title: "优先求助专业科室", text: "建议挂精神科 / 心理科 / 临床心理科，由医生评估是否需要药物或心理治疗。" },
+      { icon: "phone-red", title: "痛苦时请寻求支持", text: "如果感到绝望或出现自伤念头，请立即联系身边信任的人，或前往就近医院急诊寻求帮助。" }
+    ],
+    actions: [
+      { icon: "hospital", title: "三甲医院", desc: "精神科/心理科" },
+      { icon: "phone-red", title: "支持资源", desc: "本地的心理援助" }
+    ],
+    mainBtn: { text: "查看我的下一步建议", class: "btn-danger" }
+  }
+};
+
+function showResult() {
+  const type = getResultType(totalScore);
+  const result = results[type];
+  const maxScore = 36;
+  const percentage = Math.round((totalScore / maxScore) * 100);
+
+  // 计算雷达图数据
+  const maxDim = 9; // 每个维度 3 题 * 3 分
+  const radarValues = dimensionScores.map(s => Math.min(100, Math.round((s / maxDim) * 100)));
+  const radarPoly = getRadarPolygon(radarValues, 120, 120, 90);
+
+  const container = document.getElementById('result-container');
+  container.innerHTML = `
+    <div class="result-card type-${type}">
+      <div class="result-type">${result.type}</div>
+      <div class="result-title">${result.title}</div>
+      <div class="result-desc">${result.desc}</div>
+
+      <div class="score-bar">
+        <div class="score-fill" style="width: 0%"></div>
+      </div>
+      <div class="score-label">
+        <span>情绪负荷指数</span>
+        <span>${percentage}%</span>
+      </div>
+
+      <div class="radar-wrap">
+        <svg class="radar-svg" viewBox="0 0 240 240">
+          <polygon points="120,30 200,120 120,210 40,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,50 180,120 120,190 60,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,70 160,120 120,170 80,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,90 140,120 120,150 100,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <line x1="120" y1="30" x2="120" y2="210" stroke="#e5e5e5" stroke-width="1"/>
+          <line x1="40" y1="120" x2="200" y2="120" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="${radarPoly}" fill="rgba(94,122,100,0.2)" stroke="var(--primary)" stroke-width="2"/>
+          <text x="120" y="22" text-anchor="middle" font-size="12" fill="#888">情绪反应</text>
+          <text x="210" y="124" text-anchor="start" font-size="12" fill="#888">精力睡眠</text>
+          <text x="120" y="224" text-anchor="middle" font-size="12" fill="#888">认知注意</text>
+          <text x="30" y="124" text-anchor="end" font-size="12" fill="#888">社交自我</text>
+        </svg>
+      </div>
+
+      <div style="text-align: center; font-size: 13px; color: var(--text-light); margin-top: -8px; margin-bottom: 8px;">
+        脑区状态：${result.brain}
+      </div>
+    </div>
+
+    <div class="section-title">你可以这样做</div>
+    ${result.tips.map(tip => `
+      <div class="tip-card">
+        <div class="tip-icon">${getIconSvg(tip.icon)}</div>
+        <div class="tip-content">
+          <h4>${tip.title}</h4>
+          <p>${tip.text}</p>
+        </div>
+      </div>
+    `).join('')}
+
+    <div class="section-title">下一步引导</div>
+    <div class="action-grid">
+      ${result.actions.map(a => `
+        <div class="action-card">
+          <div class="emoji">${getIconSvg(a.icon)}</div>
+          <h4>${a.title}</h4>
+          <p>${a.desc}</p>
+        </div>
+      `).join('')}
+    </div>
+
+    <button class="btn ${result.mainBtn.class}" onclick="handleMainAction('${type}')">${result.mainBtn.text}</button>
+    <button class="btn btn-outline" onclick="startQuiz()">重新测试</button>
+
+    ${type === 'support' ? `
+      <div class="hotline">
+        <div class="hotline-title">获取专业支持</div>
+        <div class="hotline-number">寻求身边的支持</div>
+        <div class="hotline-desc">联系信任的人 · 前往医院 · 寻求专业心理咨询</div>
+      </div>
+    ` : ''}
+
+    <p class="disclaimer">
+      本测试为心理健康科普工具，结果仅供参考，不能替代精神科或心理科专业诊断。
+      如果你感到痛苦、有自伤或自杀想法，请立即联系身边信任的人，或前往医院寻求专业帮助。
+    </p>
+  `;
+
+  showPage('page-result');
+
+  // 动画分数条
+  setTimeout(() => {
+    document.querySelector('.score-fill').style.width = `${percentage}%`;
+  }, 300);
+}
+
+function getRadarPolygon(values, cx, cy, r) {
+  // 4 个维度：上、右、下、左
+  const angles = [-Math.PI / 2, 0, Math.PI / 2, Math.PI];
+  return values.map((v, i) => {
+    const radius = r * (v / 100);
+    const x = cx + radius * Math.cos(angles[i]);
+    const y = cy + radius * Math.sin(angles[i]);
+    return `${x},${y}`;
+  }).join(' ');
+}
+
+function handleMainAction(type) {
+  if (type === 'stable') {
+    shareResult();
+  } else if (type === 'tired') {
+    alert("PHQ-9 自评量表：\n\n1. 做事时提不起劲或没有兴趣\n2. 感到心情低落、沮丧或绝望\n3. 入睡困难、睡不安稳或睡眠过多\n4. 感觉疲倦或没有活力\n5. 食欲不振或吃太多\n6. 觉得自己很糟，或觉得自己很失败\n7. 对事物专注有困难\n8. 动作或说话速度缓慢到别人可察觉的程度\n9. 有不如死掉或用某种方式伤害自己的念头\n\n评分：完全不会=0，好几天=1，一半以上天数=2，几乎每天=3\n总分 0-27 分，≥10 分建议进一步评估。");
+  } else if (type === 'burnout') {
+    alert("你正在经历明显的情绪内耗。\n\n建议行动：\n1. 找身边 1-2 个信任的人聊聊你的状态\n2. 在美团/大众点评搜索'心理咨询'，预约首次评估\n3. 如果持续 2 周以上，建议前往医院临床心理科\n\n你不是一个人在扛。");
+  } else if (type === 'support') {
+    alert("【重要】\n\n你当前的负荷已经接近临界点，请认真对待：\n\n1. 现在就联系身边信任的人，告诉他们你的状态\n2. 尽快前往医院精神科或心理科就诊\n3. 如有自伤念头，请直接去最近医院的急诊科\n\n你不是一个人，也不需要独自扛过去。");
+  }
+}
+
+function shareResult() {
+  if (navigator.share) {
+    navigator.share({
+      title: '你的大脑情绪负荷有多高？',
+      text: '我刚测了自己的情绪状态，推荐你也试试这个 12 题自测。',
+      url: window.location.href
+    });
+  } else {
+    alert('已复制结果，快去分享给朋友吧！');
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>你在相亲市场值多少分？｜婚恋竞争力评分</title>
+  <meta name="description" content="12题测出你的婚恋市场竞争力评分，4维度拆解你的择偶优劣势，给具体提升建议。">
+  <style>
+    :root {
+      --bg: #fdf5f8;
+      --card: #ffffff;
+      --text: #2d1f26;
+      --text-light: #8a6e7a;
+      --primary: #b56a8a;
+      --primary-dark: #8e4f6b;
+      --primary-light: #f9e8f0;
+      --accent: #6a4ab5;
+      --accent-light: #eee9f9;
+      --gold: #d4a04a;
+      --gold-light: #fdf4e0;
+      --silver: #9ca3af;
+      --bronze: #b8826a;
+      --radius: 20px;
+      --shadow: 0 8px 24px rgba(181,106,138,0.07);
+      --shadow-lg: 0 14px 40px rgba(181,106,138,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+    }
+
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #page-result.active {
+      position: relative;
+      height: auto;
+      min-height: 100vh;
+      justify-content: flex-start;
+      padding-top: 24px;
+      padding-bottom: 40px;
+      overflow: visible;
+    }
+
+    #page-result { position: absolute; overflow-y: auto; }
+
+    /* Intro */
+    .intro-visual {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 28px;
+      position: relative;
+      aspect-ratio: 1;
+    }
+
+    .heart-emoji {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 96px;
+      filter: drop-shadow(0 10px 20px rgba(181,106,138,0.25));
+    }
+
+    .float-chip {
+      position: absolute;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+      white-space: nowrap;
+    }
+
+    .float-chip.c1 { top: 4%; left: -6%; color: var(--primary); }
+    .float-chip.c2 { top: 18%; right: -8%; color: var(--accent); }
+    .float-chip.c3 { bottom: 22%; left: -8%; color: var(--gold); }
+    .float-chip.c4 { bottom: 6%; right: -6%; color: var(--primary-dark); }
+
+    .intro-title {
+      font-size: 26px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .intro-sub {
+      font-size: 14px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .stat-box {
+      flex: 1;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-box .num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-box .label {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 17px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(181,106,138,0.32);
+    }
+
+    .btn-ghost {
+      background: var(--card);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+      margin-top: 12px;
+    }
+
+    /* Quiz */
+    .progress-wrap { margin-bottom: 20px; }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #f0dfe6;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 4px;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      width: 0%;
+    }
+
+    .question-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .q-dim {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      border-radius: 8px;
+      padding: 4px 10px;
+      margin-bottom: 14px;
+    }
+
+    .q-text {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 2px solid #f4e8ee;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fffafc;
+    }
+
+    .option:active { transform: scale(0.98); }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .option .opt-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid #e3c9d6;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      transition: all 0.15s;
+    }
+
+    .option.selected .opt-dot {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .option .opt-text {
+      font-size: 14.5px;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    /* Loading */
+    .loading-visual {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .loading-heart {
+      font-size: 72px;
+      display: inline-block;
+      animation: heartbeat 1.2s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .loading-text {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .loading-step {
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 600;
+      text-align: center;
+      margin-top: 16px;
+      min-height: 20px;
+    }
+
+    /* Result */
+    .result-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .grade-ring {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--card);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .grade-ring::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 6px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .score-num {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .score-label {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    .grade-badge {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 800;
+      border-radius: 20px;
+      padding: 7px 20px;
+      margin-bottom: 10px;
+    }
+
+    .result-type-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 8px 0 6px;
+    }
+
+    .result-type-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.7;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .radar-wrap {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .radar-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .dim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .dim-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .dim-card .dim-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .dim-card .dim-score {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .dim-card .dim-desc {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    .match-card {
+      background: linear-gradient(135deg, var(--primary-light), #f9eef4);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .match-card h3 {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      color: var(--primary-dark);
+    }
+
+    .match-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .match-icon {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .match-text {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .suggestion-box {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .suggestion-box h3 {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .suggestion-box p {
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--text-light);
+    }
+
+    .share-card {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      color: #fff;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .share-card .sc-title {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-bottom: 8px;
+    }
+
+    .share-card .sc-result {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .share-card .sc-sub {
+      font-size: 12px;
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .result-actions .btn { font-size: 14px; padding: 14px; }
+
+    .disclaimer {
+      font-size: 11.5px;
+      color: #bdaab4;
+      text-align: center;
+      line-height: 1.6;
+      margin-top: 8px;
+      padding: 0 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Intro Page -->
+  <div class="page active" id="page-intro">
+    <div class="intro-visual">
+      <div class="heart-emoji">💖</div>
+      <div class="float-chip c1">你的综合评分</div>
+      <div class="float-chip c2">4 维拆解</div>
+      <div class="float-chip c3">适配人群</div>
+      <div class="float-chip c4">提升建议</div>
+    </div>
+
+    <h1 class="intro-title">你在相亲市场<br>值多少分？</h1>
+    <p class="intro-sub">2026 年，婚恋市场早已变成一场用 Excel 打分的游戏。<br>12 题算出你的<b>婚恋竞争力评分</b>，<br>看懂你的优势、短板和适配人群。</p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="num">100</div>
+        <div class="label">满分竞争力</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">4</div>
+        <div class="label">评分维度</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">4</div>
+        <div class="label">竞争等级</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startQuiz()">开始评分</button>
+    <button class="btn btn-ghost" onclick="alert('本测试基于当下真实婚恋市场关注维度设计，评分客观，建议建设性，不PUA、不贩卖焦虑。')">这是什么测试？</button>
+  </div>
+
+  <!-- Quiz Page -->
+  <div class="page" id="page-quiz">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="progress-label">第 1 / 12 题</span>
+        <span id="progress-pct">8%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="question-card" id="question-card"></div>
+  </div>
+
+  <!-- Loading Page -->
+  <div class="page" id="page-loading">
+    <div class="loading-visual">
+      <div class="loading-heart">💖</div>
+    </div>
+    <div class="loading-text">正在匹配婚恋市场数据…</div>
+    <div class="loading-step" id="loading-step">读取硬件条件中</div>
+  </div>
+
+  <!-- Result Page -->
+  <div class="page" id="page-result">
+    <div class="result-header">
+      <div class="grade-ring">
+        <div class="score-num" id="score-num">0</div>
+        <div class="score-label">竞争力评分</div>
+      </div>
+      <div class="grade-badge" id="grade-badge"></div>
+      <div class="result-type-title" id="result-type-title"></div>
+      <div class="result-type-desc" id="result-type-desc"></div>
+    </div>
+
+    <div class="radar-wrap">
+      <div class="radar-title">你的 4 维竞争力雷达</div>
+      <div id="radar-container"></div>
+    </div>
+
+    <div class="dim-grid" id="dim-grid"></div>
+
+    <div class="match-card">
+      <h3>💎 你的优劣势与适配人群</h3>
+      <div id="match-list"></div>
+    </div>
+
+    <div class="suggestion-box">
+      <h3>💡 提升竞争力的 3 个动作</h3>
+      <p id="suggestion-text"></p>
+    </div>
+
+    <div class="share-card">
+      <div class="sc-title">我测出来是</div>
+      <div class="sc-result" id="share-result"></div>
+      <div class="sc-sub">扫码或点下方按钮，测测你的婚恋市场价值</div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="shareResult()">分享给朋友</button>
+      <button class="btn btn-ghost" onclick="restart()">再测一次</button>
+    </div>
+
+    <p class="disclaimer">本测试基于当下婚恋市场常见关注维度设计，结果仅供自我了解参考，不代表真实婚恋价值。每个人都是独特的。</p>
+  </div>
+
+</div>
+
+<script>
+// ====== 题目数据 ======
+// 维度: hard(硬件条件) soft(软实力) money(经济实力) match(性格适配)
+const QUESTIONS = [
+  {
+    dim: '硬件条件',
+    dimKey: 'hard',
+    q: '你的年龄处于哪个区间？（按婚恋市场常见偏好）',
+    options: [
+      { t: '35岁以上（女）/ 38岁以上（男）', s: 0 },
+      { t: '30-34岁（女）/ 33-37岁（男）', s: 1 },
+      { t: '25-29岁（女）/ 27-32岁（男）', s: 2 },
+      { t: '22-24岁（女）/ 24-26岁（男）', s: 3 }
+    ]
+  },
+  {
+    dim: '硬件条件',
+    dimKey: 'hard',
+    q: '你的外形条件在生活中的真实反馈是？',
+    options: [
+      { t: '几乎没被夸过外貌，偶尔被说普通', s: 0 },
+      { t: '有时会被说"耐看""有气质"', s: 1 },
+      { t: '经常被夸好看/帅，相亲中算是加分项', s: 2 },
+      { t: '从小到大都是人群中的亮点，常被要联系方式', s: 3 }
+    ]
+  },
+  {
+    dim: '硬件条件',
+    dimKey: 'hard',
+    q: '你的学历/工作城市/户籍组合在婚恋中算？',
+    options: [
+      { t: '学历一般 + 三四线城市 + 无本地户籍', s: 0 },
+      { t: '本科 + 二三线城市 / 或一线城市边缘', s: 1 },
+      { t: '本科以上 + 新一线/一线城市 / 或有本地户口', s: 2 },
+      { t: '名校/硕士以上 + 一线城市核心 / 有本地户口', s: 3 }
+    ]
+  },
+  {
+    dim: '软实力',
+    dimKey: 'soft',
+    q: '和异性初次见面，你的聊天状态通常是？',
+    options: [
+      { t: '容易冷场，不知道说什么', s: 0 },
+      { t: '能正常聊，但需要对方主动', s: 1 },
+      { t: '气氛不错，能让对方放松', s: 2 },
+      { t: '很擅长破冰，对方愿意主动约下一次', s: 3 }
+    ]
+  },
+  {
+    dim: '软实力',
+    dimKey: 'soft',
+    q: '朋友/同事遇到情感问题，会来找你倾诉吗？',
+    options: [
+      { t: '几乎不会', s: 0 },
+      { t: '偶尔有一两个', s: 1 },
+      { t: '经常有人找我聊心事', s: 2 },
+      { t: '我是朋友圈里的"情感树洞"', s: 3 }
+    ]
+  },
+  {
+    dim: '软实力',
+    dimKey: 'soft',
+    q: '你的生活自理能力/情趣/审美综合如何？',
+    options: [
+      { t: '比较邋遢，生活一团糟', s: 0 },
+      { t: '基本能照顾自己，但没啥生活情趣', s: 1 },
+      { t: '生活井井有条，有点小爱好', s: 2 },
+      { t: '过得有质感，能把普通日子过出氛围', s: 3 }
+    ]
+  },
+  {
+    dim: '经济实力',
+    dimKey: 'money',
+    q: '你目前的年收入在当地处于什么水平？',
+    options: [
+      { t: '低于当地平均', s: 0 },
+      { t: '接近当地平均', s: 1 },
+      { t: '高于当地平均 50%-100%', s: 2 },
+      { t: '显著高于当地平均（前 20% 以上）', s: 3 }
+    ]
+  },
+  {
+    dim: '经济实力',
+    dimKey: 'money',
+    q: '你目前的资产/储蓄情况？',
+    options: [
+      { t: '月光或负债', s: 0 },
+      { t: '有少量存款，但不多', s: 1 },
+      { t: '有可观存款 / 或已有房/车', s: 2 },
+      { t: '有房产/投资，财务状况稳健', s: 3 }
+    ]
+  },
+  {
+    dim: '经济实力',
+    dimKey: 'money',
+    q: '你的职业稳定性/发展前景如何？',
+    options: [
+      { t: '不稳定，经常换工作 / 自由职业收入波动大', s: 0 },
+      { t: '一般，行业前景不太明朗', s: 1 },
+      { t: '稳定，有清晰的上升路径', s: 2 },
+      { t: '稳定且在上升期，收入有增长预期', s: 3 }
+    ]
+  },
+  {
+    dim: '性格适配',
+    dimKey: 'match',
+    q: '在亲密关系中，你的情绪稳定性如何？',
+    options: [
+      { t: '很容易焦虑、发脾气或冷战', s: 0 },
+      { t: '偶尔情绪失控，但能自己平复', s: 1 },
+      { t: '基本稳定，能沟通问题', s: 2 },
+      { t: '很稳定，能给伴侣安全感', s: 3 }
+    ]
+  },
+  {
+    dim: '性格适配',
+    dimKey: 'match',
+    q: '你对婚姻/亲密关系的核心诉求清晰吗？',
+    options: [
+      { t: '很模糊，不知道自己想要什么', s: 0 },
+      { t: '大概知道，但经常变', s: 1 },
+      { t: '比较清晰，知道自己要什么', s: 2 },
+      { t: '非常清晰，并且能表达出来', s: 3 }
+    ]
+  },
+  {
+    dim: '性格适配',
+    dimKey: 'match',
+    q: '你在亲密关系中是否愿意妥协和经营？',
+    options: [
+      { t: '不太愿意，容易以自我为中心', s: 0 },
+      { t: '看心情，兴致来了才经营', s: 1 },
+      { t: '愿意，但需要对方也配合', s: 2 },
+      { t: '很愿意，相信关系需要两个人一起维护', s: 3 }
+    ]
+  }
+];
+
+let current = 0;
+let scores = { hard: 0, soft: 0, money: 0, match: 0 };
+let answers = [];
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+  current = 0;
+  scores = { hard: 0, soft: 0, money: 0, match: 0 };
+  answers = [];
+  renderQuestion();
+  showPage('page-quiz');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  const card = document.getElementById('question-card');
+  card.innerHTML = `
+    <span class="q-dim">${q.dim}</span>
+    <div class="q-text">${q.q}</div>
+    ${q.options.map((opt, i) => `
+      <div class="option" onclick="selectOption(${i}, ${opt.s})">
+        <div class="opt-dot">${String.fromCharCode(65 + i)}</div>
+        <div class="opt-text">${opt.t}</div>
+      </div>
+    `).join('')}
+  `;
+  const pct = Math.round(((current) / QUESTIONS.length) * 100);
+  document.getElementById('progress-label').textContent = `第 ${current + 1} / ${QUESTIONS.length} 题`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+}
+
+function selectOption(idx, score) {
+  const q = QUESTIONS[current];
+  scores[q.dimKey] += score;
+  answers[current] = { dim: q.dimKey, score };
+  document.querySelectorAll('.option').forEach((el, i) => el.classList.toggle('selected', i === idx));
+  setTimeout(() => {
+    current++;
+    if (current < QUESTIONS.length) renderQuestion();
+    else showLoading();
+  }, 280);
+}
+
+function showLoading() {
+  showPage('page-loading');
+  const steps = ['读取硬件条件中', '评估软实力指数', '计算经济实力分', '匹配性格适配度', '生成竞争力报告'];
+  let i = 0;
+  document.getElementById('loading-step').textContent = steps[0];
+  const timer = setInterval(() => {
+    i++;
+    if (i < steps.length) document.getElementById('loading-step').textContent = steps[i];
+    else { clearInterval(timer); showResult(); }
+  }, 550);
+}
+
+function getResultType() {
+  const total = scores.hard + scores.soft + scores.money + scores.match;
+  const maxTotal = 36;
+  const score = Math.round((total / maxTotal) * 100);
+  let grade;
+  if (score >= 85) grade = 'S';
+  else if (score >= 70) grade = 'A';
+  else if (score >= 55) grade = 'B';
+  else grade = 'C';
+  return { score, grade, total };
+}
+
+const GRADE_TYPES = {
+  S: {
+    name: '💎 S 级 · 稀缺资源',
+    desc: '你的综合条件在婚恋市场中属于头部，选择面广，但要注意识别真心与短择。',
+    badge: 'S 级 · 稀缺资源',
+    color: '#d4a04a',
+    bg: '#fdf4e0',
+    actions: '1）别因为选择多就挑花眼，先明确自己核心诉求；2）筛选长期伴侣时，重点看情绪稳定和价值观匹配；3）适当低调，避免吸引到只看条件的人。',
+    match: '你适合同样条件优秀、情绪稳定的伴侣；短期可先接触，长期重点考察对方家庭观和责任感。'
+  },
+  A: {
+    name: '🥇 A 级 · 优质股',
+    desc: '你的条件整体不错，在婚恋市场有明显优势。稍微优化短板，就能进入 S 级。',
+    badge: 'A 级 · 优质股',
+    color: '#b56a8a',
+    bg: '#f9e8f0',
+    actions: '1）找出你 4 维中最低的那一项，集中 3 个月提升；2）扩大社交半径，多去你目标人群会出现的场合；3）相亲资料突出你的核心优势，别写太满。',
+    match: '你适合条件相当、有共同成长意愿的伴侣；可适当降低"感觉"门槛，给三观一致的人更多机会。'
+  },
+  B: {
+    name: '🥈 B 级 · 达标选手',
+    desc: '你在婚恋市场中属于中等偏上，有基本竞争力，但缺少一个突出的"记忆点"。',
+    badge: 'B 级 · 达标选手',
+    color: '#6a4ab5',
+    bg: '#eee9f9',
+    actions: '1）打造 1 个核心标签：可以是"情绪稳定""会生活""事业上升"；2）主动展示优点，别等着别人发现；3）拓宽择偶范围，别卡死在单一条件上。',
+    match: '你适合包容性较强、愿意一起经营的伴侣；相处舒适度比条件堆砌更重要。'
+  },
+  C: {
+    name: '🥉 C 级 · 潜力股',
+    desc: '你当前在婚恋市场中的显性优势不明显，但婚恋不是求职，每个人都有机会逆袭。',
+    badge: 'C 级 · 潜力股',
+    color: '#fff',
+    bg: '#b56a8a',
+    actions: '1）先别急着相亲，用 3-6 个月重点提升 1-2 个维度（如收入、外形、情绪管理）；2）多参加兴趣社群，自然认识比硬相亲成功率更高；3）调整心态：婚恋市场的分，不是人生的分。',
+    match: '你适合看重内在、不功利的人；可以先从交朋友开始，别一上来就奔着"结婚"去。'
+  }
+};
+
+const DIM_INFO = {
+  hard: { name: '硬件条件', desc: '年龄、外形、学历、城市、户籍等显性标签' },
+  soft: { name: '软实力', desc: '沟通情商、共情力、生活情趣、审美' },
+  money: { name: '经济实力', desc: '收入、储蓄、资产、职业稳定性' },
+  match: { name: '性格适配', desc: '情绪稳定、婚恋观清晰、经营意愿' }
+};
+
+function showResult() {
+  const { score, grade } = getResultType();
+  const gt = GRADE_TYPES[grade];
+
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('score-num').style.color = gt.color;
+
+  const badge = document.getElementById('grade-badge');
+  badge.textContent = gt.badge;
+  badge.style.color = gt.color;
+  badge.style.background = gt.bg;
+
+  document.getElementById('result-type-title').textContent = gt.name;
+  document.getElementById('result-type-desc').textContent = gt.desc;
+
+  const dims = ['hard', 'soft', 'money', 'match'];
+  const values = dims.map(d => Math.round((scores[d] / 9) * 100));
+  document.getElementById('radar-container').innerHTML = getRadarSVG(values, gt.color);
+
+  document.getElementById('dim-grid').innerHTML = dims.map(d => `
+    <div class="dim-card">
+      <div class="dim-name">${DIM_INFO[d].name}</div>
+      <div class="dim-score" style="color:${getScoreColor(scores[d])}">${scores[d]}/9</div>
+      <div class="dim-desc">${DIM_INFO[d].desc}</div>
+    </div>
+  `).join('');
+
+  // 优劣势
+  const sorted = dims.map(d => ({ key: d, score: scores[d], name: DIM_INFO[d].name })).sort((a, b) => b.score - a.score);
+  const strong = sorted[0], weak = sorted[3];
+  document.getElementById('match-list').innerHTML = `
+    <div class="match-item"><div class="match-icon">+</div><div class="match-text"><b>最强项：${strong.name}（${strong.score}/9）</b><br>这是你最吸引异性的地方，约会时可以多展示。</div></div>
+    <div class="match-item"><div class="match-icon">-</div><div class="match-text"><b>待提升：${weak.name}（${weak.score}/9）</b><br>这不是硬伤，而是性价比最高的突破口。</div></div>
+    <div class="match-item"><div class="match-icon">≈</div><div class="match-text"><b>适配人群：${gt.match}</b></div></div>
+  `;
+
+  // 建议
+  document.getElementById('suggestion-text').textContent = gt.actions;
+
+  // 分享卡
+  document.getElementById('share-result').textContent = `${gt.name} · 评分 ${score}`;
+
+  showPage('page-result');
+}
+
+function getScoreColor(s) {
+  if (s >= 7) return '#2e8b57';
+  if (s >= 4) return '#d4a04a';
+  return '#c0392b';
+}
+
+function getRadarSVG(values, color) {
+  const labels = ['硬件', '软实力', '经济', '性格'];
+  const size = 240, cx = size / 2, cy = size / 2, r = 80;
+  const n = 4;
+  const angle = (i) => (Math.PI * 2 * i / n) - Math.PI / 2;
+  const point = (i, val) => {
+    const rr = r * (val / 100);
+    return [cx + rr * Math.cos(angle(i)), cy + rr * Math.sin(angle(i))];
+  };
+  let grid = '';
+  [0.25, 0.5, 0.75, 1].forEach(f => {
+    const pts = [];
+    for (let i = 0; i < n; i++) { const p = point(i, f * 100); pts.push(p.join(',')); }
+    grid += `<polygon points="${pts.join(' ')}" fill="none" stroke="#f0dfe6" stroke-width="1"/>`;
+  });
+  let axes = '', labelsSvg = '';
+  for (let i = 0; i < n; i++) {
+    const p = point(i, 100);
+    axes += `<line x1="${cx}" y1="${cy}" x2="${p[0]}" y2="${p[1]}" stroke="#f0dfe6" stroke-width="1"/>`;
+    const lp = point(i, 122);
+    labelsSvg += `<text x="${lp[0]}" y="${lp[1]}" font-size="11" fill="#8a6e7a" text-anchor="middle" dominant-baseline="middle">${labels[i]}</text>`;
+  }
+  const dataPts = [];
+  for (let i = 0; i < n; i++) { const p = point(i, values[i]); dataPts.push(p.join(',')); }
+  const dataPoly = `<polygon points="${dataPts.join(' ')}" fill="${color}33" stroke="${color}" stroke-width="2"/>`;
+  let dots = '';
+  for (let i = 0; i < n; i++) { const p = point(i, values[i]); dots += `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${color}"/>`; }
+
+  return `<svg width="100%" viewBox="0 0 ${size} ${size}" style="max-width:260px;margin:0 auto;display:block">
+    ${grid}${axes}${dataPoly}${dots}${labelsSvg}
+  </svg>`;
+}
+
+function shareResult() {
+  const { score, grade } = getResultType();
+  const gt = GRADE_TYPES[grade];
+  const text = `我测了"你在相亲市场值多少分"，结果是【${gt.name}】，婚恋竞争力 ${score} 分。\n\n来测测你的婚恋市场价值 👉`;
+  if (navigator.share) {
+    navigator.share({ title: '婚恋竞争力评分', text }).catch(() => {});
+  } else {
+    const url = window.location.href;
+    if (navigator.clipboard) navigator.clipboard.writeText(url).catch(() => {});
+    alert('结果已生成，链接已复制～\n\n可粘贴到微信/朋友圈发给朋友：\n' + url);
+  }
+}
+
+function restart() {
+  startQuiz();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>夫妻吵架修复指南｜12题测出你们的冲突模式+3句刹车话术</title>
+<style>
+:root{--bg:#fdf6f8;--bg-deep:#f5e4ea;--card:#fff;--text:#2d1f24;--text-light:#8a6e7a;--primary:#a04658;--primary-dark:#7a3344;--primary-light:#f9e8ee;--accent:#6a4ab5;--accent-light:#eee9f9;--danger:#c0392b;--warn:#d6892b;--radius:20px;--shadow:0 8px 24px rgba(160,70,88,0.08);--shadow-lg:0 14px 40px rgba(160,70,88,0.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg);overflow-x:hidden}
+.app::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 15% 20%,rgba(160,70,88,0.06) 0,transparent 35%),radial-gradient(circle at 85% 15%,rgba(106,74,181,0.05) 0,transparent 40%),radial-gradient(circle at 50% 60%,rgba(214,137,43,0.04) 0,transparent 35%),radial-gradient(circle at 80% 85%,rgba(160,70,88,0.05) 0,transparent 30%);z-index:0}
+.app::after{content:"";position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(45deg,transparent 0,transparent 80px,rgba(160,70,88,0.02) 80px,rgba(160,70,88,0.02) 81px),radial-gradient(circle at 30% 50%,rgba(160,70,88,0.03) 0,transparent 25%);z-index:0}
+.page{position:relative;z-index:1;padding:28px 22px;min-height:100vh;display:none;flex-direction:column;justify-content:center;opacity:0;transform:translateY(20px);transition:all 0.5s cubic-bezier(0.22,1,0.36,1)}
+.page.active{display:flex;opacity:1;transform:translateY(0)}
+#page-result{display:none}
+#page-result.active{display:block;justify-content:flex-start;padding-top:28px;padding-bottom:50px}
+.brand-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px}
+.brand-tag{font-size:13px;font-weight:700;color:var(--primary);background:var(--primary-light);padding:6px 14px;border-radius:8px;letter-spacing:1px}
+.brand-no{font-size:13px;color:var(--accent);letter-spacing:2px;font-weight:600}
+.intro-emoji{text-align:center;font-size:88px;margin-bottom:20px;filter:drop-shadow(0 8px 20px rgba(160,70,88,0.2))}
+.intro-title{font-size:30px;font-weight:800;text-align:center;line-height:1.35;margin-bottom:14px;letter-spacing:-0.5px}
+.intro-title em{font-style:normal;color:var(--primary);position:relative}
+.intro-title em::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:8px;background:var(--primary-light);z-index:-1}
+.intro-sub{font-size:14px;color:var(--text-light);text-align:center;line-height:1.75;margin-bottom:30px;padding:0 8px}
+.pain-box{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:18px;border:1px solid var(--bg-deep)}
+.pain-box h4{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:12px;letter-spacing:0.5px}
+.pain-item{display:flex;gap:10px;margin-bottom:9px;font-size:13.5px;line-height:1.55}
+.pain-item:last-child{margin-bottom:0}
+.pain-dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:8px}
+.promise-box{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius);padding:22px;color:#fff;box-shadow:var(--shadow-lg);margin-bottom:28px}
+.promise-box h4{font-size:14px;font-weight:700;margin-bottom:14px;letter-spacing:0.5px;opacity:0.9}
+.promise-item{display:flex;gap:12px;margin-bottom:11px;font-size:13.5px;line-height:1.5}
+.promise-item:last-child{margin-bottom:0}
+.promise-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.btn{display:block;width:100%;border:none;border-radius:16px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;transition:transform 0.15s;font-family:inherit}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 8px 20px rgba(160,70,88,0.3)}
+.btn-ghost{background:var(--card);color:var(--primary);box-shadow:var(--shadow);margin-top:12px}
+.progress-wrap{margin-bottom:22px}
+.progress-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-light);margin-bottom:8px;font-weight:600}
+.progress-bar{height:8px;background:var(--bg-deep);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:4px;transition:width 0.4s;width:0%}
+.question-card{background:var(--card);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);margin-bottom:16px;border:1px solid var(--bg-deep)}
+.q-num{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.q-text{font-size:18px;font-weight:700;line-height:1.55;margin-bottom:20px}
+.option{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid var(--bg-deep);margin-bottom:10px;cursor:pointer;transition:all 0.15s;background:#fffafc}
+.option:active{transform:scale(0.98)}
+.option.selected{border-color:var(--primary);background:var(--primary-light)}
+.option .opt-dot{width:22px;height:22px;border-radius:50%;border:2px solid #e3c9d6;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--primary);transition:all 0.15s}
+.option.selected .opt-dot{background:var(--primary);border-color:var(--primary);color:#fff}
+.option .opt-text{font-size:14.5px;line-height:1.45}
+.loading-emoji{text-align:center;font-size:72px;margin:40px 0;animation:beat 1.2s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.loading-text{font-size:15px;color:var(--text-light);text-align:center;line-height:1.8}
+.loading-step{font-size:13px;color:var(--primary);font-weight:600;text-align:center;margin-top:16px;min-height:20px}
+.result-hero{text-align:center;margin-bottom:24px}
+.mode-badge{display:inline-block;padding:10px 22px;border-radius:30px;font-size:14px;font-weight:700;margin-bottom:14px}
+.mode-title{font-size:32px;font-weight:900;line-height:1.2;margin-bottom:8px;letter-spacing:-1px}
+.mode-sub{font-size:14px;color:var(--text-light);line-height:1.65;max-width:320px;margin:0 auto 18px}
+.trigger-card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px;border:1px solid var(--bg-deep)}
+.trigger-card h3{font-size:15px;font-weight:800;margin-bottom:14px;color:var(--primary)}
+.trigger-text{font-size:14px;line-height:1.7;color:var(--text)}
+.trigger-text b{color:var(--primary)}
+.brake-card{background:linear-gradient(135deg,var(--primary-light),#fbeef2);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+.brake-card h3{font-size:15px;font-weight:800;margin-bottom:14px;color:var(--primary-dark)}
+.brake-item{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;border-left:4px solid var(--primary)}
+.brake-item:last-child{margin-bottom:0}
+.brake-quote{font-size:15px;line-height:1.6;font-weight:600;color:var(--primary-dark);margin-bottom:8px}
+.brake-when{font-size:12.5px;color:var(--text-light);line-height:1.5}
+.brake-when b{color:var(--primary)}
+.plan-card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:18px;border:1px solid var(--bg-deep)}
+.plan-card h3{font-size:15px;font-weight:800;margin-bottom:14px;color:var(--primary)}
+.plan-item{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+.plan-item:last-child{margin-bottom:0}
+.plan-day{flex-shrink:0;width:64px;font-size:12px;font-weight:700;color:var(--primary);text-align:center;padding:4px 0;background:var(--primary-light);border-radius:8px}
+.plan-text{font-size:13.5px;line-height:1.6;flex:1}
+.warn-box{background:#fff7f0;border-radius:14px;padding:16px 18px;margin-bottom:18px;border-left:4px solid var(--warn)}
+.warn-box p{font-size:13px;line-height:1.65;color:#8a7068}
+.warn-box b{color:var(--warn)}
+.share-card{background:linear-gradient(135deg,var(--primary-dark),var(--primary));border-radius:var(--radius);padding:22px;color:#fff;margin-bottom:18px;text-align:center}
+.share-card .sc-title{font-size:12px;opacity:0.85;margin-bottom:6px;letter-spacing:1px}
+.share-card .sc-result{font-size:18px;font-weight:800;margin-bottom:4px}
+.share-card .sc-sub{font-size:12px;opacity:0.8;line-height:1.5}
+.result-actions{display:flex;gap:12px;margin-top:4px}
+.result-actions .btn{font-size:14px;padding:14px}
+.disclaimer{font-size:11.5px;color:#bdaab4;text-align:center;line-height:1.6;margin-top:10px;padding:0 10px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="page active" id="page-intro">
+  <div class="brand-bar"><span class="brand-tag">亲密关系</span><span class="brand-no">NO.141</span></div>
+  <div class="intro-emoji">💞</div>
+  <h1 class="intro-title">夫妻吵架<br><em>修复指南</em></h1>
+  <p class="intro-sub">你们总为鸡毛蒜皮的事吵，吵完冷战谁也不低头。<br>这个测试不评判谁对谁错，是帮你找到你们吵架的"引爆点" + 下次开口怎么说不升级。</p>
+  <div class="pain-box">
+    <h4>这些场景，你们中几条？</h4>
+    <div class="pain-item"><div class="pain-dot"></div><div>每次都为小事吵，吵着吵着就翻旧账</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>吵完谁也不道歉，冷战能冷三天</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>明明是小事，最后变成"你根本不爱我"</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>想好好说话，但一开口就控制不住语气</div></div>
+  </div>
+  <div class="promise-box">
+    <h4>做完你能拿到：</h4>
+    <div class="promise-item"><div class="promise-num">1</div><div>你们的冲突模式（5 种之一）——到底是怎么吵起来的</div></div>
+    <div class="promise-item"><div class="promise-num">2</div><div>你们吵架的"引爆点"是什么——不是表面那件小事</div></div>
+    <div class="promise-item"><div class="promise-num">3</div><div>3 句"刹车话术"——下次再吵能直接照念，当场降温</div></div>
+    <div class="promise-item"><div class="promise-num">4</div><div>7 天关系修复清单——每天做一件，把冷战变成亲密</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="startQuiz()">开始测我们的模式</button>
+  <button class="btn btn-ghost" onclick="alert('本测试基于亲密关系心理学（Gottman 冲突理论等）常见维度设计，帮你识别吵架的底层模式，给出可立即使用的话术和修复动作。不替代婚姻咨询。')">这是什么测试？</button>
+</div>
+<div class="page" id="page-quiz">
+  <div class="progress-wrap">
+    <div class="progress-top"><span id="progress-label">第 1 / 12 题</span><span id="progress-pct">8%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+  <div class="question-card" id="question-card"></div>
+</div>
+<div class="page" id="page-loading">
+  <div class="loading-emoji">💞</div>
+  <div class="loading-text">正在分析你们的冲突模式…</div>
+  <div class="loading-step" id="loading-step">扫描你们的争吵场景</div>
+</div>
+<div class="page" id="page-result">
+  <div class="result-hero">
+    <div class="mode-badge" id="mode-badge"></div>
+    <div class="mode-title" id="mode-title"></div>
+    <div class="mode-sub" id="mode-sub"></div>
+  </div>
+  <div class="trigger-card">
+    <h3>你们的引爆点是什么</h3>
+    <div class="trigger-text" id="trigger-text"></div>
+  </div>
+  <div class="brake-card">
+    <h3>3 句刹车话术（下次照念）</h3>
+    <div id="brake-list"></div>
+  </div>
+  <div class="plan-card">
+    <h3>7 天关系修复清单</h3>
+    <div id="plan-list"></div>
+  </div>
+  <div class="warn-box" id="warn-box"><p id="warn-text"></p></div>
+  <div class="share-card">
+    <div class="sc-title">我们测出来是</div>
+    <div class="sc-result" id="share-result"></div>
+    <div class="sc-sub">两口子总吵架？花 3 分钟找到你们的模式</div>
+  </div>
+  <div class="result-actions">
+    <button class="btn btn-primary" onclick="shareResult()">分享给另一半</button>
+    <button class="btn btn-ghost" onclick="restart()">重新测一次</button>
+  </div>
+  <p class="disclaimer">本测试基于亲密关系心理学维度设计，结果仅供自我了解参考。如涉及家暴或严重心理问题，请寻求专业婚姻咨询师帮助。</p>
+</div>
+</div>
+<script>
+const QUESTIONS=[
+{dim:'情绪型',dimKey:'emo',q:'你们吵架时，谁的嗓门会先大起来？',options:[{t:'我，一旦急了就控制不住',s:3},{t:'对方，我反而是被带起来的',s:2},{t:'两个人都差不多',s:1},{t:'我们都比较冷静，不会大嗓门',s:0}]},
+{dim:'情绪型',dimKey:'emo',q:'吵到一半，谁更容易先哭或摔东西？',options:[{t:'我，情绪上来就压不住',s:3},{t:'对方',s:2},{t:'两个人都有过',s:1},{t:'我们都不会这样',s:0}]},
+{dim:'情绪型',dimKey:'emo',q:'吵完之后，谁先低头？',options:[{t:'基本是我先开口',s:3},{t:'基本是对方先开口',s:2},{t:'看谁先撑不住',s:1},{t:'我们不会冷战，很快就好',s:0}]},
+{dim:'控制型',dimKey:'ctrl',q:'你们吵架时，谁更想"赢"？',options:[{t:'我，必须把道理说清楚',s:3},{t:'对方，必须让我认错',s:2},{t:'两个人都较劲',s:1},{t:'我们不太在意输赢',s:0}]},
+{dim:'控制型',dimKey:'ctrl',q:'吵架中，谁更容易翻旧账？',options:[{t:'我，会把以前的事都搬出来',s:3},{t:'对方',s:2},{t:'两个人都会',s:1},{t:'我们只说当下的事',s:0}]},
+{dim:'控制型',dimKey:'ctrl',q:'吵架时，谁更容易说"你总是""你从来不"？',options:[{t:'我，一急就上头',s:3},{t:'对方',s:2},{t:'两个人都有',s:1},{t:'我们尽量说具体的事',s:0}]},
+{dim:'冷处理型',dimKey:'cold',q:'吵到一半，谁更容易突然不说话？',options:[{t:'我，觉得说也没用就闭嘴',s:3},{t:'对方，一吵就走人',s:2},{t:'两个人都会',s:1},{t:'我们会一直说到完',s:0}]},
+{dim:'冷处理型',dimKey:'cold',q:'冷战通常能持续多久？',options:[{t:'三五天甚至一周以上',s:3},{t:'一两天',s:2},{t:'几小时就过去',s:1},{t:'我们基本不冷战',s:0}]},
+{dim:'冷处理型',dimKey:'cold',q:'冷战中，谁的"心理战"更多（不发消息、不做饭、分床）？',options:[{t:'我，用行动表达不满',s:3},{t:'对方',s:2},{t:'两个人都有',s:1},{t:'我们不会用这种招',s:0}]},
+{dim:'价值型',dimKey:'val',q:'你们最常为什么吵？',options:[{t:'钱——花销、谁出、存不存',s:3},{t:'双方家庭——父母、亲戚插手',s:2},{t:'孩子教育或家务分工',s:1},{t:'主要是小事，没什么核心矛盾',s:0}]},
+{dim:'价值型',dimKey:'val',q:'你们的吵架，是否反复围绕同一个问题？',options:[{t:'是，几年了都没解决',s:3},{t:'是，最近几个月一直这个',s:2},{t:'有时候换主题',s:1},{t:'每次都是新问题',s:0}]},
+{dim:'价值型',dimKey:'val',q:'你们对"什么是重要的"（钱、家、自由、仪式感）认同度高吗？',options:[{t:'差很远，经常踩对方底线',s:3},{t:'有些地方对不上',s:2},{t:'基本一致，偶尔有分歧',s:1},{t:'高度一致',s:0}]}
+];
+let current=0,scores={emo:0,ctrl:0,cold:0,val:0};
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function startQuiz(){current=0;scores={emo:0,ctrl:0,cold:0,val:0};renderQuestion();showPage('page-quiz')}
+function renderQuestion(){
+  const q=QUESTIONS[current];
+  document.getElementById('question-card').innerHTML='<div class="q-num">'+q.dim+'</div><div class="q-text">'+q.q+'</div>'+q.options.map((opt,i)=>'<div class="option" onclick="selectOption('+i+','+opt.s+')"><div class="opt-dot">'+String.fromCharCode(65+i)+'</div><div class="opt-text">'+opt.t+'</div></div>').join('');
+  const pct=Math.round((current/QUESTIONS.length)*100);
+  document.getElementById('progress-label').textContent='第 '+(current+1)+' / '+QUESTIONS.length+' 题';
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
+}
+function selectOption(idx,score){
+  const q=QUESTIONS[current];
+  scores[q.dimKey]+=score;
+  document.querySelectorAll('.option').forEach((el,i)=>el.classList.toggle('selected',i===idx));
+  setTimeout(()=>{current++;if(current<QUESTIONS.length)renderQuestion();else showLoading()},280);
+}
+function showLoading(){
+  showPage('page-loading');
+  const steps=['扫描你们的争吵场景','识别情绪触发点','分析沟通模式','定位深层引爆点','匹配修复话术','生成 7 天清单'];
+  let i=0;document.getElementById('loading-step').textContent=steps[0];
+  const timer=setInterval(()=>{i++;if(i<steps.length)document.getElementById('loading-step').textContent=steps[i];else{clearInterval(timer);showResult()}},500);
+}
+function getResult(){
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  return {top:sorted[0][0],scores};
+}
+const MODES={
+  emo:{
+    badge:'情绪型',badgeColor:'#fff',badgeBg:'#c0392b',
+    title:'你们是情绪型吵架',
+    sub:'你们吵架不是真的有大事，而是情绪一上来就收不住。吵的不是那件小事，是那一刻的委屈、不被理解、和积攒的疲惫。',
+    trigger:'你们的引爆点不是"谁洗碗""谁接孩子"这种表面的事，而是<b>背后那个"你不在乎我"的感觉</b>。情绪上头时，小事就会被无限放大，变成"你从来都不重视我"。',
+    brakes:[
+      {quote:'我现在很上头，不是不想说，是怕说错话。给我 15 分钟，我冷静下来再聊。',when:'<b>什么时候用：</b>你感觉嗓门要变大、眼泪要出来、想摔东西之前'},
+      {quote:'我不是在怪你，我是太累了想被你抱一下。',when:'<b>什么时候用：</b>你发现其实自己不是真的在气那件事，只是想要被关注'},
+      {quote:'我们不要说"你总是"了好吗？我们就说这一次怎么了。',when:'<b>什么时候用：</b>对方开始翻旧账、说"你从来都不"的时候'}
+    ],
+    plan:[
+      {d:'第1天',t:'今天不主动聊任何沉重话题。给对方一个拥抱，说一句"我爱你，即使我们吵架"'},
+      {d:'第2天',t:'找一个安静的时间，各自写 3 件"最近让我委屈的事"，然后交换看，不评价'},
+      {d:'第3天',t:'约定一个"吵架暗号"——任一方说出，双方必须停 15 分钟再继续'},
+      {d:'第4天',t:'一起做一件小事（做饭、散步），不聊任何问题，只享受陪伴'},
+      {d:'第5天',t:'告诉对方一件他/她做过的、让你感动的小事'},
+      {d:'第6天',t:'聊聊你们最近一次吵架背后，真正让你委屈的是什么（不是那件小事）'},
+      {d:'第7天',t:'约定下次吵架的 3 条规则：不大嗓门、不翻旧账、不说"你总是"'}
+    ],
+    warn:'情绪型吵架最怕"以冷制冷"。冷战越久，情绪积压越多。下次吵完，哪怕你还在气，也至少发一句"我还在气，但我没想离开"。这一句话能省掉三天冷战。'
+  },
+  ctrl:{
+    badge:'控制型',badgeColor:'#fff',badgeBg:'#7a3344',
+    title:'你们是控制型吵架',
+    sub:'你们吵架的核心是"谁对谁错"。两个人都想赢，结果赢了道理、输了感情。长期下去，对方会越来越不想开口。',
+    trigger:'你们的引爆点是<b>"被否定"和"不被尊重"</b>。表面上在争一件事，实际在争"你认不认可我"。赢了对方，对方心里就多一道坎。',
+    brakes:[
+      {quote:'你说得有道理，这点我之前没想明白。',when:'<b>什么时候用：</b>你确实意识到对方说的有部分对，哪怕只有 10%'},
+      {quote:'我们不是敌人，别用审犯人的语气问我。',when:'<b>什么时候用：</b>对方语气开始像审问、质问、追问"你为什么"'},
+      {quote:'我承认这件事我有问题，但我希望你也看到我做的好的地方。',when:'<b>什么时候用：</b>对方开始全盘否定你，说"你从来不""你总是"'}
+    ],
+    plan:[
+      {d:'第1天',t:'今天对方说任何话，你都先回一句"嗯，我理解你的意思"，再表达自己'},
+      {d:'第2天',t:'找一个对方做得对的小事，明确说"这件事你处理得比我好"'},
+      {d:'第3天',t:'聊聊你们各自最受不了对方哪种语气，定下"禁区"'},
+      {d:'第4天',t:'一起回忆你们刚在一起时，对方最打动你的一个瞬间'},
+      {d:'第5天',t:'坦白一件你最近觉得对方"不理解你"的事，但用"我希望"开头，不用"你为什么"'},
+      {d:'第6天',t:'交换一下："如果我是你，我可能也会这么想"——互相说一次'},
+      {d:'第7天',t:'约定下次吵架的规则：先说"我理解你"，再说自己的观点'}
+    ],
+    warn:'控制型吵架的本质是"两个自尊心在打架"。赢了一次，输的是长期关系。下次想说"你错了"的时候，先问自己：赢了这一句，你想要什么？'
+  },
+  cold:{
+    badge:'冷处理型',badgeColor:'#fff',badgeBg:'#4a6a8c',
+    title:'你们是冷处理型吵架',
+    sub:'你们不太正面吵，但冷战、不说话、分床、不回消息。表面平静，底下在较劲。冷暴力比吵出来更伤人——因为对方根本不知道你在想什么。',
+    trigger:'你们的引爆点是<b>"被忽视"和"不被回应"</b>。表面上是对方做错了某件事你不开心，但你不表达，对方也猜不到，于是用沉默惩罚对方。结果两个人都在受罚。',
+    brakes:[
+      {quote:'我现在不想说话，不是不想理你，是不知道怎么说。给我点时间。',when:'<b>什么时候用：</b>你想闭嘴、走开、不回消息的时候——先发这一句'},
+      {quote:'我刚才没回你消息，不是不在乎，是我真的不知道怎么回。',when:'<b>什么时候用：</b>你冷了一段时间后，想破冰但不知怎么开口'},
+      {quote:'我们今晚能不能不分床睡？哪怕不说话，我也想你在身边。',when:'<b>什么时候用：</b>冷战超过一天，你想要主动破冰'}
+    ],
+    plan:[
+      {d:'第1天',t:'今天主动发一条消息，哪怕只是"今天累不累"。打破沉默从一句开始'},
+      {d:'第2天',t:'晚上一起吃饭，不聊任何问题，就聊一件今天看到的小事'},
+      {d:'第3天',t:'坦白："我冷处理不是不在乎，是我不知道怎么表达。我想改"'},
+      {d:'第4天',t:'约定一个"冷战止损"机制——超过 12 小时必须有一方主动开口'},
+      {d:'第5天',t:'聊聊你们各自小时候，父母吵架是怎么处理的——很多人在复制父母'},
+      {d:'第6天',t:'今晚不分床睡。哪怕背对背，也要在同一个床上'},
+      {d:'第7天',t:'约定下次想冷战时，先说一句"我需要 1 小时冷静"——给时间和给沉默是两回事'}
+    ],
+    warn:'冷暴力的伤害比吵架大 10 倍。冷战每多一天，关系修复就要多花一周。下次想用沉默惩罚对方之前，想想你到底想要的是"被理解"还是"对方认输"。'
+  },
+  val:{
+    badge:'价值型',badgeColor:'#fff',badgeBg:'#6a4ab5',
+    title:'你们是价值型吵架',
+    sub:'你们吵的不是情绪，是真正的人生选择——钱、家庭、孩子、未来方向。这种吵架最难解，但也最重要，因为它决定你们能不能走下去。',
+    trigger:'你们的引爆点是<b>核心价值冲突</b>——对钱、对家、对孩子、对未来的根本看法不一致。这种吵架反复出现，因为问题没真正解决，只是被搁置了。',
+    brakes:[
+      {quote:'我们先不谈对错。我想先听你说，你为什么这么想。',when:'<b>什么时候用：</b>你们又开始绕同一个问题吵起来，想跳出循环'},
+      {quote:'这件事我们可以分歧，但我不想因为分歧就否定你这个人。',when:'<b>什么时候用：</b>对方开始说"你这种人""你们家"的时候'},
+      {quote:'我们能不能找一个双方都不完美但能接受的方案？不求最优，求继续。',when:'<b>什么时候用：</b>双方都不愿意让步，僵住的时候'}
+    ],
+    plan:[
+      {d:'第1天',t:'今天不谈核心问题。先一起回忆你们最早为什么在一起——那时候你看中对方什么'},
+      {d:'第2天',t:'各自写下：我对这件事最在乎的是什么（不是方案，是底线）'},
+      {d:'第3天',t:'交换看，不评价，只问问题："你为什么这么在乎这一点"'},
+      {d:'第4天',t:'聊聊你们父母当年是怎么处理类似问题的——很多分歧是原生家庭的复制'},
+      {d:'第5天',t:'找一个"双方都不完美但能接受"的中间方案，先试 1 个月'},
+      {d:'第6天',t:'聊聊：5 年后我们想要什么样的家？把视野从当下拉远'},
+      {d:'第7天',t:'约定：核心问题每季度深聊一次，平时不翻；有新想法先记下来不立刻吵'}
+    ],
+    warn:'价值型分歧不要指望"吵一次解决"。它需要的是"持续对话"。如果你们反复绕同一个问题吵 3 年以上，建议找婚姻咨询师——不是因为你们不行，是因为这个问题靠自己很难跳出循环。'
+  }
+};
+function showResult(){
+  const r=getResult();
+  const m=MODES[r.top];
+  const b=document.getElementById('mode-badge');
+  b.textContent=m.badge;b.style.color=m.badgeColor;b.style.background=m.badgeBg;
+  document.getElementById('mode-title').textContent=m.title;
+  document.getElementById('mode-sub').textContent=m.sub;
+  document.getElementById('trigger-text').innerHTML=m.trigger;
+  document.getElementById('brake-list').innerHTML=m.brakes.map(b=>'<div class="brake-item"><div class="brake-quote">"'+b.quote+'"</div><div class="brake-when">'+b.when+'</div></div>').join('');
+  document.getElementById('plan-list').innerHTML=m.plan.map(p=>'<div class="plan-item"><div class="plan-day">'+p.d+'</div><div class="plan-text">'+p.t+'</div></div>').join('');
+  document.getElementById('warn-text').innerHTML='<b>避坑提醒：</b>'+m.warn;
+  document.getElementById('share-result').textContent=m.badge+' · '+m.title;
+  showPage('page-result');
+}
+function shareResult(){
+  const r=getResult();const m=MODES[r.top];
+  const text='我们测了夫妻吵架修复指南，结果是【'+m.badge+'】。下次再吵就有刹车话术了';
+  if(navigator.share){navigator.share({title:'夫妻吵架修复指南',text}).catch(()=>{})}
+  else{const url=window.location.href;if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});alert('结果已生成，链接已复制，可发给另一半一起看：\n'+url)}
+}
+function restart(){startQuiz()}
+</script>
+</body>
+</html>

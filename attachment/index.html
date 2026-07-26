@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>你在恋爱里是哪种依恋类型？</title>
+  <meta name="description" content="12题依恋模式自测，识别你在亲密关系里的底层模式，并给出关系改善建议。">
+  <style>
+    :root {
+      --bg: #fdf5f7;
+      --card: #ffffff;
+      --text: #2c282c;
+      --text-light: #6b676c;
+      --primary: #b56a8a;
+      --primary-light: #f4e4ec;
+      --accent: #8a6ab5;
+      --accent-light: #ede4f4;
+      --danger: #b5566a;
+      --danger-light: #f6e0e6;
+      --warning: #d48a4a;
+      --warning-light: #faecd8;
+      --info: #5a7a9a;
+      --info-light: #e6eef6;
+      --radius: 20px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.06);
+      --shadow-lg: 0 14px 40px rgba(0,0,0,0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--bg);
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow-y: auto;
+    }
+
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #page-result.active {
+      position: relative;
+      height: auto;
+      min-height: 100vh;
+      justify-content: flex-start;
+      padding-top: 24px;
+      padding-bottom: 40px;
+      overflow: visible;
+    }
+
+    #page-result { position: absolute; overflow-y: auto; }
+
+    /* Intro */
+    .intro-visual {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 24px;
+      position: relative;
+      height: 200px;
+    }
+
+    .heart-shape {
+      position: absolute;
+      font-size: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .heart-shape.h1 { top: 20px; left: 50%; transform: translateX(-50%); }
+    .heart-shape.h2 { top: 90px; left: 30px; font-size: 40px; opacity: 0.6; }
+    .heart-shape.h3 { top: 90px; right: 30px; font-size: 40px; opacity: 0.6; }
+    .heart-shape.h4 { top: 140px; left: 50%; transform: translateX(-50%); font-size: 32px; opacity: 0.4; }
+
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      padding: 0 8px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 6px 18px rgba(181, 106, 138, 0.3);
+    }
+
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      margin-top: 12px;
+    }
+
+    .btn-accent { background: var(--accent); color: white; box-shadow: 0 6px 18px rgba(138, 106, 181, 0.3); }
+    .btn-danger { background: var(--danger); color: white; box-shadow: 0 6px 18px rgba(181, 86, 106, 0.3); }
+    .btn-info { background: var(--info); color: white; box-shadow: 0 6px 18px rgba(90, 122, 154, 0.3); }
+    .btn-warning { background: var(--warning); color: white; box-shadow: 0 6px 18px rgba(212, 138, 74, 0.3); }
+
+    .tagline {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .tagline span {
+      background: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* Quiz */
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 3px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .quiz-step { font-size: 13px; color: var(--text-light); font-weight: 600; }
+
+    .quiz-category {
+      font-size: 12px;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .question {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 28px;
+      min-height: 64px;
+    }
+
+    .option {
+      background: var(--card);
+      border: 1.5px solid transparent;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .option:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+    .option-letter {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .option-text { font-size: 15px; line-height: 1.5; color: var(--text); }
+
+    /* Loading */
+    .loading-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+
+    .loading-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-ring:nth-child(2) { inset: 10px; border-top-color: var(--accent); animation: spin 1.4s linear infinite reverse; }
+    .loading-ring:nth-child(3) { inset: 20px; border-top-color: var(--info); animation: spin 1.8s linear infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { text-align: center; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .loading-sub { text-align: center; font-size: 14px; color: var(--text-light); }
+
+    /* Result */
+    .result-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 20px;
+    }
+
+    .result-type {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .result-title { font-size: 24px; font-weight: 800; line-height: 1.3; margin-bottom: 8px; }
+    .result-desc { font-size: 15px; color: var(--text-light); line-height: 1.7; }
+
+    .score-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 6px;
+      margin: 24px 0 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .radar-wrap {
+      width: 100%;
+      max-width: 260px;
+      margin: 20px auto;
+      aspect-ratio: 1;
+      position: relative;
+    }
+
+    .radar-svg { width: 100%; height: 100%; }
+
+    .section-title { font-size: 17px; font-weight: 700; margin: 24px 0 12px; }
+
+    .tip-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .tip-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .tip-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .tip-content p { font-size: 14px; color: var(--text-light); line-height: 1.6; }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+    .action-card .emoji { font-size: 28px; margin-bottom: 8px; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .action-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .action-card p { font-size: 12px; color: var(--text-light); }
+
+    .disclaimer {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.7;
+      text-align: center;
+      margin-top: 20px;
+      padding: 0 8px;
+    }
+
+    .suggestion-box {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .suggestion-box h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .suggestion-box p {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .result-actions { margin-top: 8px; }
+    .result-actions .btn { margin-bottom: 10px; }
+
+    /* Type colors */
+    .type-secure .result-type, .type-secure .result-title { color: var(--accent); }
+    .type-secure .score-fill { background: linear-gradient(90deg, var(--accent), #a88ac8); }
+    .type-secure .tip-icon { background: var(--accent-light); }
+
+    .type-anxious .result-type, .type-anxious .result-title { color: var(--danger); }
+    .type-anxious .score-fill { background: linear-gradient(90deg, var(--danger), #d47a8e); }
+    .type-anxious .tip-icon { background: var(--danger-light); }
+
+    .type-avoidant .result-type, .type-avoidant .result-title { color: var(--info); }
+    .type-avoidant .score-fill { background: linear-gradient(90deg, var(--info), #7a9ab8); }
+    .type-avoidant .tip-icon { background: var(--info-light); }
+
+    .type-fearful .result-type, .type-fearful .result-title { color: var(--warning); }
+    .type-fearful .score-fill { background: linear-gradient(90deg, var(--warning), #e8a86a); }
+    .type-fearful .tip-icon { background: var(--warning-light); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 开场页 -->
+  <div class="page active" id="page-intro">
+    <div class="intro-visual">
+      <div class="heart-shape h1">💕</div>
+      <div class="heart-shape h2">💗</div>
+      <div class="heart-shape h3">💙</div>
+      <div class="heart-shape h4">🤍</div>
+    </div>
+
+    <h1 class="title">你在恋爱里<br>是哪种依恋类型？</h1>
+    <p class="subtitle">
+      12 道题，从亲密需求、冲突反应、独立空间、自我认知 4 个维度，
+      识别你在亲密关系里的底层模式，并给出关系改善的具体方向。
+    </p>
+
+    <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+
+    <div class="tagline">
+      <span>12 题</span>
+      <span>4 维度</span>
+      <span>1 份关系指南</span>
+    </div>
+  </div>
+
+  <!-- 答题页 -->
+  <div class="page" id="page-quiz">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="quiz-header">
+      <span class="quiz-step" id="quiz-step">01 / 12</span>
+      <span class="quiz-category" id="quiz-category">亲密需求</span>
+    </div>
+    <div class="question" id="question-text"></div>
+    <div id="options-container"></div>
+  </div>
+
+  <!-- 加载页 -->
+  <div class="page" id="page-loading">
+    <div class="loading-icon">
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+      <div class="loading-ring"></div>
+    </div>
+    <div class="loading-text" id="loading-text">正在分析你的依恋模式…</div>
+    <div class="loading-sub">亲密需求 · 冲突反应 · 独立空间 · 自我认知</div>
+  </div>
+
+  <!-- 结果页 -->
+  <div class="page" id="page-result">
+    <div id="result-container"></div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { category: "亲密需求", text: "当你喜欢一个人时，你的状态是？", options: [
+    { label: "A", text: "能自然表达，也享受对方的回应", score: 0 },
+    { label: "B", text: "很想靠近，但总担心对方不够喜欢我", score: 1 },
+    { label: "C", text: "喜欢但保持距离，怕靠太近会失控", score: 2 },
+    { label: "D", text: "又想靠近又想逃，整个人很撕裂", score: 3 }
+  ]},
+  { category: "亲密需求", text: "对方多久回你消息，会让你开始不安？", options: [
+    { label: "A", text: "多久都行，每个人都有自己的节奏", score: 0 },
+    { label: "B", text: "几小时内不回就会开始想多", score: 1 },
+    { label: "C", text: "不太在意，反而希望对方别太频繁", score: 2 },
+    { label: "D", text: "既希望秒回，又觉得秒回压力很大", score: 3 }
+  ]},
+  { category: "亲密需求", text: "你需要对方表达爱意的方式是？", options: [
+    { label: "A", text: "偶尔表达就好，行动比言语重要", score: 0 },
+    { label: "B", text: "需要经常确认，否则会怀疑", score: 1 },
+    { label: "C", text: "不太需要，过多表达反而别扭", score: 2 },
+    { label: "D", text: "想要但又害怕，收到会紧张", score: 3 }
+  ]},
+  { category: "冲突反应", text: "和另一半吵架后，你的第一反应是？", options: [
+    { label: "A", text: "冷静后主动沟通解决", score: 0 },
+    { label: "B", text: "焦虑地等对方先来找自己", score: 1 },
+    { label: "C", text: "躲开，需要一个人待很久", score: 2 },
+    { label: "D", text: "想和好又想拉黑，反复横跳", score: 3 }
+  ]},
+  { category: "冲突反应", text: "对方说'我们需要谈谈'，你的感受是？", options: [
+    { label: "A", text: "有点紧张但能面对", score: 0 },
+    { label: "B", text: "非常慌，担心是不是要分手", score: 1 },
+    { label: "C", text: "烦躁，本能想回避", score: 2 },
+    { label: "D", text: "心跳加速，同时想逃跑", score: 3 }
+  ]},
+  { category: "冲突反应", text: "关系出现问题时，你倾向于？", options: [
+    { label: "A", text: "直接表达感受，一起想办法", score: 0 },
+    { label: "B", text: "反复试探对方到底还在不在乎", score: 1 },
+    { label: "C", text: "默默疏远，等关系自然冷淡", score: 2 },
+    { label: "D", text: "一边试探一边疏远，自己都矛盾", score: 3 }
+  ]},
+  { category: "独立空间", text: "另一半想天天见面，你的感受是？", options: [
+    { label: "A", text: "很开心，但也保留自己的事", score: 0 },
+    { label: "B", text: "很享受，恨不得 24 小时在一起", score: 1 },
+    { label: "C", text: "有点窒息，需要自己的空间", score: 2 },
+    { label: "D", text: "想答应又本能抗拒", score: 3 }
+  ]},
+  { category: "独立空间", text: "你有自己的兴趣爱好和社交圈吗？", options: [
+    { label: "A", text: "有，恋爱只是生活的一部分", score: 0 },
+    { label: "B", text: "有，但恋爱后会慢慢让位", score: 1 },
+    { label: "C", text: "有，而且很保护不被打扰", score: 2 },
+    { label: "D", text: "有时很投入，有时完全想独处", score: 3 }
+  ]},
+  { category: "独立空间", text: "对方想了解你所有朋友和行踪，你？", options: [
+    { label: "A", text: "可以分享，但也希望有隐私", score: 0 },
+    { label: "B", text: "很开心，觉得是被在乎", score: 1 },
+    { label: "C", text: "反感，感觉被监视", score: 2 },
+    { label: "D", text: "表面配合内心抗拒", score: 3 }
+  ]},
+  { category: "自我认知", text: "恋爱中你对自己的评价是？", options: [
+    { label: "A", text: "整体认可自己，值得被爱", score: 0 },
+    { label: "B", text: "总觉得不够好，怕配不上对方", score: 1 },
+    { label: "C", text: "觉得自己独立，不太需要依赖", score: 2 },
+    { label: "D", text: "时而自信时而自卑，波动很大", score: 3 }
+  ]},
+  { category: "自我认知", text: "对方对你太好时，你的感受是？", options: [
+    { label: "A", text: "开心，自然接受并回馈", score: 0 },
+    { label: "B", text: "感动但不安，担心哪天会失去", score: 1 },
+    { label: "C", text: "不自在，有压力", score: 2 },
+    { label: "D", text: "既渴望又想推开", score: 3 }
+  ]},
+  { category: "自我认知", text: "回忆你的恋爱模式，你觉得？", options: [
+    { label: "A", text: "整体健康，能亲密也能独立", score: 0 },
+    { label: "B", text: "总是爱得很累，患得患失", score: 1 },
+    { label: "C", text: "习惯保持距离，难以真正亲密", score: 2 },
+    { label: "D", text: "爱得很纠结，靠近又逃跑", score: 3 }
+  ]}
+];
+
+let currentQuestion = 0;
+let totalScore = 0;
+let dimensionScores = [0, 0, 0, 0];
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  currentQuestion = 0;
+  totalScore = 0;
+  dimensionScores = [0, 0, 0, 0];
+  showPage('page-quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestion];
+  document.getElementById('quiz-step').textContent = `${String(currentQuestion + 1).padStart(2, '0')} / ${questions.length}`;
+  document.getElementById('quiz-category').textContent = q.category;
+  document.getElementById('question-text').textContent = q.text;
+  document.getElementById('progress-fill').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+
+  q.options.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `
+      <div class="option-letter">${opt.label}</div>
+      <div class="option-text">${opt.text}</div>
+    `;
+    div.onclick = () => selectOption(idx);
+    container.appendChild(div);
+  });
+}
+
+function selectOption(idx) {
+  const q = questions[currentQuestion];
+  const score = q.options[idx].score;
+  totalScore += score;
+
+  const dimMap = { "亲密需求": 0, "冲突反应": 1, "独立空间": 2, "自我认知": 3 };
+  dimensionScores[dimMap[q.category]] += score;
+
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    renderQuestion();
+  } else {
+    document.getElementById('progress-fill').style.width = '100%';
+    showLoading();
+  }
+}
+
+const loadingTexts = [
+  "正在分析你的依恋模式…",
+  "正在评估亲密需求强度…",
+  "正在检测冲突应对方式…",
+  "正在识别独立空间偏好…",
+  "正在生成你的关系指南…"
+];
+
+function showLoading() {
+  showPage('page-loading');
+  let i = 0;
+  const el = document.getElementById('loading-text');
+  el.textContent = loadingTexts[0];
+  const interval = setInterval(() => {
+    i++;
+    if (i < loadingTexts.length) {
+      el.textContent = loadingTexts[i];
+    } else {
+      clearInterval(interval);
+      showResult();
+    }
+  }, 700);
+}
+
+function getResultType(score) {
+  if (score <= 6) return 'secure';
+  if (score <= 14) return 'anxious';
+  if (score <= 24) return 'avoidant';
+  return 'fearful';
+}
+
+const results = {
+  secure: {
+    type: "安全型",
+    title: "你能亲密，也能独立",
+    desc: "你在关系里既不害怕靠近，也不害怕独处。你能信任对方，也能保留自我。这是最健康的依恋模式。",
+    brain: "情绪调节稳定 · 信任回路健全",
+    tips: [
+      { icon: "heart", title: "珍惜这份能力", text: "安全型依恋是稀缺资源。你能在关系里稳定地爱人和被爱，这是很多人终其一生在追求的状态。" },
+      { icon: "users", title: "给对方安全感", text: "如果你的伴侣不是安全型，你的稳定会慢慢疗愈 TA。耐心一点，不要被对方的焦虑或回避带跑。" },
+      { icon: "refresh", title: "保持自我觉察", text: "安全型不是永远不会波动。遇到重大冲突时仍要沟通，不要把'我没事'当成万能挡箭牌。" }
+    ],
+    actions: [
+      { icon: "book", title: "关系精进", desc: "推荐《亲密关系》" },
+      { icon: "share", title: "分享给伴侣", desc: "一起测一测" }
+    ],
+    mainBtn: { text: "查看我的关系指南", class: "btn-accent" }
+  },
+  anxious: {
+    type: "焦虑型",
+    title: "你爱得很深，但也很累",
+    desc: "你在关系里高度渴望亲密，却总担心对方不够爱你。一点小信号就会被放大成'TA不爱我了'，于是反复试探、过度付出。",
+    brain: "依恋系统过度激活 · 分离敏感",
+    tips: [
+      { icon: "pause", title: "冲动前先停 10 秒", text: "想发'你是不是不爱我了'之前，先深呼吸 10 秒。问自己：这是事实，还是我的焦虑在编故事？" },
+      { icon: "self", title: "把注意力分一半给自己", text: "焦虑型最容易把全部精力放在对方身上。强制每周保留 2 个完全属于自己的时段。" },
+      { icon: "chat", title: "表达需求，而不是测试对方", text: "不要用'没事'、'随便'让对方猜。直接说'我需要你陪一会儿'，健康的关系能接住直接表达。" }
+    ],
+    actions: [
+      { icon: "book", title: "推荐阅读", desc: "《依恋的形成》" },
+      { icon: "share", title: "分享给伴侣", desc: "让TA更懂你" }
+    ],
+    mainBtn: { text: "查看我的关系指南", class: "btn-danger" }
+  },
+  avoidant: {
+    type: "回避型",
+    title: "你渴望爱，却本能保持距离",
+    desc: "你其实需要爱，但一靠近就本能想逃。你用'我不需要'保护自己，却在独处时感到深深的孤独。",
+    brain: "依恋系统抑制 · 自立过度补偿",
+    tips: [
+      { icon: "eye", title: "承认你需要人", text: "回避型最大的谎话是'我一个人也挺好'。承认'我需要被爱'不是软弱，是勇气。" },
+      { icon: "heart", title: "练习小剂量的脆弱", text: "从分享一件今天不开心的小事开始。不用一次掏心掏肺，慢慢训练自己被接住的体验。" },
+      { icon: "users", title: "别在感觉好时撤退", text: "回避型常在关系最好时突然冷淡。识别这个模式，告诉自己：现在很好，不需要逃。" }
+    ],
+    actions: [
+      { icon: "book", title: "推荐阅读", desc: "《逃离亲密》" },
+      { icon: "share", title: "分享给伴侣", desc: "让TA理解你" }
+    ],
+    mainBtn: { text: "查看我的关系指南", class: "btn-info" }
+  },
+  fearful: {
+    type: "恐惧型",
+    title: "你又渴望爱，又害怕爱",
+    desc: "你在焦虑和回避之间反复横跳。想要亲密，但一旦靠近就想逃；逃开之后又痛苦于孤独。这是最消耗的依恋模式。",
+    brain: "依恋系统紊乱 · 趋近与回避冲突",
+    tips: [
+      { icon: "pause", title: "识别自己的'逃跑时刻'", text: "记录每次想拉黑/分手/消失的瞬间。通常不是对方做错了什么，而是你的恐惧被激活了。" },
+      { icon: "self", title: "先疗愈自己，再谈恋爱", text: "恐惧型往往源于早期创伤。在进入下一段关系前，给自己一段稳定的自我修复期。" },
+      { icon: "chat", title: "告诉伴侣你的模式", text: "直接说'我有时会突然想逃，不是你的错'。让懂你的人陪你度过那些时刻，而不是独自承受。" }
+    ],
+    actions: [
+      { icon: "book", title: "推荐阅读", desc: "《身体从未忘记》" },
+      { icon: "share", title: "分享给伴侣", desc: "一起理解你" }
+    ],
+    mainBtn: { text: "查看我的关系指南", class: "btn-warning" }
+  }
+};
+
+const icons = {
+  heart: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  users: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>',
+  self: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5a8.5 8.5 0 0 1 8.5-8.5 8.38 8.38 0 0 1 3.8.9h.5a8.48 8.48 0 0 1 4.2 1.6z"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  book: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  share: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+};
+
+function getIconSvg(name) {
+  return icons[name] || icons['heart'];
+}
+
+function showResult() {
+  const type = getResultType(totalScore);
+  const result = results[type];
+  const maxScore = 36;
+  const percentage = Math.round((totalScore / maxScore) * 100);
+
+  const maxDim = 9;
+  const radarValues = dimensionScores.map(s => Math.min(100, Math.round((s / maxDim) * 100)));
+  const radarPoly = getRadarPolygon(radarValues, 120, 120, 90);
+
+  const container = document.getElementById('result-container');
+  container.innerHTML = `
+    <div class="result-card type-${type}">
+      <div class="result-type">${result.type}</div>
+      <div class="result-title">${result.title}</div>
+      <div class="result-desc">${result.desc}</div>
+
+      <div class="score-bar">
+        <div class="score-fill" style="width: 0%"></div>
+      </div>
+      <div class="score-label">
+        <span>依恋波动指数</span>
+        <span>${percentage}%</span>
+      </div>
+
+      <div class="radar-wrap">
+        <svg class="radar-svg" viewBox="0 0 240 240">
+          <polygon points="120,30 200,120 120,210 40,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,50 180,120 120,190 60,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,70 160,120 120,170 80,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="120,90 140,120 120,150 100,120" fill="none" stroke="#e5e5e5" stroke-width="1"/>
+          <line x1="120" y1="30" x2="120" y2="210" stroke="#e5e5e5" stroke-width="1"/>
+          <line x1="40" y1="120" x2="200" y2="120" stroke="#e5e5e5" stroke-width="1"/>
+          <polygon points="${radarPoly}" fill="rgba(181,106,138,0.2)" stroke="var(--primary)" stroke-width="2"/>
+          <text x="120" y="22" text-anchor="middle" font-size="12" fill="#888">亲密需求</text>
+          <text x="210" y="124" text-anchor="start" font-size="12" fill="#888">冲突反应</text>
+          <text x="120" y="224" text-anchor="middle" font-size="12" fill="#888">独立空间</text>
+          <text x="30" y="124" text-anchor="end" font-size="12" fill="#888">自我认知</text>
+        </svg>
+      </div>
+
+      <div style="text-align: center; font-size: 13px; color: var(--text-light); margin-top: -8px; margin-bottom: 8px;">
+        模式特征：${result.brain}
+      </div>
+    </div>
+
+    <div class="section-title">3 个改善关系的方法</div>
+    ${result.tips.map(tip => `
+      <div class="tip-card">
+        <div class="tip-icon">${getIconSvg(tip.icon)}</div>
+        <div class="tip-content">
+          <h4>${tip.title}</h4>
+          <p>${tip.text}</p>
+        </div>
+      </div>
+    `).join('')}
+
+    <div class="suggestion-box">
+      <h4>给你的下一步建议</h4>
+      <p>${getSuggestion(type)}</p>
+    </div>
+
+    <div class="section-title">延伸资源</div>
+    <div class="action-grid">
+      ${result.actions.map(a => `
+        <div class="action-card">
+          <div class="emoji">${getIconSvg(a.icon)}</div>
+          <h4>${a.title}</h4>
+          <p>${a.desc}</p>
+        </div>
+      `).join('')}
+    </div>
+
+    <button class="btn ${result.mainBtn.class}" onclick="handleMainAction('${type}')">${result.mainBtn.text}</button>
+    <button class="btn btn-outline" onclick="startQuiz()">重新测试</button>
+
+    <p class="disclaimer">
+      本测试基于依恋理论改编，结果仅供参考。依恋模式不是缺陷，而是早年关系的烙印。
+      如果你在亲密关系中持续痛苦，建议阅读相关书籍或寻求心理咨询师的帮助，慢慢重建安全依恋。
+    </p>
+  `;
+
+  showPage('page-result');
+
+  setTimeout(() => {
+    document.querySelector('.score-fill').style.width = `${percentage}%`;
+  }, 300);
+}
+
+function getSuggestion(type) {
+  const suggestions = {
+    secure: "你已经拥有了健康爱的能力。下一步可以做的，是把这个能力带给身边的人——一个焦虑型的伴侣会在你的稳定里慢慢被疗愈。如果还没有伴侣，你值得找一个同样健康的人。",
+    anxious: "本周试试：每天给自己写 3 件'不依赖任何人也值得开心'的小事。把'我需要被爱才能完整'的信念，慢慢换成'我本身就值得被爱'。这不是一朝一夕，但每一次自我确认都在重建你的安全感。",
+    avoidant: "本周试试：主动向一个信任的人分享一件真实的、不完美的事。不用很大，可以是'今天有点累'。让被人接住的体验慢慢替代'我只能靠自己'的信念。脆弱不是软弱，是亲密的开始。",
+    fearful: "你的模式形成得最早、也最根深蒂固。建议给自己 3-6 个月的'恋爱空窗期'，专注自我修复：规律作息、稳定情绪、必要时寻求专业帮助。等内在稳定了，再进入关系，会少很多撕裂。"
+  };
+  return suggestions[type];
+}
+
+function getRadarPolygon(values, cx, cy, r) {
+  const angles = [-Math.PI / 2, 0, Math.PI / 2, Math.PI];
+  return values.map((v, i) => {
+    const radius = r * (v / 100);
+    const x = cx + radius * Math.cos(angles[i]);
+    const y = cy + radius * Math.sin(angles[i]);
+    return `${x},${y}`;
+  }).join(' ');
+}
+
+function handleMainAction(type) {
+  const guides = {
+    secure: "【你的关系指南】\n\n你的优势：\n✅ 能健康地爱人和被爱\n✅ 冲突中能稳定沟通\n✅ 既亲密又独立\n\n给安全型的提醒：\n• 不要因为自己稳定就忽视对方的情绪\n• 偶尔也允许自己脆弱和需要人\n• 你的稳定是稀缺品，值得被同样珍惜",
+    anxious: "【你的关系指南】\n\n你的模式：\n⚠️ 高度渴望亲密，害怕被抛弃\n⚠️ 容易过度付出和试探\n⚠️ 对方一点点冷淡就会被放大\n\n改善方向：\n• 冲动前停 10 秒，区分'事实'和'焦虑'\n• 把注意力分一半给自己\n• 表达需求而不是测试对方\n• 一个能稳定接住你的人，比一个让你心跳加速的人更重要",
+    avoidant: "【你的关系指南】\n\n你的模式：\n⚠️ 渴望爱却本能保持距离\n⚠️ 用'我不需要'保护自己\n⚠️ 关系变亲密时反而想逃\n\n改善方向：\n• 承认'我需要人'不是软弱\n• 练习小剂量的脆弱\n• 识别'想撤退'的时刻，告诉自己'现在很好'\n• 你的独立是盔甲，但盔甲下也需要被看见",
+    fearful: "【你的关系指南】\n\n你的模式：\n⚠️ 焦虑与回避反复横跳\n⚠️ 想靠近又想逃\n⚠️ 关系里非常消耗\n\n改善方向：\n• 识别'逃跑时刻'，通常不是对方的错\n• 先疗愈自己，再谈恋爱\n• 告诉伴侣你的模式，让TA陪你度过\n• 必要时寻求专业帮助，这不是你的错"
+  };
+  alert(guides[type]);
+}
+</script>
+</body>
+</html>
