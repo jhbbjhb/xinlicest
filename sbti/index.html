@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>恋爱人格SBTI测试｜MBTI过时了，2026恋爱的人都测SBTI</title>
+<style>
+:root{--bg:#0f0a1e;--bg2:#1a1033;--card:#1f1542;--card2:#2a1d5c;--text:#f5f0ff;--text-dim:#a89dd4;--primary:#ff3d8b;--primary2:#ff6bb5;--accent:#7c4dff;--accent2:#a78bfa;--cyan:#00e5ff;--yellow:#ffd54f;--green:#69f0ae;--orange:#ff9100;--radius:18px;--shadow:0 10px 30px rgba(124,77,255,0.25);--shadow-lg:0 18px 50px rgba(255,61,139,0.3)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg);overflow-x:hidden}
+.app::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 15% 15%,rgba(255,61,139,0.15) 0,transparent 35%),radial-gradient(circle at 85% 20%,rgba(124,77,255,0.18) 0,transparent 40%),radial-gradient(circle at 50% 70%,rgba(0,229,255,0.08) 0,transparent 35%),radial-gradient(circle at 20% 90%,rgba(255,213,79,0.06) 0,transparent 30%);z-index:0}
+.app::after{content:"";position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(45deg,transparent 0,transparent 50px,rgba(255,255,255,0.015) 50px,rgba(255,255,255,0.015) 51px);z-index:0}
+.page{position:relative;z-index:1;padding:28px 22px;min-height:100vh;display:none;flex-direction:column;justify-content:center;opacity:0;transform:translateY(20px);transition:all 0.5s cubic-bezier(0.22,1,0.36,1)}
+.page.active{display:flex;opacity:1;transform:translateY(0)}
+#page-result{display:none}
+#page-result.active{display:block;justify-content:flex-start;padding-top:24px;padding-bottom:50px}
+.brand-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+.brand-tag{font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--primary),var(--accent));padding:6px 14px;border-radius:20px;letter-spacing:1px}
+.brand-no{font-size:12px;color:var(--accent2);letter-spacing:2px;font-weight:700}
+.intro-badge{text-align:center;margin-bottom:18px}
+.intro-badge .sbti{font-size:64px;font-weight:900;letter-spacing:2px;background:linear-gradient(135deg,var(--primary),var(--accent),var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.intro-badge .sub{font-size:13px;color:var(--text-dim);margin-top:6px;letter-spacing:1px}
+.intro-title{font-size:28px;font-weight:900;text-align:center;line-height:1.35;margin-bottom:14px;letter-spacing:-0.5px}
+.intro-title em{font-style:normal;background:linear-gradient(135deg,var(--primary),var(--yellow));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.intro-sub{font-size:14px;color:var(--text-dim);text-align:center;line-height:1.7;margin-bottom:26px;padding:0 8px}
+.pain-box{background:var(--card);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.06)}
+.pain-box h4{font-size:13px;font-weight:800;color:var(--cyan);margin-bottom:12px;letter-spacing:0.5px}
+.pain-item{display:flex;gap:10px;margin-bottom:9px;font-size:13.5px;line-height:1.55}
+.pain-item:last-child{margin-bottom:0}
+.pain-dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;background:var(--primary);margin-top:8px}
+.promise-box{background:linear-gradient(135deg,var(--accent),var(--primary));border-radius:var(--radius);padding:20px;color:#fff;box-shadow:var(--shadow-lg);margin-bottom:24px}
+.promise-box h4{font-size:13px;font-weight:800;margin-bottom:12px;letter-spacing:0.5px;opacity:0.95}
+.promise-item{display:flex;gap:12px;margin-bottom:10px;font-size:13.5px;line-height:1.5}
+.promise-item:last-child{margin-bottom:0}
+.promise-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:800;cursor:pointer;transition:transform 0.15s;font-family:inherit}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;box-shadow:0 8px 24px rgba(255,61,139,0.4)}
+.btn-ghost{background:var(--card);color:var(--accent2);box-shadow:var(--shadow);margin-top:10px;border:1px solid rgba(124,77,255,0.3)}
+.progress-wrap{margin-bottom:20px}
+.progress-top{display:flex;justify-content:space-between;font-size:12px;color:var(--text-dim);margin-bottom:8px;font-weight:700}
+.progress-bar{height:8px;background:var(--card);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent),var(--cyan));border-radius:4px;transition:width 0.4s;width:0%}
+.question-card{background:var(--card);border-radius:var(--radius);padding:22px 20px;box-shadow:var(--shadow);margin-bottom:14px;border:1px solid rgba(255,255,255,0.06)}
+.q-num{font-size:11px;color:var(--cyan);font-weight:800;letter-spacing:1px;margin-bottom:8px}
+.q-text{font-size:17px;font-weight:700;line-height:1.5;margin-bottom:18px}
+.option{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:12px;border:2px solid rgba(255,255,255,0.06);margin-bottom:9px;cursor:pointer;transition:all 0.15s;background:var(--card2)}
+.option:active{transform:scale(0.98)}
+.option.selected{border-color:var(--primary);background:rgba(255,61,139,0.12)}
+.option .opt-dot{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--primary2);transition:all 0.15s}
+.option.selected .opt-dot{background:var(--primary);border-color:var(--primary);color:#fff}
+.option .opt-text{font-size:14px;line-height:1.45}
+.loading{text-align:center;padding:40px 0}
+.loading-emoji{font-size:64px;margin-bottom:20px;animation:spin 1.5s linear infinite;display:inline-block}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.loading-text{font-size:15px;color:var(--text-dim);line-height:1.8}
+.loading-step{font-size:13px;color:var(--cyan);font-weight:700;margin-top:14px;min-height:20px}
+.result-hero{text-align:center;margin-bottom:22px}
+.result-type-badge{display:inline-block;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:800;margin-bottom:14px;letter-spacing:1px}
+.result-code{font-size:56px;font-weight:900;line-height:1;margin-bottom:8px;letter-spacing:1px}
+.result-name{font-size:22px;font-weight:800;margin-bottom:10px}
+.result-slogan{font-size:14px;color:var(--text-dim);line-height:1.6;max-width:300px;margin:0 auto 16px;font-style:italic}
+.portrait-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:14px;border:1px solid rgba(255,255,255,0.06)}
+.portrait-card h3{font-size:14px;font-weight:800;margin-bottom:12px;color:var(--cyan)}
+.portrait-text{font-size:14px;line-height:1.7;color:var(--text)}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.pc-card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.06)}
+.pc-card h4{font-size:12px;font-weight:800;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.pc-card.pros h4{color:var(--green)}
+.pc-card.cons h4{color:var(--orange)}
+.pc-item{font-size:12.5px;line-height:1.5;margin-bottom:8px;padding-left:14px;position:relative}
+.pc-item:last-child{margin-bottom:0}
+.pc-item::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%}
+.pc-card.pros .pc-item::before{background:var(--green)}
+.pc-card.cons .pc-item::before{background:var(--orange)}
+.match-card{background:var(--card);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px;border:1px solid rgba(255,255,255,0.06)}
+.match-card h3{font-size:13px;font-weight:800;margin-bottom:12px;color:var(--accent2)}
+.match-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13.5px}
+.match-row:last-child{margin-bottom:0}
+.match-label{font-size:12px;color:var(--text-dim);min-width:64px}
+.match-tag{padding:4px 12px;border-radius:10px;font-size:12.5px;font-weight:700}
+.advice-card{background:linear-gradient(135deg,rgba(124,77,255,0.2),rgba(255,61,139,0.15));border-radius:14px;padding:18px;margin-bottom:14px;border:1px solid rgba(124,77,255,0.3)}
+.advice-card h3{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--yellow)}
+.advice-text{font-size:14.5px;line-height:1.65;font-weight:600}
+.moments-card{background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:var(--radius);padding:22px;color:#fff;box-shadow:var(--shadow-lg);margin-bottom:14px;text-align:center}
+.moments-card .mc-label{font-size:11px;opacity:0.85;margin-bottom:10px;letter-spacing:1px;font-weight:700}
+.moments-card .mc-content{font-size:15px;line-height:1.7;font-weight:600;text-align:left;padding:14px;background:rgba(255,255,255,0.12);border-radius:12px}
+.moments-card .mc-content .big{font-size:22px;font-weight:900;display:block;margin:6px 0}
+.moments-card .mc-hint{font-size:11px;opacity:0.7;margin-top:10px}
+.result-actions{display:flex;gap:10px;margin-top:6px}
+.result-actions .btn{font-size:14px;padding:14px}
+.disclaimer{font-size:11px;color:var(--text-dim);text-align:center;line-height:1.6;margin-top:10px;padding:0 10px;opacity:0.6}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="page active" id="page-intro">
+  <div class="brand-bar"><span class="brand-tag">恋爱人格</span><span class="brand-no">NO.143</span></div>
+  <div class="intro-badge">
+    <div class="sbti">SBTI</div>
+    <div class="sub">SOCIAL-BASED TYPE INDICATOR</div>
+  </div>
+  <h1 class="intro-title">MBTI过时了<br>2026恋爱的人都测<em>SBTI</em></h1>
+  <p class="intro-sub">道理我都懂，可一谈恋爱就上头？<br>测出你的恋爱人格，看清自己到底是个什么品种的恋爱脑。</p>
+  <div class="pain-box">
+    <h4>这些症状你中了几个？</h4>
+    <div class="pain-item"><div class="pain-dot"></div><div>单身时人间清醒，一恋爱就化身福尔摩斯+恋爱脑</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>暧昧到一半自己先撤退，主打一个"我先不爱"</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>一周换3个crush，新鲜感一过就下头</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>朋友圈天天喊脱单，真遇到人又嫌麻烦</div></div>
+  </div>
+  <div class="promise-box">
+    <h4>测完你能拿到：</h4>
+    <div class="promise-item"><div class="promise-num">1</div><div>你的SBTI恋爱人格代码 + 发疯人格名</div></div>
+    <div class="promise-item"><div class="promise-num">2</div><div>扎心标语 + 性格画像（被冒犯到了）</div></div>
+    <div class="promise-item"><div class="promise-num">3</div><div>你的恋爱死穴 + 匹配/克星人格</div></div>
+    <div class="promise-item"><div class="promise-num">4</div><div>1句话恋爱建议 + 朋友圈炫耀卡（直接截图发）</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="startQuiz()">测出我的SBTI</button>
+  <button class="btn btn-ghost" onclick="alert('SBTI = Social-Based Type Indicator 社交版MBTI。基于亲密关系中的主动模式、情感投入、依恋倾向、新鲜感需求等维度设计。比MBTI更懂你的恋爱脑。仅供娱乐参考，不替代专业心理评估。')">这是什么测试？</button>
+</div>
+<div class="page" id="page-quiz">
+  <div class="progress-wrap">
+    <div class="progress-top"><span id="progress-label">第 1 / 12 题</span><span id="progress-pct">8%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+  <div class="question-card" id="question-card"></div>
+</div>
+<div class="page" id="page-loading">
+  <div class="loading">
+    <div class="loading-emoji">🌀</div>
+    <div class="loading-text">正在解析你的恋爱脑回路…</div>
+    <div class="loading-step" id="loading-step">扫描你的发疯指数</div>
+  </div>
+</div>
+<div class="page" id="page-result">
+  <div class="result-hero">
+    <div class="result-type-badge" id="type-badge"></div>
+    <div class="result-code" id="result-code"></div>
+    <div class="result-name" id="result-name"></div>
+    <div class="result-slogan" id="result-slogan"></div>
+  </div>
+  <div class="portrait-card"><h3>性格画像</h3><div class="portrait-text" id="portrait-text"></div></div>
+  <div class="pros-cons">
+    <div class="pc-card pros"><h4>恋爱优点</h4><div id="pros-list"></div></div>
+    <div class="pc-card cons"><h4>恋爱死穴</h4><div id="cons-list"></div></div>
+  </div>
+  <div class="match-card">
+    <h3>人格匹配度</h3>
+    <div class="match-row"><span class="match-label">天选CP</span><span class="match-tag" id="match-best"></span></div>
+    <div class="match-row"><span class="match-label">互相折磨</span><span class="match-tag" id="match-worst"></span></div>
+  </div>
+  <div class="advice-card">
+    <h3>给你的恋爱建议</h3>
+    <div class="advice-text" id="advice-text"></div>
+  </div>
+  <div class="moments-card">
+    <div class="mc-label">朋友圈炫耀卡（长按截图保存）</div>
+    <div class="mc-content" id="mc-content"></div>
+    <div class="mc-hint">测完发朋友圈，看看谁和你一样发疯</div>
+  </div>
+  <div class="result-actions">
+    <button class="btn btn-primary" onclick="shareResult()">分享给闺蜜</button>
+    <button class="btn btn-ghost" onclick="restart()">重新测</button>
+  </div>
+  <p class="disclaimer">SBTI为趣味恋爱人格测试，基于依恋理论与恋爱模式设计，结果仅供娱乐参考。</p>
+</div>
+</div>
+<script>
+const QUESTIONS=[
+{q:'你看到一个心动的人，第一反应是？',options:[{t:'已经开始幻想婚礼了，孩子叫什么都想好',s:'S'},{t:'先观察三天，发现一点瑕疵就下头',s:'R'},{t:'这就是我本周第4个crush了，正常',s:'C'},{t:'先看看是不是认真发展的那种',s:'T'}]},
+{q:'对方3小时没回消息，你会？',options:[{t:'已经脑补完TA出轨的全过程',s:'S'},{t:'顺便把TA删了，反正我也没那么喜欢',s:'R'},{t:'在看新crush的主页，早忘了TA',s:'C'},{t:'正常做自己的事，TA可能在忙',s:'T'}]},
+{q:'暧昧期对方说"我们顺其自然"，你？',options:[{t:'顺什么自然，我现在就要个答案',s:'S'},{t:'懂了，撤退。下一位',s:'R'},{t:'顺其自然好啊，我还有别的crush',s:'C'},{t:'想搞清楚"顺其自然"到底是什么意思',s:'T'}]},
+{q:'关于"未来规划"，你的真实状态？',options:[{t:'第二次约会就想聊以后住哪个城市',s:'S'},{t:'未来？我们这周能处好就不错了',s:'R'},{t:'没有未来，享受当下',s:'C'},{t:'3个月内想确定关系走向',s:'T'}]},
+{q:'对方朋友圈没你的痕迹，你怎么看？',options:[{t:'崩溃，是不是不想公开我',s:'S'},{t:'正好，我也不想被绑死',s:'R'},{t:'无所谓，我也不发',s:'C'},{t:'会介意，想认真聊一次',s:'T'}]},
+{q:'恋爱中你最怕什么？',options:[{t:'对方不爱我/不够爱我',s:'S'},{t:'被束缚、失去自由',s:'R'},{t:'无聊、没新鲜感',s:'C'},{t:'浪费时间在错的人身上',s:'T'}]},
+{q:'朋友说你谈恋爱像什么？',options:[{t:'恋爱脑本脑，清醒只存在单身时',s:'S'},{t:'渣男/渣女收割机，先走为敬',s:'R'},{t:'海王/海后，广撒网',s:'C'},{t:'HR面试官，考察期超长',s:'T'}]},
+{q:'你和crush的关系通常怎么结束？',options:[{t:'TA冷暴力我崩溃，最后我求复合',s:'S'},{t:'我主动撤退，主打一个先不爱',s:'R'},{t:'新鲜感过了，我自然下头',s:'C'},{t:'发现不合适，理性分手',s:'T'}]},
+{q:'对方想见你朋友/家人，你？',options:[{t:'激动，终于要见家长了',s:'S'},{t:'告辞，进展太快',s:'R'},{t:'看心情，可能就忘了',s:'C'},{t:'认真考虑时机是否合适',s:'T'}]},
+{q:'你怎么表达喜欢？',options:[{t:'掏心掏肺，恨不得把心挖出来',s:'S'},{t:'嘴上不说，偷偷观察对方反应',s:'R'},{t:'调情一流，但走心有限',s:'C'},{t:'用行动和陪伴，不擅长甜言蜜语',s:'T'}]},
+{q:'深夜emo时，你会？',options:[{t:'翻TA所有社交动态哭一场',s:'S'},{t:'想TA但不联系，憋着',s:'R'},{t:'找新crush聊天转移注意力',s:'C'},{t:'复盘这段关系值不值得',s:'T'}]},
+{q:'如果前任回来找你？',options:[{t:'80%会复合，恋爱脑复发',s:'S'},{t:'拉黑，我已经放下了',s:'R'},{t:'看心情，反正我也不缺',s:'C'},{t:'先搞清楚TA回来干什么',s:'T'}]}
+];
+let current=0,scores={S:0,R:0,C:0,T:0};
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function startQuiz(){current=0;scores={S:0,R:0,C:0,T:0};renderQuestion();showPage('page-quiz')}
+function renderQuestion(){
+  const q=QUESTIONS[current];
+  document.getElementById('question-card').innerHTML='<div class="q-num">第 '+(current+1)+' 题</div><div class="q-text">'+q.q+'</div>'+q.options.map((opt,i)=>'<div class="option" onclick="selectOption('+i+',\''+opt.s+'\')"><div class="opt-dot">'+String.fromCharCode(65+i)+'</div><div class="opt-text">'+opt.t+'</div></div>').join('');
+  const pct=Math.round((current/QUESTIONS.length)*100);
+  document.getElementById('progress-label').textContent='第 '+(current+1)+' / '+QUESTIONS.length+' 题';
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
+}
+function selectOption(idx,score){
+  scores[score]++;
+  document.querySelectorAll('.option').forEach((el,i)=>el.classList.toggle('selected',i===idx));
+  setTimeout(()=>{current++;if(current<QUESTIONS.length)renderQuestion();else showLoading()},260);
+}
+function showLoading(){
+  showPage('page-loading');
+  const steps=['扫描你的发疯指数','分析恋爱脑回路','计算撤退速度','评估crush频率','生成SBTI人格'];
+  let i=0;document.getElementById('loading-step').textContent=steps[0];
+  const timer=setInterval(()=>{i++;if(i<steps.length)document.getElementById('loading-step').textContent=steps[i];else{clearInterval(timer);showResult()}},500);
+}
+function getResult(){
+  const max=Math.max(scores.S,scores.R,scores.C,scores.T);
+  let type;
+  if(scores.S===max)type='S';
+  else if(scores.R===max)type='R';
+  else if(scores.C===max)type='C';
+  else type='T';
+  return type;
+}
+const TYPES={
+S:{
+code:'S',name:'清醒恋爱脑晚期患者',
+slogan:'单身时人间清醒，一恋爱就化身福尔摩斯+恋爱脑。',
+badge:'恋爱脑本脑',badgeBg:'#ff3d8b',badgeColor:'#fff',
+codeColor:'linear-gradient(135deg,#ff3d8b,#ff6bb5)',
+portrait:'你是那种"道理我都懂，可一上头就全忘了"的典型。单身时你能写出800字恋爱避坑指南，一恋爱却秒变"TA三小时没回我消息是不是不爱我了"。你的爱很浓烈也很真，但太容易把自己烧光。',
+pros:['投入度满分，爱就全心全意','感情真挚，不玩套路'],
+cons:['过度解读对方每个行为','容易失去自我，围着TA转'],
+best:{name:'稳定型选手T',color:'#69f0ae'},worst:{name:'Crush收割机C',color:'#ff9100'},
+advice:'谈恋爱前先谈自己——你的生活不能只有TA，先把自己活成主角，爱情才是锦上添花。',
+mc:'我的SBTI是【S · 清醒恋爱脑晚期患者】\n单身时人间清醒，一恋爱就上头\n谁懂啊，道理都懂，就是控制不住自己 🌀\n#SBTI测试 #恋爱人格'
+},
+R:{
+code:'R',name:'人间退堂鼓大师',
+slogan:'暧昧到一半主动撤退，主打一个"我先不爱"。',
+badge:'撤退专业户',badgeBg:'#7c4dff',badgeColor:'#fff',
+codeColor:'linear-gradient(135deg,#7c4dff,#a78bfa)',
+portrait:'你是感情里的"先走为敬"选手。一旦察觉对方有半点不上心，或者关系要往认真方向发展，你的退堂鼓就打得震天响。看似潇洒，其实是用撤退来保护自己——你怕的不是爱，是被爱后又被辜负。',
+pros:['自我保护意识强，不轻易受伤','说断就断，执行力惊人'],
+cons:['错失真正适合的人','习惯性逃避，问题永远没解决'],
+best:{name:'清醒恋爱脑S',color:'#ff3d8b'},worst:{name:'人间退堂鼓R',color:'#7c4dff'},
+advice:'下次想撤退的时候，多待30秒问问自己：我是真的不喜欢，还是害怕喜欢？别让"先不爱"成为你的保护色。',
+mc:'我的SBTI是【R · 人间退堂鼓大师】\n暧昧到一半主动撤退，主打先不爱\n不是不爱，是怕被辜负 🚪\n#SBTI测试 #恋爱人格'
+},
+C:{
+code:'C',name:'Crush收割机',
+slogan:'新鲜感一过就下头，本周第4个crush了。',
+badge:'新鲜感猎人',badgeBg:'#00e5ff',badgeColor:'#0f0a1e',
+codeColor:'linear-gradient(135deg,#00e5ff,#7c4dff)',
+portrait:'你是感情里的"广撒网选手"，crush比换季还快。你迷恋的是心动的那一刻，而不是真实的人。一旦关系进入柴米油盐，你就觉得无聊想逃。你不是花心，你只是把"心动"当成了"爱"。',
+pros:['永远有热情，生活不无聊','社交能力强，桃花不断'],
+cons:['很难建立深度关系','把心动当爱情，错过真爱'],
+best:{name:'人间退堂鼓R',color:'#7c4dff'},worst:{name:'清醒恋爱脑S',color:'#ff3d8b'},
+advice:'区分心动和爱：心动是想要靠近，爱是靠近后还想留下。给一个人3个月的深度相处，你会发现柴米油盐也有浪漫。',
+mc:'我的SBTI是【C · Crush收割机】\n新鲜感一过就下头，本周第4个crush\n心动是本能，留下是本事 🌀\n#SBTI测试 #恋爱人格'
+},
+T:{
+code:'T',name:'稳定型选手',
+slogan:'认真找对象不养鱼，考察期比试用期还长。',
+badge:'恋爱界HR',badgeBg:'#69f0ae',badgeColor:'#0f0a1e',
+codeColor:'linear-gradient(135deg,#69f0ae,#00e5ff)',
+portrait:'你是感情里的"长期主义者"。你不养鱼、不将就，但考察期长得离谱，恨不得给对方做背景调查。你认真对待每一段关系，但也容易因为太理性而错过心动的瞬间——爱情不是面试，没有标准答案。',
+pros:['认真专一，值得托付','情绪稳定，不制造内耗'],
+cons:['太理性，错过心动时机','考察太久，把人熬没'],
+best:{name:'清醒恋爱脑S',color:'#ff3d8b'},worst:{name:'稳定型选手T',color:'#69f0ae'},
+advice:'爱情需要30%的冲动。如果一个人三个月内没让你想"理性分析"，那才是最该理性分析的事——别让过度考察熬没了缘分。',
+mc:'我的SBTI是【T · 稳定型选手】\n认真找对象不养鱼，考察期比试用期还长\n不将就，但也别太端着 🎯\n#SBTI测试 #恋爱人格'
+}
+};
+function showResult(){
+  const type=getResult();
+  const t=TYPES[type];
+  const badge=document.getElementById('type-badge');
+  badge.textContent=t.badge;badge.style.background=t.badgeBg;badge.style.color=t.badgeColor;
+  const codeEl=document.getElementById('result-code');
+  codeEl.textContent=t.code;codeEl.style.background=t.codeColor;codeEl.style.webkitBackgroundClip='text';codeEl.style.backgroundClip='text';codeEl.style.webkitTextFillColor='transparent';
+  document.getElementById('result-name').textContent=t.name;
+  document.getElementById('result-slogan').textContent='"'+t.slogan+'"';
+  document.getElementById('portrait-text').textContent=t.portrait;
+  document.getElementById('pros-list').innerHTML=t.pros.map(p=>'<div class="pc-item">'+p+'</div>').join('');
+  document.getElementById('cons-list').innerHTML=t.cons.map(c=>'<div class="pc-item">'+c+'</div>').join('');
+  const mb=document.getElementById('match-best');
+  mb.textContent=t.best.name;mb.style.background='rgba(105,240,174,0.15)';mb.style.color=t.best.color;
+  const mw=document.getElementById('match-worst');
+  mw.textContent=t.worst.name;mw.style.background='rgba(255,145,0,0.15)';mw.style.color=t.worst.color;
+  document.getElementById('advice-text').textContent=t.advice;
+  const mc=document.getElementById('mc-content');
+  mc.innerHTML=t.mc.replace(/\n/g,'<br>');
+  showPage('page-result');
+}
+function shareResult(){
+  const type=getResult();const t=TYPES[type];
+  const text='我测了SBTI恋爱人格，结果是【'+t.code+' · '+t.name+'】。MBTI过时了，2026恋爱的人都测SBTI';
+  if(navigator.share){navigator.share({title:'SBTI恋爱人格',text}).catch(()=>{})}
+  else{const url=window.location.href;if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});alert('结果已生成，链接已复制，发给闺蜜一起测：\n'+url)}
+}
+function restart(){startQuiz()}
+</script>
+</body>
+</html>
