@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>浓淡风格指数｜12题看出你是浓人还是淡人</title>
+<style>
+:root{--bg:#fbf8f3;--bg2:#f3ede1;--card:#fff;--text:#2a2620;--text-light:#8a7e6a;--primary:#d4a04a;--primary-dark:#a07635;--primary-light:#f7ecd4;--accent:#5a7a8a;--accent-light:#e4ecef;--strong:#c0392b;--mid:#d6892b;--cool:#5a7a8a;--ice:#2c5f6f;--radius:18px;--shadow:0 8px 24px rgba(160,118,53,0.10);--shadow-lg:0 14px 40px rgba(160,118,53,0.15)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg);overflow-x:hidden}
+.app::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 15% 20%,rgba(212,160,74,0.08) 0,transparent 35%),radial-gradient(circle at 85% 15%,rgba(90,122,138,0.06) 0,transparent 40%),radial-gradient(circle at 50% 70%,rgba(160,118,53,0.05) 0,transparent 35%);z-index:0}
+.app::after{content:"";position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(45deg,transparent 0,transparent 60px,rgba(160,118,53,0.025) 60px,rgba(160,118,53,0.025) 61px);z-index:0}
+.page{position:relative;z-index:1;padding:28px 22px;min-height:100vh;display:none;flex-direction:column;justify-content:center;opacity:0;transform:translateY(20px);transition:all 0.5s cubic-bezier(0.22,1,0.36,1)}
+.page.active{display:flex;opacity:1;transform:translateY(0)}
+#page-result{display:none}
+#page-result.active{display:block;justify-content:flex-start;padding-top:28px;padding-bottom:50px}
+.brand-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+.brand-tag{font-size:13px;font-weight:700;color:var(--primary-dark);background:var(--primary-light);padding:6px 14px;border-radius:8px;letter-spacing:1px}
+.brand-no{font-size:13px;color:var(--accent);letter-spacing:2px;font-weight:600}
+.intro-emoji{text-align:center;font-size:80px;margin-bottom:18px;filter:drop-shadow(0 8px 20px rgba(212,160,74,0.2))}
+.intro-title{font-size:30px;font-weight:900;text-align:center;line-height:1.35;margin-bottom:14px;letter-spacing:-0.5px}
+.intro-title em{font-style:normal;color:var(--primary-dark);position:relative}
+.intro-title em::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:8px;background:var(--primary-light);z-index:-1}
+.intro-sub{font-size:14px;color:var(--text-light);text-align:center;line-height:1.75;margin-bottom:28px;padding:0 8px}
+.pain-box{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;border:1px solid var(--bg2)}
+.pain-box h4{font-size:13px;font-weight:700;color:var(--primary-dark);margin-bottom:12px;letter-spacing:0.5px}
+.pain-item{display:flex;gap:10px;margin-bottom:9px;font-size:13.5px;line-height:1.55}
+.pain-item:last-child{margin-bottom:0}
+.pain-dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;background:var(--primary);margin-top:8px}
+.promise-box{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius);padding:22px;color:#fff;box-shadow:var(--shadow-lg);margin-bottom:26px}
+.promise-box h4{font-size:14px;font-weight:700;margin-bottom:14px;letter-spacing:0.5px;opacity:0.95}
+.promise-item{display:flex;gap:12px;margin-bottom:11px;font-size:13.5px;line-height:1.5}
+.promise-item:last-child{margin-bottom:0}
+.promise-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.btn{display:block;width:100%;border:none;border-radius:16px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;transition:transform 0.15s;font-family:inherit}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 8px 20px rgba(212,160,74,0.3)}
+.btn-ghost{background:var(--card);color:var(--primary-dark);box-shadow:var(--shadow);margin-top:12px;border:1px solid var(--bg2)}
+.progress-wrap{margin-bottom:20px}
+.progress-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-light);margin-bottom:8px;font-weight:600}
+.progress-bar{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-dark));border-radius:4px;transition:width 0.4s;width:0%}
+.question-card{background:var(--card);border-radius:var(--radius);padding:24px 20px;box-shadow:var(--shadow);margin-bottom:14px;border:1px solid var(--bg2)}
+.q-num{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.q-text{font-size:18px;font-weight:700;line-height:1.55;margin-bottom:20px}
+.option{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid var(--bg2);margin-bottom:10px;cursor:pointer;transition:all 0.15s;background:#fffdf8}
+.option:active{transform:scale(0.98)}
+.option.selected{border-color:var(--primary);background:var(--primary-light)}
+.option .opt-dot{width:22px;height:22px;border-radius:50%;border:2px solid #d8ccb0;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--primary-dark);transition:all 0.15s}
+.option.selected .opt-dot{background:var(--primary);border-color:var(--primary);color:#fff}
+.option .opt-text{font-size:14.5px;line-height:1.45}
+.loading-emoji{text-align:center;font-size:72px;margin:40px 0;animation:bounce 1.2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.loading-text{font-size:15px;color:var(--text-light);text-align:center;line-height:1.8}
+.loading-step{font-size:13px;color:var(--primary-dark);font-weight:600;text-align:center;margin-top:16px;min-height:20px}
+.result-hero{text-align:center;margin-bottom:22px}
+.result-badge{display:inline-block;padding:8px 20px;border-radius:24px;font-size:13px;font-weight:700;margin-bottom:14px}
+.result-title{font-size:36px;font-weight:900;line-height:1.2;margin-bottom:8px;letter-spacing:-1px}
+.result-label{font-size:14px;color:var(--text-light);line-height:1.65;max-width:320px;margin:0 auto 18px}
+.score-wrap{background:var(--card);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px;border:1px solid var(--bg2)}
+.score-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-label{font-size:13px;color:var(--text-light);font-weight:600}
+.score-num{font-size:22px;font-weight:800;color:var(--primary-dark)}
+.score-bar{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;position:relative}
+.score-fill{height:100%;border-radius:4px;transition:width 1s}
+.score-scale{display:flex;justify-content:space-between;font-size:10px;color:var(--text-light);margin-top:6px}
+.info-card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin-bottom:16px;border:1px solid var(--bg2)}
+.info-card h3{font-size:15px;font-weight:800;margin-bottom:14px;color:var(--primary-dark);display:flex;align-items:center;gap:8px}
+.info-card h3 .icon{font-size:18px}
+.info-text{font-size:14px;line-height:1.7;color:var(--text)}
+.comfort-card{background:linear-gradient(135deg,var(--primary-light),#f5ead8);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.comfort-card h3{font-size:14px;font-weight:800;margin-bottom:12px;color:var(--primary-dark)}
+.comfort-text{font-size:14px;line-height:1.65}
+.attract-card{background:var(--accent-light);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.attract-card h3{font-size:14px;font-weight:800;margin-bottom:12px;color:var(--accent)}
+.attract-text{font-size:14px;line-height:1.65}
+.tip-card{background:var(--card);border-radius:14px;padding:18px;margin-bottom:18px;border-left:4px solid var(--primary)}
+.tip-card h3{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--primary-dark)}
+.tip-text{font-size:14.5px;line-height:1.65;font-weight:600}
+.moments-card{background:linear-gradient(135deg,var(--primary-dark),var(--primary));border-radius:var(--radius);padding:22px;color:#fff;box-shadow:var(--shadow-lg);margin-bottom:18px;text-align:center}
+.moments-card .mc-label{font-size:12px;opacity:0.85;margin-bottom:10px;letter-spacing:1px;font-weight:700}
+.moments-card .mc-content{font-size:16px;line-height:1.7;font-weight:600;text-align:left;padding:14px;background:rgba(255,255,255,0.15);border-radius:12px}
+.moments-card .mc-hint{font-size:11px;opacity:0.7;margin-top:10px}
+.result-actions{display:flex;gap:12px;margin-top:4px}
+.result-actions .btn{font-size:14px;padding:14px}
+.disclaimer{font-size:11.5px;color:#b8a99b;text-align:center;line-height:1.6;margin-top:10px;padding:0 10px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="page active" id="page-intro">
+  <div class="brand-bar"><span class="brand-tag">趣味风格观察</span><span class="brand-no">NO.144</span></div>
+  <div class="intro-emoji">🍵</div>
+  <h1 class="intro-title">你是<em>浓人</em>还是<em>淡人</em>？<br>12题看出你的社交浓度</h1>
+  <p class="intro-sub">朋友圈3条起步还是半年不更新？<br>聚餐坐C位还是角落里喝茶？<br>来算算你的"浓淡风格指数"，看看自己在社交光谱的哪一端。</p>
+  <div class="pain-box">
+    <h4>这些日常你站哪边？</h4>
+    <div class="pain-item"><div class="pain-dot"></div><div>朋友说"你最近怎么不发朋友圈了"，你：？？我有这东西？</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>群聊消息99+，你已读不回，主打一个"我在，但没完全在"</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>参加聚会，要么全场最嗨，要么全程静音观察人类</div></div>
+    <div class="pain-item"><div class="pain-dot"></div><div>别人一句话你能脑补一整集连续剧，或者根本没听见</div></div>
+  </div>
+  <div class="promise-box">
+    <h4>做完你能拿到：</h4>
+    <div class="promise-item"><div class="promise-num">1</div><div>你的浓淡风格指数 + 类型归属</div></div>
+    <div class="promise-item"><div class="promise-num">2</div><div>你的典型行为特征（被冒犯到了）</div></div>
+    <div class="promise-item"><div class="promise-num">3</div><div>你的社交舒适区 + 你会吸引什么样的人</div></div>
+    <div class="promise-item"><div class="promise-num">4</div><div>给你的一个小建议 + 朋友圈分享语（直接复制发）</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="startQuiz()">开始算我的浓度</button>
+  <button class="btn btn-ghost" onclick="alert('浓淡风格指数是基于社交行为模式设计的趣味观察工具。通过12个日常场景，观察你在社交主动度、情绪表达、边界感等维度的偏好，算出你的"浓淡风格"。纯娱乐，不代表任何专业评估。')">这是什么？</button>
+</div>
+<div class="page" id="page-quiz">
+  <div class="progress-wrap">
+    <div class="progress-top"><span id="progress-label">第 1 / 12 题</span><span id="progress-pct">8%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+  <div class="question-card" id="question-card"></div>
+</div>
+<div class="page" id="page-loading">
+  <div class="loading-emoji">🍵</div>
+  <div class="loading-text">正在泡你的茶…</div>
+  <div class="loading-step" id="loading-step">观察你的社交浓度</div>
+</div>
+<div class="page" id="page-result">
+  <div class="result-hero">
+    <div class="result-badge" id="result-badge"></div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-label" id="result-label"></div>
+  </div>
+  <div class="score-wrap">
+    <div class="score-row"><span class="score-label">你的浓淡风格指数</span><span class="score-num" id="score-num"></span></div>
+    <div class="score-bar"><div class="score-fill" id="score-fill"></div></div>
+    <div class="score-scale"><span>淡人端 ◀</span><span>浓人端 ▶</span></div>
+  </div>
+  <div class="info-card"><h3><span class="icon">📋</span>你的典型行为特征</h3><div class="info-text" id="feature-text"></div></div>
+  <div class="comfort-card"><h3>🛋️ 你的社交舒适区</h3><div class="comfort-text" id="comfort-text"></div></div>
+  <div class="attract-card"><h3>🧲 你会吸引什么样的人</h3><div class="attract-text" id="attract-text"></div></div>
+  <div class="tip-card"><h3>💡 给你的一个小建议</h3><div class="tip-text" id="tip-text"></div></div>
+  <div class="moments-card">
+    <div class="mc-label">朋友圈分享语（长按截图保存）</div>
+    <div class="mc-content" id="mc-content"></div>
+    <div class="mc-hint">复制发朋友圈，看看朋友们的浓度</div>
+  </div>
+  <div class="result-actions">
+    <button class="btn btn-primary" onclick="shareResult()">分享给朋友</button>
+    <button class="btn btn-ghost" onclick="restart()">重新算一次</button>
+  </div>
+  <p class="disclaimer">浓淡风格指数为趣味观察工具，结果仅供娱乐参考。</p>
+</div>
+</div>
+<script>
+const QUESTIONS=[
+{q:'你最近一次发朋友圈是什么时候？',options:[{t:'今天，已经第3条了，配图九宫格',s:3},{t:'这周发过一两次，主要晒晒生活',s:2},{t:'上个月？记不清了，转发过一篇文章',s:1},{t:'朋友圈是什么？半年没开过了',s:0}]},
+{q:'朋友群聊99+消息，你的处理方式？',options:[{t:'已经聊在最前面了，表情包库存1000+',s:3},{t:'挑感兴趣的回几句，潜水为主',s:2},{t:'默默看完，不回，心里有数',s:1},{t:'已读不回，群消息免打扰3年了',s:0}]},
+{q:'聚餐时你通常坐哪里？',options:[{t:'C位，全场话题我带，气氛我搞',s:3},{t:'中间偏热闹，该聊聊该笑笑',s:2},{t:'角落里安静吃饭，有人搭话就聊',s:1},{t:'能不去就不去，去了就坐最边上的位置',s:0}]},
+{q:'你情绪起伏大吗？',options:[{t:'像过山车，开心就原地起飞，难过直接哭',s:3},{t:'会有波动，但基本能hold住',s:2},{t:'内心有戏，面上波澜不惊',s:1},{t:'情绪？我已经平静到出家了',s:0}]},
+{q:'旅游规划你是什么风格？',options:[{t:'攻略做满30页，打卡清单100项，必须特种兵',s:3},{t:'大概定个路线，灵活调整',s:2},{t:'只订个酒店，走到哪算哪',s:1},{t:'旅游？我家沙发不香吗',s:0}]},
+{q:'工作中收到新任务，你的反应？',options:[{t:'立刻拉群，语音60秒×10条同步进度',s:3},{t:'先回复确认，按节奏推进',s:2},{t:'默默做完，到点交付，不多说',s:1},{t:'已读，放着，ddl前夜奇迹降临',s:0}]},
+{q:'朋友难过找你倾诉，你会？',options:[{t:'比TA还激动，直接骂那个让TA难过的人',s:3},{t:'陪TA聊，给点建议',s:2},{t:'静静听着，递纸巾',s:1},{t:'发个抱抱表情，不知道说啥',s:0}]},
+{q:'你的聊天风格是？',options:[{t:'消息密度高，一秒三条，语音文字表情包轮番上',s:3},{t:'正常回复，偶尔发表情包',s:2},{t:'惜字如金，主要用"嗯""哦""好"',s:1},{t:'能用表情包绝不用字，能不回绝不回',s:0}]},
+{q:'关于"边界感"，你的态度？',options:[{t:'什么边界？我们这么熟，分享一切',s:3},{t:'看关系，熟了就没那么讲究',s:2},{t:'有边界，不喜欢被过度靠近',s:1},{t:'我的边界是长城，闲人免进',s:0}]},
+{q:'新认识一个朋友，你会？',options:[{t:'聊半小时就把家底交代了，约下周吃饭',s:3},{t:'聊得来就继续，看缘分',s:2},{t:'观察3个月再决定要不要深交',s:1},{t:'认识就够了，不主动发展',s:0}]},
+{q:'你的朋友圈/社交动态主要发什么？',options:[{t:'吃饭晒饭，旅游晒景，心情晒文，一天N条',s:3},{t:'偶尔发发生活片段',s:2},{t:'只转发不原创，立个人设',s:1},{t:'从来不发，只看',s:0}]},
+{q:'你理想的周末是？',options:[{t:'约满4场局，朋友轮流见，越热闹越好',s:3},{t:'见1-2个朋友，剩下时间自己待着',s:2},{t:'窝家追剧，出门只去楼下便利店',s:1},{t:'和床融为一体，外卖都不想点',s:0}]}
+];
+let current=0,total=0;
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function startQuiz(){current=0;total=0;renderQuestion();showPage('page-quiz')}
+function renderQuestion(){
+  const q=QUESTIONS[current];
+  document.getElementById('question-card').innerHTML='<div class="q-num">第 '+(current+1)+' 题 · '+['社交主动度','社交主动度','社交场景','情绪浓度','生活节奏','工作风格','社交回应','沟通方式','边界感','社交节奏','自我表达','生活偏好'][current]+'</div><div class="q-text">'+q.q+'</div>'+q.options.map((opt,i)=>'<div class="option" onclick="selectOption('+i+','+opt.s+')"><div class="opt-dot">'+String.fromCharCode(65+i)+'</div><div class="opt-text">'+opt.t+'</div></div>').join('');
+  const pct=Math.round((current/QUESTIONS.length)*100);
+  document.getElementById('progress-label').textContent='第 '+(current+1)+' / '+QUESTIONS.length+' 题';
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
+}
+function selectOption(idx,score){
+  total+=score;
+  document.querySelectorAll('.option').forEach((el,i)=>el.classList.toggle('selected',i===idx));
+  setTimeout(()=>{current++;if(current<QUESTIONS.length)renderQuestion();else showLoading()},280);
+}
+function showLoading(){
+  showPage('page-loading');
+  const steps=['观察你的社交浓度','统计你的情绪密度','计算边界感指数','分析表达欲望','生成浓淡风格'];
+  let i=0;document.getElementById('loading-step').textContent=steps[0];
+  const timer=setInterval(()=>{i++;if(i<steps.length)document.getElementById('loading-step').textContent=steps[i];else{clearInterval(timer);showResult()}},500);
+}
+function getResult(){
+  if(total<=12)return 'ice';
+  else if(total<=24)return 'cool';
+  else if(total<=36)return 'mid';
+  else return 'strong';
+}
+const TYPES={
+ice:{
+badge:'极致淡人',badgeBg:'#2c5f6f',badgeColor:'#fff',
+title:'极致淡人',
+label:'社交界的薄荷水，凉薄清爽。',
+scoreColor:'#2c5f6f',
+feature:'你是朋友圈的隐形人，群聊的潜水冠军。半年不更新动态，已读不回是基本操作，能文字绝不语音，能表情包绝不动嘴。你的情绪像一杯凉白开，不是没有，只是懒得表达。朋友一度怀疑你是不是把他们删了。',
+comfort:'一个人待着最舒服，社交是消耗品。你的能量来自独处，不是孤独，是选择。',
+attract:'你会吸引"浓人"——他们觉得你神秘、有边界、不油腻，想把你拉进热闹里。',
+tip:'偶尔主动一次，朋友会感动到哭。淡不是错，但别淡到让在乎你的人以为你不在乎。',
+mc:'我是【极致淡人】🍵\n社交浓度0%，朋友圈半年没更新\n能已读不回的绝不开口，我是社交界的薄荷水\n#浓淡风格指数 #你是浓人还是淡人'
+},
+cool:{
+badge:'淡中带浓',badgeBg:'#5a7a8a',badgeColor:'#fff',
+title:'淡中带浓',
+label:'看似佛系，偶尔上头。',
+scoreColor:'#5a7a8a',
+feature:'你是"薛定谔的浓度"——平时佛系到出家，偶尔发疯到起飞。大多数时候你懒得社交、懒得表达、懒得争，但遇到真正感兴趣的事或人，会突然爆发出惊人的热情。你不是没有浓度，只是浓度不均匀，得看场合和对象。',
+comfort:'熟的地方放得开，陌生的地方收着。你的舒适区是有1-2个懂你的人在场。',
+attract:'你会吸引同类——看似冷淡其实有趣的人，互相试探后才发现彼此都是宝藏。',
+tip:'别总等别人来发现你的有趣。偶尔主动一点，世界会给你更多回应。',
+mc:'我是【淡中带浓】🧊🔥\n平时佛系，偶尔上头\n社交浓度30%，薛定谔的我\n#浓淡风格指数 #淡中带浓'
+},
+mid:{
+badge:'浓淡适中',badgeBg:'#d6892b',badgeColor:'#fff',
+title:'浓淡适中',
+label:'该浓时浓，该淡时淡。',
+scoreColor:'#d6892b',
+feature:'你是社交界的"高情商选手"，懂得什么时候该上什么时候该收。热闹的场合你带得动气氛，安静的场合你待得住。你的情绪浓度刚刚好，不会让人觉得油腻，也不会让人觉得冷漠。朋友圈里你是那个"什么局都叫上TA"的人。',
+comfort:'人群里自在，独处也舒服。你的舒适区很宽，能进能退。',
+attract:'你会吸引各种类型的人——你的适配性高，谁和你相处都觉得刚刚好。',
+tip:'你已经是社交天花板了。唯一要注意的是：别为了照顾所有人，忘了照顾自己。',
+mc:'我是【浓淡适中】⚖️\n该浓时浓，该淡时淡\n社交浓度60%，什么局都叫上我\n#浓淡风格指数 #浓淡适中'
+},
+strong:{
+badge:'极致浓人',badgeBg:'#c0392b',badgeColor:'#fff',
+title:'极致浓人',
+label:'人间小太阳，热度爆表。',
+scoreColor:'#c0392b',
+feature:'你是社交界的"永动机"，能量满格永不掉电。朋友圈一天三条起步，群聊永远在线，表情包库存上千，语音消息60秒连发。你的情绪浓烈真挚，爱就大声说，恨就当场讲。朋友又爱又怕——爱你带气氛，怕你把他们拉进第18个群。',
+comfort:'人越多越嗨，一个人就emo。你的能量来自互动，安静对你来说是惩罚。',
+attract:'你会吸引"淡人"——他们被你的热情感染，你负责热闹，他们负责稳住你。',
+tip:'你的热情是礼物，但不是所有人都接得住。给淡人留点空间，浓度别太高，否则他们会被"腌入味"。',
+mc:'我是【极致浓人】🌞\n人间小太阳，热度爆表\n社交浓度100%，朋友圈一天三条起\n#浓淡风格指数 #你是浓人还是淡人'
+}
+};
+function showResult(){
+  const type=getResult();
+  const t=TYPES[type];
+  const badge=document.getElementById('result-badge');
+  badge.textContent=t.badge;badge.style.background=t.badgeBg;badge.style.color=t.badgeColor;
+  document.getElementById('result-title').textContent=t.title;
+  document.getElementById('result-label').textContent='"'+t.label+'"';
+  document.getElementById('score-num').textContent=total+'/48';
+  const fill=document.getElementById('score-fill');
+  fill.style.width=((total/48)*100)+'%';
+  fill.style.background=t.scoreColor;
+  document.getElementById('feature-text').textContent=t.feature;
+  document.getElementById('comfort-text').textContent=t.comfort;
+  document.getElementById('attract-text').textContent=t.attract;
+  document.getElementById('tip-text').textContent=t.tip;
+  document.getElementById('mc-content').innerHTML=t.mc.replace(/\n/g,'<br>');
+  showPage('page-result');
+}
+function shareResult(){
+  const type=getResult();const t=TYPES[type];
+  const text='我算了浓淡风格指数，结果是【'+t.badge+'】'+total+'分。你是浓人还是淡人？来算算';
+  if(navigator.share){navigator.share({title:'浓淡风格指数',text}).catch(()=>{})}
+  else{const url=window.location.href;if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});alert('结果已生成，链接已复制，发给朋友一起算：\n'+url)}
+}
+function restart(){startQuiz()}
+</script>
+</body>
+</html>
