@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TA是在吊着你，还是真喜欢你？｜12题真心指数判断工具</title>
+<style>
+:root{
+  --bg:#fbf5f0;
+  --bg-deep:#f5ebe2;
+  --card:#ffffff;
+  --text:#1a1a1a;
+  --text-light:#6b6b6b;
+  --danger:#d63031;
+  --danger-dark:#a82020;
+  --danger-light:#fce8e8;
+  --warn:#e67e22;
+  --warn-light:#fdf0e0;
+  --ok:#00a878;
+  --ok-light:#e0f5ee;
+  --ink:#1a1a1a;
+  --line:#e8dccc;
+  --radius:16px;
+  --shadow:0 6px 20px rgba(214,48,49,0.08);
+  --shadow-lg:0 12px 32px rgba(214,48,49,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg);overflow-x:hidden}
+.app::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent 0,transparent 32px,rgba(214,48,49,0.025) 32px,rgba(214,48,49,0.025) 33px);z-index:0}
+.page{position:relative;z-index:1;padding:28px 22px;min-height:100vh;display:none;flex-direction:column;justify-content:center;opacity:0;transform:translateY(16px);transition:all 0.45s cubic-bezier(0.22,1,0.36,1)}
+.page.active{display:flex;opacity:1;transform:translateY(0)}
+#page-result{display:none}
+#page-result.active{display:block;justify-content:flex-start;padding-top:28px;padding-bottom:50px}
+
+/* 顶部警示条 */
+.warn-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding:8px 14px;background:var(--ink);color:#fff;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:2px}
+.warn-bar .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--danger);margin-right:6px;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* 开场页 */
+.intro-mark{text-align:center;font-size:56px;margin-bottom:14px;line-height:1}
+.intro-title{font-size:28px;font-weight:900;text-align:center;line-height:1.3;margin-bottom:14px;letter-spacing:-0.5px}
+.intro-title .red{color:var(--danger);position:relative}
+.intro-title .red::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:8px;background:var(--danger-light);z-index:-1}
+.intro-sub{font-size:13.5px;color:var(--text-light);text-align:center;line-height:1.75;margin-bottom:22px;padding:0 6px}
+.pain-box{background:var(--card);border-radius:var(--radius);padding:18px 18px;box-shadow:var(--shadow);margin-bottom:16px;border-left:4px solid var(--danger)}
+.pain-box h4{font-size:12px;font-weight:800;color:var(--danger);margin-bottom:12px;letter-spacing:1px}
+.pain-item{display:flex;gap:9px;margin-bottom:8px;font-size:13px;line-height:1.55;color:var(--text)}
+.pain-item:last-child{margin-bottom:0}
+.pain-dot{flex-shrink:0;width:5px;height:5px;border-radius:50%;background:var(--danger);margin-top:8px}
+.gain-box{background:var(--ink);color:#fff;border-radius:var(--radius);padding:20px;margin-bottom:24px}
+.gain-box h4{font-size:12px;font-weight:800;color:var(--danger);margin-bottom:14px;letter-spacing:1px}
+.gain-item{display:flex;gap:10px;margin-bottom:10px;font-size:13px;line-height:1.55}
+.gain-item:last-child{margin-bottom:0}
+.gain-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.btn-primary{width:100%;padding:17px;background:var(--danger);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:800;letter-spacing:1px;cursor:pointer;box-shadow:0 8px 20px rgba(214,48,49,0.3);transition:all 0.2s}
+.btn-primary:active{transform:scale(0.98)}
+.intro-foot{font-size:11px;color:var(--text-light);text-align:center;margin-top:14px;line-height:1.6}
+
+/* 答题页 */
+.quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.quiz-no{font-size:12px;font-weight:800;color:var(--danger);letter-spacing:1px}
+.quiz-dim{font-size:11px;color:var(--text-light);background:var(--bg-deep);padding:4px 10px;border-radius:6px}
+.progress-bar{height:5px;background:var(--bg-deep);border-radius:3px;overflow:hidden;margin-bottom:22px}
+.progress-fill{height:100%;background:var(--danger);border-radius:3px;transition:width 0.4s}
+.q-os{font-size:12px;color:var(--text-light);font-style:italic;margin-bottom:10px;padding-left:10px;border-left:2px solid var(--line);line-height:1.5}
+.q-title{font-size:18px;font-weight:800;line-height:1.5;margin-bottom:22px;letter-spacing:-0.3px}
+.opt-list{display:flex;flex-direction:column;gap:11px}
+.opt{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:15px 16px;cursor:pointer;transition:all 0.2s;font-size:14px;line-height:1.5;position:relative}
+.opt:active{transform:scale(0.98)}
+.opt.selected{border-color:var(--danger);background:var(--danger-light)}
+.opt-tag{position:absolute;top:11px;right:13px;font-size:10px;font-weight:800;color:var(--text-light);background:var(--bg-deep);padding:3px 7px;border-radius:5px;letter-spacing:1px}
+
+/* 加载页 */
+.loading{text-align:center;padding:60px 0}
+.loading-mark{font-size:64px;margin-bottom:18px;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:0.7}}
+.loading-text{font-size:14px;color:var(--text-light);line-height:1.8}
+.loading-bar{width:200px;height:4px;background:var(--bg-deep);border-radius:2px;margin:18px auto 0;overflow:hidden}
+.loading-bar-fill{height:100%;background:var(--danger);border-radius:2px;animation:load 2s ease forwards}
+@keyframes load{from{width:0}to{width:100%}}
+
+/* 结果页 */
+.result-warn-bar{margin-bottom:18px}
+.result-emoji{text-align:center;font-size:64px;margin-bottom:10px;line-height:1}
+.result-score-box{text-align:center;margin-bottom:22px;padding:24px 0;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.result-score-box::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--score-color,var(--danger))}
+.score-label{font-size:11px;font-weight:800;color:var(--text-light);letter-spacing:2px;margin-bottom:6px}
+.score-num{font-size:56px;font-weight:900;color:var(--score-color,var(--danger));line-height:1;letter-spacing:-2px}
+.score-name{font-size:18px;font-weight:800;margin-top:10px;line-height:1.4;padding:0 20px}
+.score-conclusion{font-size:13.5px;color:var(--text);line-height:1.7;margin-top:12px;padding:0 20px;text-align:left;background:var(--bg-deep);border-radius:10px;padding:14px}
+.sec{margin-bottom:18px}
+.sec-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:0.5px}
+.sec-title .ico{font-size:16px}
+.sec-title .bar{flex:1;height:1px;background:var(--line)}
+.signal-card{background:var(--card);border-radius:12px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow);border-left:4px solid var(--danger)}
+.signal-card.ok{border-left-color:var(--ok)}
+.signal-name{font-size:13px;font-weight:800;color:var(--danger);margin-bottom:7px}
+.signal-card.ok .signal-name{color:var(--ok)}
+.signal-desc{font-size:13px;line-height:1.65;color:var(--text)}
+.script-card{background:var(--ink);color:#fff;border-radius:12px;padding:15px;margin-bottom:10px}
+.script-tag{font-size:11px;font-weight:800;color:var(--danger);margin-bottom:8px;letter-spacing:1px}
+.script-text{font-size:13.5px;line-height:1.7;color:#fff}
+.script-text::before{content:"\"";color:var(--danger);font-size:20px;font-weight:900;margin-right:2px}
+.script-text::after{content:"\"";color:var(--danger);font-size:20px;font-weight:900;margin-left:2px}
+.week-card{background:var(--card);border-radius:12px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow)}
+.week-head{font-size:13px;font-weight:800;color:var(--danger);margin-bottom:10px;letter-spacing:0.5px}
+.day-row{display:flex;gap:8px;margin-bottom:7px;font-size:12.5px;line-height:1.5}
+.day-row:last-child{margin-bottom:0}
+.day-tag{flex-shrink:0;font-weight:800;color:var(--text-light);min-width:38px}
+.day-text{flex:1;color:var(--text)}
+.expect-row{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:12px;color:var(--text-light);line-height:1.5}
+.expect-row b{color:var(--danger)}
+.moments-card{background:linear-gradient(135deg,var(--danger-dark),var(--danger));color:#fff;border-radius:var(--radius);padding:20px;text-align:center;margin-top:6px}
+.moments-card .mc-label{font-size:11px;opacity:0.85;margin-bottom:10px;letter-spacing:1px;font-weight:700}
+.moments-card .mc-text{font-size:14px;line-height:1.8;white-space:pre-line}
+.result-foot{text-align:center;font-size:11px;color:var(--text-light);margin-top:24px;line-height:1.7;padding:0 20px}
+.btn-restart{width:100%;padding:14px;background:var(--card);color:var(--danger);border:2px solid var(--danger);border-radius:12px;font-size:14px;font-weight:800;margin-top:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- 开场页 -->
+<div class="page active" id="page-intro">
+  <div class="warn-bar"><span><span class="dot"></span>RISK SCAN · 情感风险扫描</span><span>FILE_072.log</span></div>
+  <div class="intro-mark">🚩</div>
+  <h1 class="intro-title">TA是在<span class="red">吊着你</span>，<br>还是真喜欢你？</h1>
+  <p class="intro-sub">12题真心指数判断工具<br>帮你省下3个月内耗时间，不再瞎猜</p>
+
+  <div class="pain-box">
+    <h4>⚠️ 这些症状，你中了几条？</h4>
+    <div class="pain-item"><span class="pain-dot"></span><span>每天研究TA每句话，猜到半夜睡不着</span></div>
+    <div class="pain-item"><span class="pain-dot"></span><span>暧昧超过1个月，TA就是不主动确定关系</span></div>
+    <div class="pain-item"><span class="pain-dot"></span><span>已读不回、忽冷忽热，你却舍不得放手</span></div>
+    <div class="pain-item"><span class="pain-dot"></span><span>想止损又怕错过，反复内耗</span></div>
+  </div>
+
+  <div class="gain-box">
+    <h4>✓ 做完这个判断，你会拿到：</h4>
+    <div class="gain-item"><span class="gain-num">1</span><span>一个0-100%的真心指数（具体到个位数）</span></div>
+    <div class="gain-item"><span class="gain-num">2</span><span>3个TA"吊着你"的实锤信号（附行为对照）</span></div>
+    <div class="gain-item"><span class="gain-num">3</span><span>3句可直接复制的话术（摊牌/试探/告别）</span></div>
+    <div class="gain-item"><span class="gain-num">4</span><span>一份30天反内耗行动指南（具体到每周）</span></div>
+    <div class="gain-item"><span class="gain-num">5</span><span>一张朋友圈截图卡（仅TA可见，含蓄表态）</span></div>
+  </div>
+
+  <button class="btn-primary" onclick="startQuiz()">开始扫描真心指数 →</button>
+  <p class="intro-foot">基于亲密关系发展心理学维度设计 · 5分钟出结果<br>本工具仅供参考，不构成专业建议</p>
+</div>
+
+<!-- 答题页 -->
+<div class="page" id="page-quiz">
+  <div class="warn-bar"><span><span class="dot"></span>SCANNING · 扫描中</span><span id="progress-label">1/12</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:8%"></div></div>
+  <div class="quiz-top">
+    <span class="quiz-no" id="quiz-no">Q.01</span>
+    <span class="quiz-dim" id="quiz-dim">主动频率</span>
+  </div>
+  <p class="q-os" id="q-os"></p>
+  <h2 class="q-title" id="q-title"></h2>
+  <div class="opt-list" id="opt-list"></div>
+</div>
+
+<!-- 加载页 -->
+<div class="page" id="page-loading">
+  <div class="loading">
+    <div class="loading-mark">🔍</div>
+    <p class="loading-text">正在分析TA的真实意图…<br>计算真心指数中</p>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  </div>
+</div>
+
+<!-- 结果页 -->
+<div class="page" id="page-result">
+  <div class="warn-bar result-warn-bar"><span><span class="dot"></span>SCAN COMPLETE · 扫描完成</span><span>REPORT_072</span></div>
+  <div id="result-content"></div>
+  <button class="btn-restart" onclick="location.reload()">↻ 重新扫描</button>
+</div>
+
+</div>
+
+<script>
+const QUESTIONS=[
+{dim:'主动频率',os:'每次都是我先开口，我是不是太上赶着了？',q:'最近一周，TA主动找你聊天的次数是？',opts:[
+  {t:'3次以上，而且会找话题延续，不是敷衍回一句',s:3},
+  {t:'1-2次，但回复内容挺认真，不像应付',s:2},
+  {t:'基本没有，都是我主动，TA"嗯嗯哈哈"接话',s:1},
+  {t:'0次，我发过去TA隔半天才回，从不主动',s:0}]},
+{dim:'回复速度',os:'已读不回是真的会让人心态崩。',q:'你发消息后，TA通常多久回？',opts:[
+  {t:'10分钟内，或者在忙会提前说"等下回"，然后真的回',s:3},
+  {t:'半小时到几小时，但回复内容有质量，不是单字',s:2},
+  {t:'经常隔天回，理由永远是"刚看到""太忙了"',s:1},
+  {t:'朋友圈在更新，但我的消息已读不回',s:0}]},
+{dim:'见面邀约',os:'都暧昧三个月了，连顿饭都不愿意见？',q:'关于见面这件事，真实情况是？',opts:[
+  {t:'TA主动约过，且会提前定时间地点，不是临时起意',s:3},
+  {t:'我提过，TA答应了且真的赴约，没放鸽子',s:2},
+  {t:'我提过几次，TA总有理由推掉，"下次一定"',s:1},
+  {t:'约了三次以上都被拒，或者见了面TA玩手机',s:0}]},
+{dim:'未来规划',os:'避而不谈未来，是不是压根没打算长走？',q:'TA有没有跟你聊过三个月以后的事？',opts:[
+  {t:'主动聊过，比如"年底我们一起去XX""明年想跟你…"',s:3},
+  {t:'我提起时TA会接话，态度积极，但没主动提过',s:2},
+  {t:'一聊未来就岔开话题，"走一步看一步吧"',s:1},
+  {t:'明确说过"我不喜欢规划太远""顺其自然"',s:0}]},
+{dim:'社交圈融入',os:'藏得这么深，是不是怕别人知道我存在？',q:'TA的朋友圈/同事/家人，你知道多少？',opts:[
+  {t:'TA主动提过朋友家人的事，甚至想介绍我认识',s:3},
+  {t:'我问起TA会说，但没主动分享过',s:2},
+  {t:'闭口不提，问就是"没什么好说的"',s:1},
+  {t:'TA社交账号里完全没我的痕迹，像我不存在',s:0}]},
+{dim:'排他性',os:'备胎这个词，我不想用在自己身上。',q:'TA身边有没有"关系不清不楚"的其他异性？',opts:[
+  {t:'TA主动说过"我没在跟别人聊"，且行为一致',s:3},
+  {t:'没明确说过，但我看TA手机/社交圈干干净净',s:2},
+  {t:'有几个"只是朋友"的异性，TA解释得含糊',s:1},
+  {t:'我发现TA同时在跟几个人暧昧，或有前任没断干净',s:0}]},
+{dim:'情感表达',os:'模棱两可的话听多了，我都不信了。',q:'TA有没有对你说过超出"朋友"的话？',opts:[
+  {t:'明确表达过喜欢/想念，且行为跟上',s:3},
+  {t:'偶尔会说暧昧的话，但没挑明关系',s:2},
+  {t:'嘴甜但没行动，"你很重要""舍不得你"张口就来',s:1},
+  {t:'从不说清楚，我一问就"你想多了""别逼我"',s:0}]},
+{dim:'冲突处理',os:'冷暴力真的比吵架还伤。',q:'你们有小矛盾时，TA的态度是？',opts:[
+  {t:'主动沟通解决，不隔夜，会道歉',s:3},
+  {t:'当时冷淡，过会儿会找台阶下',s:2},
+  {t:'冷处理，等我先低头，从不认错',s:1},
+  {t:'直接消失几天，回来当没事发生',s:0}]},
+{dim:'金钱态度',os:'不是图钱，是看态度。',q:'关于花钱，真实情况是？',opts:[
+  {t:'主动买单/送礼，且会记得我的喜好',s:3},
+  {t:'AA但有来有往，我请一顿TA回一顿',s:2},
+  {t:'基本我花得多，TA偶尔象征性付一次',s:1},
+  {t:'一直让我花钱，或者借钱不还',s:0}]},
+{dim:'朋友圈互动',os:'点赞都不给，是没看见还是不在乎？',q:'TA对我的朋友圈/动态是什么反应？',opts:[
+  {t:'经常点赞评论，我发emo会私聊问怎么了',s:3},
+  {t:'偶尔互动，但我说重要的事TA会回应',s:2},
+  {t:'基本不互动，我发什么都不吭声',s:1},
+  {t:'从不点赞，但TA自己发得很勤',s:0}]},
+{dim:'承诺意愿',os:'推一下动一下，我不推就不动。',q:'我试探关系时，TA的反应是？',opts:[
+  {t:'主动提过确定关系，或明确表达过"想跟我认真"',s:3},
+  {t:'我提时TA没回避，说"再了解了解"且有实际行动',s:2},
+  {t:'一提就回避，"现在这样不是挺好的吗"',s:1},
+  {t:'明确说"不想谈恋爱""我配不上你"但又不放手',s:0}]},
+{dim:'关键时刻反应',os:'真喜欢一个人，不会在她最难的时候消失。',q:'我生病/遇到难处/情绪崩溃时，TA怎么做？',opts:[
+  {t:'第一时间关心，主动帮忙，甚至放下自己的事',s:3},
+  {t:'会问候，提供建议，但不会主动到场',s:2},
+  {t:'象征性说一句"多喝热水""照顾好自己"，然后没下文',s:1},
+  {t:'已读不回，或者第二天才回"昨天没看到"',s:0}]}
+];
+
+const RESULTS={
+high:{
+  emoji:'💌',
+  scoreColor:'#00a878',
+  score:85,
+  name:'TA是真的喜欢你，别再作了',
+  conclusion:'TA对你的喜欢是实打实的——不是嘴炮，不是备胎，是那种会把你放进未来规划、愿意为你花时间花心思的真喜欢。你现在最大的问题不是TA不爱，而是你自己作——总怕被辜负，反复试探，把一个真心人往绝路上逼。再这样下去，把TA逼走的就是你自己。',
+  signals:[
+    {ok:true,name:'信号1：主动频率稳定',desc:'TA每周主动找你3次以上，且会延续话题，不是"嗯嗯"敷衍。你回得慢TA会问"在忙吗"——一个吊着你的人，绝不会主动确认你的状态。'},
+    {ok:true,name:'信号2：把你放进未来',desc:'TA聊过三个月以后的事，且是具体的事——"年底一起去XX""明年想带你见我爸妈"。吊着你的人最怕谈未来，因为未来里没你。'},
+    {ok:true,name:'信号3：关键时刻不掉链子',desc:'你生病/崩溃/遇到难处，TA第一时间出现，不是"多喝热水"四个字打发。这是最硬的指标——关键时刻的反应骗不了人。'}
+  ],
+  scripts:[
+    {tag:'① 推进关系话术（发微信）',text:'最近想了很多，觉得我们这样挺好的。下周末有空吗，想认真跟你聊聊我们的事——不是逼你，是真的想跟你往前走一步。'},
+    {tag:'② 试探反应话术（当面说）',text:'我问你个问题，你不用马上答。你心里，把我们当什么？我想听真话，哪怕跟我预想的不一样。'},
+    {tag:'③ 体面撤退话术（决定止损时发——这结果基本用不上）',text:'想了一晚上，可能我们节奏不太一样。你是个好人，但我需要更明确的关系。如果给不了，我选择先停一停。希望你能懂。'}
+  ],
+  weeks:[
+    {head:'第1周：停止试探，开始确认',days:[
+      ['周一','发一条仅TA可见的朋友圈，内容是你俩的共同回忆（一首歌/一家店）'],
+      ['周三','主动约TA周末见面，定具体时间地点'],
+      ['周五','见面时用"试探反应话术"问一句'],
+      ['周日','整理这一周TA的主动次数，写下来']
+    ],expect:'TA主动≥3次，且会回应你的试探',plan:'若主动<3次，进入结果二重新判断'},
+    {head:'第2周：观察排他性',days:[
+      ['周一','聊天时提到"我朋友问我们什么关系"'],
+      ['周三','看TA社交账号最近一周的互动'],
+      ['周五','约TA见TA的朋友'],
+      ['周日','综合判断排他性']
+    ],expect:'TA会主动表态，社交圈干净',plan:'若有暧昧异性，重判进入结果二/三'},
+    {head:'第3周：谈未来',days:[
+      ['周一','聊聊年底/明年的计划，看TA接不接'],
+      ['周三','用"推进关系话术"正式聊一次'],
+      ['周五','确定关系后，发朋友圈官宣（仅亲密可见）'],
+      ['周日','复盘这一个月']
+    ],expect:'关系确定，未来有TA',plan:'若仍模糊，延长观察一周'},
+    {head:'第4周：巩固关系',days:[
+      ['周一','安排一次TA喜欢的约会'],
+      ['周三','聊聊双方家庭的期待'],
+      ['周五','一起做件新鲜事（手工/爬山）'],
+      ['周日','写下这一个月的收获']
+    ],expect:'感情升温，心态平稳',plan:'正常经营即可'}
+  ],
+  mc:'检测了我的真心指数：85% 💌\n原来那个让我猜到失眠的人\n一直在用我看不到的方式认真对我\n这一次，我选择相信\n#真心指数 #别再作了'
+},
+mid:{
+  emoji:'🌗',
+  scoreColor:'#e67e22',
+  score:58,
+  name:'TA在犹豫，但还没下定论——你还有窗口期',
+  conclusion:'TA对你有好感，但还没到"非你不可"的程度——你在TA的候选名单上，但不是唯一，也不是第一。这不是死刑判决，但你必须清醒：现在的TA，给不了你想要的安全感。接下来30天是你最后的窗口期，用对了方法能逆转，用错了就彻底凉。',
+  signals:[
+    {ok:false,name:'信号1：主动但不持续',desc:'TA会主动找你，但频率不稳定——这周天天聊，下周突然消失。真心的人主动频率是稳定的，忽冷忽热就是典型的"备选待遇"。'},
+    {ok:false,name:'信号2：见光死倾向',desc:'约见面TA会答应，但经常临时改时间/放鸽子，或者见面时心不在焉。一个真喜欢你的人，会把你放进日程表，不是"有空再说"。'},
+    {ok:false,name:'信号3：关系模糊化',desc:'你一提关系TA就回避，"现在这样不是挺好吗""我不想破坏我们"。这是最经典的吊着话术——既不确认，也不放你走。'}
+  ],
+  scripts:[
+    {tag:'① 推进关系话术（发微信）',text:'我想了很久，觉得我们该聊聊了。我喜欢你，但我不想一直处在不确定里。这周末见一面，认真说清楚——不管结果是什么，我都能接受。'},
+    {tag:'② 试探反应话术（当面说）',text:'我问你，如果我说我想跟你认真，你的第一反应是什么？别想，就说。'},
+    {tag:'③ 体面撤退话术（决定止损时发）',text:'一个月了，我想我也该给自己一个交代了。我喜欢你，但我更想要一段确定的关系。如果你给不了，我尊重，但我得走了。谢谢你这段时间。'}
+  ],
+  weeks:[
+    {head:'第1周：降温测试',days:[
+      ['周一','停止主动找TA，整整一周不先开口'],
+      ['周三','朋友圈发一条状态不错的内容（不提TA）'],
+      ['周五','TA找你时回复慢一点，但内容有质量'],
+      ['周日','记录这周TA主动几次']
+    ],expect:'TA会主动找你，且频率≥3次',plan:'若一周没主动，直接进结果三'},
+    {head:'第2周：制造稀缺感',days:[
+      ['周一','提一次"有别的男生/女生在追你"（玩笑口吻）'],
+      ['周三','周末安排跟朋友的聚会，不发TA'],
+      ['周五','约TA见面，但这次让TA定时间'],
+      ['周日','复盘TA的态度变化']
+    ],expect:'TA会有危机感，变得更主动',plan:'若无反应，标记-1，进入摊牌'},
+    {head:'第3周：摊牌',days:[
+      ['周一','用"推进关系话术"正式聊'],
+      ['周三','若TA说要考虑，给3天期限'],
+      ['周五','期限到，要答案'],
+      ['周日','接受结果，不纠缠']
+    ],expect:'TA会表态，明确结论',plan:'模糊则视为拒绝，用撤退话术'},
+    {head:'第4周：执行决定',days:[
+      ['周一','若确定关系，正常交往；若被拒，用撤退话术'],
+      ['周三','删/隐藏TA的社交痕迹'],
+      ['周五','给自己写一封信，告别或开始'],
+      ['周日','写下这一个月的收获']
+    ],expect:'关系明朗或干净结束',plan:'不回头，不反复'}
+  ],
+  mc:'检测了我的真心指数：58% 🌗\n原来我在你心里\n是"还没下定论"的那个选项\n这一次，我给你30天\n也给我自己30天\n#真心指数 #窗口期'
+},
+low:{
+  emoji:'🌑',
+  scoreColor:'#d63031',
+  score:23,
+  name:'TA在吊着你，再不跑就晚了',
+  conclusion:'别再骗自己了——TA吊着你的概率是87%。你不是"还在了解"，你是备胎，是TA寂寞时的消遣，是"反正她/他不会走"的安全感来源。继续耗下去，你只会越来越卑微，TA只会越来越肆无忌惮。现在止损，你还来得及体面地走；再拖三个月，你会连自己都不认识自己。',
+  signals:[
+    {ok:false,name:'信号1：主动权永远在TA手里',desc:'TA找你时热情似火，你找TA时冷淡如冰。你发消息已读不回，TA需要你时秒回你——这不是忙，是选择。真忙的人会提前说"等下回"，吊着你的人永远"刚看到"。'},
+    {ok:false,name:'信号2：关系永远模糊',desc:'你们认识多久了？三个月？半年？关系确定了吗？没有。TA的口头禅是"顺其自然""现在这样挺好的""我不想定义"——翻译过来就是"我不想对你负责，但我不想失去你"。'},
+    {ok:false,name:'信号3：关键时刻消失',desc:'你生病、崩溃、遇到难处，TA永远"多喝热水""照顾好自己"然后没下文。一个真喜欢你的人，不会在你最难的时候玩消失——这是最硬的判断标准，没有之一。'}
+  ],
+  scripts:[
+    {tag:'① 推进关系话术（基本无效，但可最后试一次）',text:'我需要一段明确的关系，不是顺其自然。如果你给不了，我理解，但我得走了。这是最后一次聊这个。'},
+    {tag:'② 试探反应话术（当面说，看TA真面目）',text:'我问你，如果我现在彻底消失，你会怎么样？说真话。'},
+    {tag:'③ 体面撤退话术（强烈建议直接用这条）',text:'想了一晚上，我决定放过自己了。我喜欢你，但我更喜欢那个有尊严的自己。谢谢你出现过，但我不能再陪你了。保重。'}
+  ],
+  weeks:[
+    {head:'第1周：物理断联',days:[
+      ['周一','发完"体面撤退话术"，立刻删/隐藏TA联系方式'],
+      ['周二','取关TA所有社交账号'],
+      ['周三','把TA送的东西收起来'],
+      ['周五','约一个能倾诉的朋友，把话说完'],
+      ['周日','写下"我为什么喜欢TA"——你会发现没那么喜欢']
+    ],expect:'物理隔离完成，情绪释放',plan:'TA回来找也别回，这是陷阱'},
+    {head:'第2周：重建自我',days:[
+      ['周一','开始一项新的小习惯（运动/读书/学技能）'],
+      ['周三','朋友圈发一条状态不错的自拍'],
+      ['周五','见一个很久没见的老朋友'],
+      ['周日','复盘这周情绪波动']
+    ],expect:'情绪在减弱，自信在回升',plan:'反弹正常，坚持新习惯'},
+    {head:'第3周：扩大圈子',days:[
+      ['周一','参加一个新活动/聚会'],
+      ['周三','跟异性朋友正常社交'],
+      ['周五','整理自己的"择偶清单"'],
+      ['周日','复盘这周想起TA的次数']
+    ],expect:'想起TA的次数减少',plan:'不急着恋爱，先找回自己'},
+    {head:'第4周：彻底翻篇',days:[
+      ['周一','如果TA回来找你，问自己"我还要吗"'],
+      ['周三','删掉所有聊天记录/照片'],
+      ['周五','给自己写一封信'],
+      ['周日','写下这一个月的成长，翻篇']
+    ],expect:'彻底翻篇，准备迎接新的',plan:'大概率不要了，别回头'}
+  ],
+  mc:'检测了我的真心指数：23% 🌑\n原来我一直在\n用真心换套路\n这一次，我选择放过自己\n体面地走，比卑微地留更酷\n#真心指数 #反内耗 #止损'
+}
+};
+
+let current=0;
+let total=0;
+
+function startQuiz(){
+  document.getElementById('page-intro').classList.remove('active');
+  document.getElementById('page-quiz').classList.add('active');
+  showQuestion();
+}
+
+function showQuestion(){
+  const q=QUESTIONS[current];
+  document.getElementById('quiz-no').textContent='Q.'+String(current+1).padStart(2,'0');
+  document.getElementById('quiz-dim').textContent=q.dim;
+  document.getElementById('q-os').textContent='内心OS：'+q.os;
+  document.getElementById('q-title').textContent=q.q;
+  document.getElementById('progress-label').textContent=(current+1)+'/12';
+  document.getElementById('progress-fill').style.width=((current+1)/12*100)+'%';
+  const list=document.getElementById('opt-list');
+  list.innerHTML='';
+  const tags=['A','B','C','D'];
+  q.opts.forEach((o,i)=>{
+    const div=document.createElement('div');
+    div.className='opt';
+    div.innerHTML='<span class="opt-tag">'+tags[i]+'</span>'+o.t;
+    div.onclick=()=>selectOpt(div,o.s);
+    list.appendChild(div);
+  });
+}
+
+function selectOpt(el,s){
+  const opts=document.querySelectorAll('.opt');
+  opts.forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(()=>{
+    total+=s;
+    current++;
+    if(current>=12){
+      showLoading();
+    }else{
+      showQuestion();
+    }
+  },280);
+}
+
+function showLoading(){
+  document.getElementById('page-quiz').classList.remove('active');
+  document.getElementById('page-loading').classList.add('active');
+  setTimeout(showResult,2200);
+}
+
+function getResult(){
+  if(total>=27)return 'high';
+  else if(total>=15)return 'mid';
+  else return 'low';
+}
+
+function showResult(){
+  document.getElementById('page-loading').classList.remove('active');
+  document.getElementById('page-result').classList.add('active');
+  const type=getResult();
+  const r=RESULTS[type];
+  let html='';
+  html+='<div class="result-emoji">'+r.emoji+'</div>';
+  html+='<div class="result-score-box" style="--score-color:'+r.scoreColor+'">';
+  html+='<div class="score-label">真心指数</div>';
+  html+='<div class="score-num">'+r.score+'<span style="font-size:24px">%</span></div>';
+  html+='<div class="score-name">'+r.name+'</div>';
+  html+='<div class="score-conclusion">'+r.conclusion+'</div>';
+  html+='</div>';
+
+  html+='<div class="sec"><div class="sec-title"><span class="ico">'+(type==='high'?'✅':'🚩')+'</span>'+(type==='high'?'3个真心信号':'3个实锤信号')+'<span class="bar"></span></div>';
+  r.signals.forEach(s=>{
+    html+='<div class="signal-card'+(s.ok?' ok':'')+'"><div class="signal-name">'+s.name+'</div><div class="signal-desc">'+s.desc+'</div></div>';
+  });
+  html+='</div>';
+
+  html+='<div class="sec"><div class="sec-title"><span class="ico">💬</span>3句可直接复制的话术<span class="bar"></span></div>';
+  r.scripts.forEach(sc=>{
+    html+='<div class="script-card"><div class="script-tag">'+sc.tag+'</div><div class="script-text">'+sc.text+'</div></div>';
+  });
+  html+='</div>';
+
+  html+='<div class="sec"><div class="sec-title"><span class="ico">📋</span>30天反内耗行动指南<span class="bar"></span></div>';
+  r.weeks.forEach(w=>{
+    html+='<div class="week-card"><div class="week-head">'+w.head+'</div>';
+    w.days.forEach(d=>{
+      html+='<div class="day-row"><span class="day-tag">'+d[0]+'</span><span class="day-text">'+d[1]+'</span></div>';
+    });
+    html+='<div class="expect-row"><b>预期：</b>'+w.expect+'　<b>应对：</b>'+w.plan+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+
+  html+='<div class="sec"><div class="sec-title"><span class="ico">📸</span>朋友圈截图卡<span class="bar"></span></div>';
+  html+='<div class="moments-card"><div class="mc-label">朋友圈分享语（长按截图保存）</div><div class="mc-text">'+r.mc+'</div></div></div>';
+
+  html+='<div class="result-foot">本判断工具基于亲密关系发展心理学维度设计，仅供参考<br>不构成专业心理咨询建议，请理性看待结果</div>';
+
+  document.getElementById('result-content').innerHTML=html;
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
