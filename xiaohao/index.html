@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>关系消耗指数测试｜这段关系在滋养你,还是在消耗你？</title>
+<style>
+:root{
+  --bg:#f5f1ec;
+  --bg-deep:#ebe4dc;
+  --card:#ffffff;
+  --text:#2d2419;
+  --text-light:#7a6f5f;
+  --text-dim:#b0a698;
+  --ok:#5a8a6e;
+  --ok-light:#e6f0ea;
+  --warn:#c9923f;
+  --warn-light:#f7eed8;
+  --orange:#d97548;
+  --orange-light:#fbe8de;
+  --danger:#a83a3a;
+  --danger-light:#f3dfdf;
+  --ink:#1f1a14;
+  --line:#ddd3c4;
+  --radius:18px;
+  --shadow:0 6px 20px rgba(45,36,25,0.08);
+  --shadow-lg:0 12px 32px rgba(45,36,25,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg);overflow-x:hidden}
+.app::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(245,241,236,1) 0%,rgba(245,241,236,0.95) 40%,rgba(243,223,223,0.3) 80%,rgba(168,58,58,0.04) 100%);z-index:0}
+.app::after{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 15% 8%,rgba(90,138,110,0.05) 0,transparent 35%),radial-gradient(circle at 85% 92%,rgba(168,58,58,0.06) 0,transparent 40%);z-index:0}
+.page{position:relative;z-index:1;padding:28px 22px;min-height:100vh;display:none;flex-direction:column;justify-content:center;opacity:0;transform:translateY(16px);transition:all 0.45s cubic-bezier(0.22,1,0.36,1)}
+.page.active{display:flex;opacity:1;transform:translateY(0)}
+#page-result{display:none}
+#page-result.active{display:block;justify-content:flex-start;padding-top:28px;padding-bottom:50px}
+
+/* 顶部条 - 像电量/水位 */
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding:8px 14px;background:var(--card);border-radius:10px;font-size:11px;font-weight:700;letter-spacing:2px;box-shadow:var(--shadow)}
+.top-bar .left{display:flex;align-items:center;gap:6px;color:var(--text-light)}
+.battery{display:inline-flex;align-items:center;gap:3px}
+.battery-shell{width:24px;height:12px;border:1.5px solid var(--text-light);border-radius:2px;position:relative;padding:1px}
+.battery-fill{height:100%;background:var(--ok);border-radius:1px;transition:all 0.4s}
+
+/* 开场页 */
+.intro-mark{text-align:center;font-size:80px;margin-bottom:14px;line-height:1}
+.intro-title{font-size:28px;font-weight:900;text-align:center;line-height:1.3;margin-bottom:14px;letter-spacing:-0.5px;color:var(--ink)}
+.intro-title .warm{color:var(--ok)}
+.intro-title .drain{color:var(--danger);position:relative}
+.intro-title .drain::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:8px;background:var(--danger-light);z-index:-1}
+.intro-sub{font-size:13.5px;color:var(--text-light);text-align:center;line-height:1.75;margin-bottom:24px;padding:0 6px}
+.pain-box{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;border-left:4px solid var(--warn)}
+.pain-box h4{font-size:12px;font-weight:800;color:var(--warn);margin-bottom:12px;letter-spacing:1px}
+.pain-item{display:flex;gap:9px;margin-bottom:8px;font-size:13px;line-height:1.55;color:var(--text)}
+.pain-item:last-child{margin-bottom:0}
+.pain-dot{flex-shrink:0;width:5px;height:5px;border-radius:50%;background:var(--warn);margin-top:8px;opacity:0.7}
+.gain-box{background:linear-gradient(135deg,var(--ink),#3a2f23);color:#fff;border-radius:var(--radius);padding:20px;margin-bottom:24px}
+.gain-box h4{font-size:12px;font-weight:800;color:var(--warn);margin-bottom:14px;letter-spacing:1px}
+.gain-item{display:flex;gap:10px;margin-bottom:10px;font-size:13px;line-height:1.55}
+.gain-item:last-child{margin-bottom:0}
+.gain-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--warn);color:var(--ink);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.btn-primary{width:100%;padding:17px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:800;letter-spacing:1px;cursor:pointer;box-shadow:0 8px 20px rgba(45,36,25,0.3);transition:all 0.2s}
+.btn-primary:active{transform:scale(0.98)}
+.intro-foot{font-size:11px;color:var(--text-light);text-align:center;margin-top:14px;line-height:1.6}
+
+/* 答题页 */
+.quiz-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.quiz-no{font-size:12px;font-weight:800;color:var(--text-light);letter-spacing:1px}
+.quiz-dim{font-size:11px;color:var(--text-light);background:var(--bg-deep);padding:4px 10px;border-radius:6px}
+.progress-bar{height:5px;background:var(--bg-deep);border-radius:3px;overflow:hidden;margin-bottom:22px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--orange),var(--danger));border-radius:3px;transition:width 0.4s}
+.q-os{font-size:12px;color:var(--text-light);font-style:italic;margin-bottom:10px;padding-left:10px;border-left:2px solid var(--line);line-height:1.5}
+.q-title{font-size:18px;font-weight:800;line-height:1.5;margin-bottom:22px;letter-spacing:-0.3px}
+.opt-list{display:flex;flex-direction:column;gap:11px}
+.opt{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:15px 16px;cursor:pointer;transition:all 0.2s;font-size:14px;line-height:1.5;position:relative}
+.opt:active{transform:scale(0.98)}
+.opt.selected{border-color:var(--warn);background:var(--warn-light)}
+.opt-tag{position:absolute;top:11px;right:13px;font-size:10px;font-weight:800;color:var(--text-light);background:var(--bg-deep);padding:3px 7px;border-radius:5px;letter-spacing:1px}
+
+/* 加载页 */
+.loading{text-align:center;padding:60px 0}
+.loading-mark{font-size:64px;margin-bottom:18px;animation:drain 2s infinite}
+@keyframes drain{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.9)}}
+.loading-text{font-size:14px;color:var(--text-light);line-height:1.8}
+.loading-bar{width:200px;height:4px;background:var(--bg-deep);border-radius:2px;margin:18px auto 0;overflow:hidden}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--ok),var(--danger));border-radius:2px;animation:load 2s ease forwards}
+@keyframes load{from{width:0}to{width:100%}}
+
+/* 结果页 */
+.result-top-bar{margin-bottom:18px}
+.result-emoji{text-align:center;font-size:64px;margin-bottom:10px;line-height:1}
+.result-score-box{text-align:center;margin-bottom:22px;padding:24px 0;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.result-score-box::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--score-color,var(--warn))}
+.score-label{font-size:11px;font-weight:800;color:var(--text-light);letter-spacing:2px;margin-bottom:6px}
+.score-num{font-size:56px;font-weight:900;color:var(--score-color,var(--warn));line-height:1;letter-spacing:-2px}
+.score-level{font-size:18px;font-weight:800;margin-top:10px;line-height:1.4;padding:0 20px;color:var(--score-color,var(--warn))}
+.sec{margin-bottom:20px}
+.sec-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:0.5px;color:var(--ink)}
+.sec-title .ico{font-size:16px}
+.sec-title .bar{flex:1;height:1px;background:var(--line)}
+.state-box{background:var(--card);border-radius:14px;padding:18px;box-shadow:var(--shadow);font-size:13.5px;line-height:1.85;color:var(--text)}
+.state-box p{margin-bottom:8px}
+.state-box p:last-child{margin-bottom:0}
+.signal-card{background:var(--card);border-radius:12px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow);border-left:4px solid var(--score-color,var(--warn))}
+.signal-name{font-size:13px;font-weight:800;color:var(--score-color,var(--warn));margin-bottom:7px}
+.signal-desc{font-size:13px;line-height:1.65;color:var(--text)}
+.words-card{background:linear-gradient(135deg,var(--ink),#3a2f23);color:#fff;border-radius:14px;padding:18px;margin-bottom:0}
+.words-card .wc-label{font-size:11px;font-weight:800;color:var(--warn);margin-bottom:12px;letter-spacing:1px;opacity:0.9}
+.word-line{font-size:14px;line-height:1.7;margin-bottom:10px;padding-left:14px;position:relative}
+.word-line:last-child{margin-bottom:0}
+.word-line::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--warn)}
+.action-card{background:var(--card);border-radius:12px;padding:15px;box-shadow:var(--shadow);border-left:4px solid var(--ok)}
+.action-label{font-size:12px;font-weight:800;color:var(--ok);margin-bottom:8px;letter-spacing:0.5px}
+.action-text{font-size:13.5px;line-height:1.7;color:var(--text)}
+.script-card{background:var(--card);border-radius:12px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.script-tag{font-size:11px;font-weight:800;color:var(--orange);margin-bottom:8px;letter-spacing:1px}
+.script-text{font-size:13.5px;line-height:1.7;color:var(--text);font-style:italic}
+.list-card{background:var(--card);border-radius:12px;padding:15px;margin-bottom:10px;box-shadow:var(--shadow)}
+.list-head{font-size:13px;font-weight:800;color:var(--danger);margin-bottom:10px;letter-spacing:0.5px}
+.list-row{display:flex;gap:8px;margin-bottom:8px;font-size:12.5px;line-height:1.55}
+.list-row:last-child{margin-bottom:0}
+.list-day{flex-shrink:0;font-weight:800;color:var(--text-light);min-width:48px}
+.list-text{flex:1;color:var(--text)}
+.cross-sell{background:linear-gradient(135deg,var(--ink),#3a2f23);color:#fff;border-radius:var(--radius);padding:20px;margin-top:8px;text-align:center}
+.cross-sell .cs-label{font-size:11px;opacity:0.7;margin-bottom:8px;letter-spacing:1px;font-weight:700}
+.cross-sell .cs-text{font-size:13.5px;line-height:1.7;margin-bottom:10px}
+.cross-sell .cs-link{display:inline-block;font-size:13px;color:var(--warn);font-weight:700;border:1px solid var(--warn);padding:8px 16px;border-radius:8px;text-decoration:none}
+.result-foot{text-align:center;font-size:11px;color:var(--text-light);margin-top:24px;line-height:1.7;padding:0 20px}
+.btn-restart{width:100%;padding:14px;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:12px;font-size:14px;font-weight:800;margin-top:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- 开场页 -->
+<div class="page active" id="page-intro">
+  <div class="top-bar">
+    <div class="left">⚡ 关系消耗检测</div>
+    <div class="battery"><div class="battery-shell"><div class="battery-fill" style="width:100%"></div></div></div>
+  </div>
+  <div class="intro-mark">🕯️</div>
+  <h1 class="intro-title">关系<span class="warm">消耗</span>指数<br>这段关系在<span class="drain">滋养你</span>还是<span class="drain">消耗你</span>？</h1>
+  <p class="intro-sub">12道场景题,帮你看清这段关系<br>到底是在滋养你,还是在一点点抽干你</p>
+
+  <div class="pain-box">
+    <h4>⚠️ 这些状态,你中了几条？</h4>
+    <div class="pain-item"><span class="pain-dot"></span><span>在关系里感到疲惫,但又怀疑"是不是我想太多"</span></div>
+    <div class="pain-item"><span class="pain-dot"></span><span>委屈、不被珍惜,却又舍不得走</span></div>
+    <div class="pain-item"><span class="pain-dot"></span><span>朋友都劝分,自己却下不了决心</span></div>
+    <div class="pain-item"><span class="pain-dot"></span><span>为了留住TA,开始改自己</span></div>
+  </div>
+
+  <div class="gain-box">
+    <h4>✓ 做完你会拿到：</h4>
+    <div class="gain-item"><span class="gain-num">1</span><span>一个0-100的消耗指数（具体到个位数）</span></div>
+    <div class="gain-item"><span class="gain-num">2</span><span>精准到"你昨晚刚做过的事"的状态描述</span></div>
+    <div class="gain-item"><span class="gain-num">3</span><span>3个你正在经历的信号（每个都是日常场景）</span></div>
+    <div class="gain-item"><span class="gain-num">4</span><span>3句像深夜朋友递来温水的话</span></div>
+    <div class="gain-item"><span class="gain-num">5</span><span>具体到"今天就能做"的行动建议</span></div>
+  </div>
+
+  <button class="btn-primary" onclick="startQuiz()">开始检测消耗指数 →</button>
+  <p class="intro-foot">基于亲密关系心理学维度设计 · 5分钟出结果<br>本测试仅供参考,不构成专业建议</p>
+</div>
+
+<!-- 答题页 -->
+<div class="page" id="page-quiz">
+  <div class="top-bar">
+    <div class="left">⚡ 消耗检测中</div>
+    <span id="progress-label">1/12</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:8%"></div></div>
+  <div class="quiz-top">
+    <span class="quiz-no" id="quiz-no">Q.01</span>
+    <span class="quiz-dim" id="quiz-dim">情绪消耗</span>
+  </div>
+  <p class="q-os" id="q-os"></p>
+  <h2 class="q-title" id="q-title"></h2>
+  <div class="opt-list" id="opt-list"></div>
+</div>
+
+<!-- 加载页 -->
+<div class="page" id="page-loading">
+  <div class="loading">
+    <div class="loading-mark">🕯️</div>
+    <p class="loading-text">正在分析这段关系…<br>计算消耗指数中</p>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  </div>
+</div>
+
+<!-- 结果页 -->
+<div class="page" id="page-result">
+  <div class="top-bar result-top-bar">
+    <div class="left">⚡ 检测完成</div>
+    <span>REPORT</span>
+  </div>
+  <div id="result-content"></div>
+  <button class="btn-restart" onclick="location.reload()">↻ 重新检测</button>
+</div>
+
+</div>
+
+<script>
+const QUESTIONS=[
+{dim:'情绪消耗',os:'TA一不回消息,我就开始想是不是哪里做错了。',q:'当TA突然不回你消息,你会？',opts:[
+  {t:'该干嘛干嘛,等TA回是TA的事',s:1},
+  {t:'嘴上说不介意,手指却反复点开对话框',s:2},
+  {t:'一整天心神不宁,连工作都集中不了',s:3},
+  {t:'半夜翻TA朋友圈翻到三年前,越翻越清醒',s:4}]},
+{dim:'情绪消耗·自我欺骗',os:'每次说"最后一次",第二天又像没事一样。',q:'当TA又一次让你失望,你会？',opts:[
+  {t:'当场说清楚,不让自己憋着',s:1},
+  {t:'告诉自己"TA不是故意的",然后翻篇',s:2},
+  {t:'跟朋友吐槽一圈,最后还是选择原谅',s:3},
+  {t:'备忘录里写下"这次真的最后一次",第二天又像没事',s:4}]},
+{dim:'精力消耗',os:'见个面比上班还累。',q:'当你们要见面,出发前的真实状态是？',opts:[
+  {t:'开心,简单收拾就出门',s:1},
+  {t:'有点期待,也有点累',s:2},
+  {t:'提前两小时开始焦虑穿什么、说什么',s:3},
+  {t:'想取消,但又怕TA不高兴,硬着头皮去',s:4}]},
+{dim:'精力消耗',os:'TAemo一晚,我也跟着emo一晚。',q:'当TA跟你抱怨工作,你会？',opts:[
+  {t:'听一听,给点建议,自己的事不受影响',s:1},
+  {t:'认真听,情绪会跟着低落一会儿',s:2},
+  {t:'整晚陪着TAemo,自己的事一件没做',s:3},
+  {t:'TA情绪好就走,TAemo我就得emo,分不清是谁的情绪',s:4}]},
+{dim:'自信消耗·自我欺骗',os:'TA随口一句话,我能记半年。',q:'当TA随口说一句"你最近胖了/变丑了",你会？',opts:[
+  {t:'顶回去："你也没好到哪去"',s:1},
+  {t:'嘴上不在意,心里开始照镜子',s:2},
+  {t:'当天就开始节食、买衣服、查护肤',s:3},
+  {t:'半年后还在想这句话,越来越觉得自己真的不行',s:4}]},
+{dim:'自信消耗',os:'被夸"懂事"的时候,我一点都不开心。',q:'当TA夸你"你真懂事"时,你的第一反应是？',opts:[
+  {t:'开心,觉得被认可了',s:1},
+  {t:'苦笑,因为"懂事"的意思是"不麻烦TA"',s:2},
+  {t:'心里一沉,知道这又是让你别闹的铺垫',s:3},
+  {t:'想哭,因为已经懂事到快不认识自己了',s:4}]},
+{dim:'社交消耗·朋友反应',os:'朋友的话,我以前不爱听,现在想想都对。',q:'最近半年,朋友最常跟你说的一句话是？',opts:[
+  {t:'"你俩挺甜的啊"',s:1},
+  {t:'"你最近怎么了,感觉没以前开心"',s:2},
+  {t:'"你为TA付出太多了吧"',s:3},
+  {t:'"你再这样下去,我们都不想听了"',s:4}]},
+{dim:'社交消耗·朋友反应',os:'我帮TA解释过无数次,后来朋友都不说了。',q:'当朋友委婉说"TA好像不太适合你",你会？',opts:[
+  {t:'想想朋友说得对,认真评估一下',s:1},
+  {t:'帮TA解释："你们不了解TA好的那一面"',s:2},
+  {t:'以后慢慢不跟这个朋友聊TA了',s:3},
+  {t:'跟所有"说TA不好"的朋友渐行渐远,最后只剩TA',s:4}]},
+{dim:'终极拷问',os:'这道题,你可能要想很久。',q:'如果现在有个按钮,按下去这段关系就回到"认识TA之前"——',opts:[
+  {t:'不按,现在的我比那时候好',s:1},
+  {t:'犹豫一下,最后还是不按',s:2},
+  {t:'想按,但怕按了会后悔',s:3},
+  {t:'秒按。哪怕失去所有甜蜜,我也要那个不认识TA的自己',s:4}]},
+{dim:'未来消耗',os:'TA的未来里,有我吗？',q:'当TA聊到"以后",真实情况是？',opts:[
+  {t:'我们一起规划过,且TA在行动',s:1},
+  {t:'TA嘴上说有未来,但行动上没推进',s:2},
+  {t:'一聊未来TA就岔开,"走一步看一步"',s:3},
+  {t:'TA的未来规划里,根本没有你的位置',s:4}]},
+{dim:'未来消耗·自我欺骗',os:'我连TA的存款都替TA操心。',q:'当TA说"我现在的状态不适合谈未来",你会？',opts:[
+  {t:'直接问："那你什么时候适合？"',s:1},
+  {t:'信了,觉得TA是负责任',s:2},
+  {t:'替TA找理由：TA原生家庭不好/工作压力大/前任伤害过TA',s:3},
+  {t:'帮TA规划未来,连TA的工作、房子、存款都替TA操心',s:4}]},
+{dim:'直球拷问',os:'这道题,你别想,直接选。',q:'这段关系带给你的,痛苦多还是快乐多？',opts:[
+  {t:'快乐多,痛苦是插曲',s:1},
+  {t:'一半一半,说不清',s:2},
+  {t:'痛苦多,但那点快乐让我舍不得走',s:3},
+  {t:'已经没有快乐了,但我还是走不掉',s:4}]}
+];
+
+const LEVELS={
+light:{
+  emoji:'🟢',
+  scoreColor:'#5a8a6e',
+  scoreMin:0,scoreMax:25,
+  levelName:'轻度消耗',
+  state:'<p>你俩的关系,整体还行。但有些时刻,你会突然觉得"哪里不对"。</p><p>比如TA回消息慢了半拍,你嘴上说没事,心里已经把今天重新过了一遍。</p><p>比如TA开玩笑损你一句,你笑着顶回去,转头却在想"TA是不是真的这么觉得"。</p><p>你很少跟朋友吐槽TA,因为你也说不清到底哪里不好——所有的不舒服,都小到像矫情。</p><p>你最大的内耗不是TA做了什么,而是你一直在怀疑自己"是不是我想太多"。</p><p>其实不是你想太多。是你还没学会,把那些"小事"当回事。</p>',
+  signals:[
+    {name:'深夜复盘',desc:'睡前会把今天的对话过一遍,找有没有说错的话'},
+    {name:'过度解释',desc:'TA一个表情不对,你就开始解释自己刚才的话'},
+    {name:'情绪记账',desc:'你心里有一本账,记着TA的好,也记着那些"算了不计较"的瞬间'}
+  ],
+  words:[
+    '你不是想太多,你只是开始在意了。',
+    '关系里的小不舒服,不用急着归零。',
+    '现在的你,还来得及好好说话。'
+  ],
+  action:'今天就开始:找一个你最近"算了不计较"的瞬间,跟TA说一次"其实那天我有点不舒服"。不用说狠话,就这一句。看TA怎么回应。TA的态度,比TA的承诺更值得看。'
+},
+mid:{
+  emoji:'🟡',
+  scoreColor:'#c9923f',
+  scoreMin:26,scoreMax:50,
+  levelName:'中度消耗',
+  state:'<p>你已经说不清,这段关系是从什么时候开始变味的。</p><p>见面前的焦虑,比见面本身的快乐还多。出门前换三套衣服,不是为了美,是怕TA挑刺。</p><p>TAemo一晚上,你也跟着emo一晚上,自己的事一件没做,第二天顶着黑眼圈去上班。</p><p>你跟朋友吐槽TA的频率变高了,但每次吐槽完,你都会补一句"其实TA也有好的时候"——你不是在帮TA解释,你是在说服自己没看错人。</p><p>你开始偷偷照镜子,偷偷节食,偷偷买新衣服。不是因为你想变美,是因为TA随口说过一句"你最近胖了"。</p><p>你最大的消耗,不是TA对你做了什么,而是你为了留住TA,开始改自己。</p>',
+  signals:[
+    {name:'讨好型启动',desc:'TA皱个眉,你就开始想"是不是我又做错了什么"'},
+    {name:'情绪传染',desc:'TA的状态决定你一整天的状态,你已经分不清是谁的情绪'},
+    {name:'社交萎缩',desc:'你越来越少跟朋友出去,因为怕TA不高兴,也怕朋友问起TA'}
+  ],
+  words:[
+    '你不是付出太多,你是把自己算进去了。',
+    '让你累的不是这段关系,是你在关系里丢了自己。',
+    '改自己换不回来真心,只会换回更多要求。'
+  ],
+  action:'今天就开始:列出这周你为TA妥协的3件小事。不用改,不用摊牌,就写下来。写完你会发现,这些事你从来没敢跟自己承认过。'
+},
+heavy:{
+  emoji:'🟠',
+  scoreColor:'#d97548',
+  scoreMin:51,scoreMax:75,
+  levelName:'重度消耗',
+  state:'<p>你已经记不清,上一次在TA面前真正放松是什么时候了。</p><p>TA一个眼神,你就能读出三重意思,然后花一晚上猜哪一重才是真的。</p><p>你手机不敢离手,怕错过TA的消息；可TA回得慢了,你又不敢追问,怕显得"作"。</p><p>朋友约你,你第一反应是"TA会不会不高兴",而不是"我想不想去"。</p><p>你已经很久没跟朋友深聊过TA了——不是没话说,是说了朋友会劝你分,而你还没准备好听。</p><p>你开始失眠。不是睡不着,是脑子停不下来,反复回放TA今天说过的每一句话。</p><p>你最大的恐惧不是TA离开,而是你发现自己已经离不开,哪怕你早就知道这段关系不对。</p>',
+  signals:[
+    {name:'情绪绑架',desc:'你的一天好不好,完全取决于TA今天对你怎么样'},
+    {name:'自我怀疑常态化',desc:'你开始觉得"是不是我真的太敏感/太作/太矫情"'},
+    {name:'快乐靠施舍',desc:'TA对你好一点,你能高兴三天；TA冷淡一天,你能崩溃一周'}
+  ],
+  words:[
+    '你不是太敏感,你是被训练得太警觉。',
+    '留不住的不是TA,是那个曾经不在意TA的你自己。',
+    '现在的你,还有选择。再晚一点,可能就没了。'
+  ],
+  action:'今天就开始:把手机调成静音一晚上,不主动找TA。看看这一晚你会不会死。不会的。然后你会发现,你怕的不是失去TA,是失去"被需要"的感觉。',
+  scripts:[
+    {tag:'摊牌话术（适合正式聊一次）',text:'我想了很久,最近我状态不太好。不是怪你,是想跟你聊聊我们之间到底怎么了。这周末有空吗？'},
+    {tag:'表态话术（适合TA冷淡时）',text:'我不需要你秒回,但我需要知道你在。如果你做不到,我希望你直接告诉我,而不是让我猜。'},
+    {tag:'止损话术（适合决定止损时）',text:'我不是在闹,我是真的累了。我不想用情绪逼你,但我也不想再假装没事。'}
+  ],
+  list:[
+    {day:'第1天',text:'发完上面任一句话,然后把手机放抽屉里2小时'},
+    {day:'第4天',text:'约一个三个月没见的朋友,不聊TA,只聊你自己'},
+    {day:'第7天',text:'写下"如果这段关系结束,我最怕失去什么"——你会发现答案不是TA'},
+    {day:'第11天',text:'做一件TA一直不让做、但你很想做的事（剪头发/纹身/一个人旅行）'},
+    {day:'第15天',text:'问自己——"如果我的女儿/妹妹过成我现在这样,我会说什么？"'}
+  ]
+},
+extreme:{
+  emoji:'🔴',
+  scoreColor:'#a83a3a',
+  scoreMin:76,scoreMax:100,
+  levelName:'极度消耗',
+  state:'<p>你已经不是"在关系里累"了,你是在关系里消失了。</p><p>你照镜子,认不出里面的人。眼神是空的,笑容是练出来的,连哭都要挑TA不在的时候。</p><p>你手机一响就心慌,不是期待,是应激。TA的每条消息,都像一道待批阅的作业。</p><p>你已经没有自己的社交了——要么是TA不让你见,要么是你不敢见,怕朋友一眼看出你过得有多糟。</p><p>你经常想"如果没认识TA就好了",但下一秒又慌:"那我怎么办？"</p><p>你不是离不开TA,你是忘了没有TA的自己长什么样。</p><p>你最深的痛苦是:你明明知道这段关系在毁你,但你已经不相信自己能一个人活下来。</p>',
+  signals:[
+    {name:'人格瓦解',desc:'你已经说不出自己喜欢什么、想做什么,所有偏好都围着TA转'},
+    {name:'生理反应',desc:'心慌、失眠、暴食/厌食、莫名想哭——身体比脑子先崩溃'},
+    {name:'孤立无援',desc:'你跟所有"劝你走"的人都断了,留下来的人都在劝你忍'}
+  ],
+  words:[
+    '你不是走不掉,你是忘了自己能走。',
+    '你不会一个人活不下来,你只是太久没试过。',
+    '现在的你,需要的不只是一个决定,是一双手。'
+  ],
+  action:'今天就开始:打一个电话给任何你还信任的人。不用说原因,就说一句"我最近不太好"。这是你重建的第一步。',
+  facts:[
+    'TA不会改。你等的"TA变好",不会来。你看到的"好",是TA心情好时的施舍,不是常态。',
+    '你不是离不开TA。你离不开的是"被需要"的幻觉。一旦你重建起自己,这个幻觉就会碎。',
+    '再拖下去,你会失去重建的能力。不是吓你——消耗到极致的人,连"想走"的力气都没有。趁你还有这口气,动。'
+  ],
+  scripts:[
+    {tag:'告别话术一',text:'我想了很久,这段关系让我越来越不像我自己。我需要离开一段时间,不是赌气,是真的撑不住了。请别找我。'},
+    {tag:'告别话术二',text:'谢谢你出现过。但我已经分不清,跟你在一起是在爱还是在熬。我选择先停一停。保重。'},
+    {tag:'告别话术三',text:'我不怪你,也不怪我自己。只是我们走到这里,已经不对了。这一次,我选我自己。'}
+  ],
+  list:[
+    {day:'第1天',text:'发完告别话术,立刻删/隐藏TA所有联系方式。最痛的一天,也是最对的一天'},
+    {day:'第3天',text:'联系一个你曾经断联的朋友/家人。就说一句"我最近不太好,能陪我说说话吗"'},
+    {day:'第5天',text:'去三甲医院做个体检。看看你的身体被这段关系折腾成什么样了'},
+    {day:'第9天',text:'开始一项每天要做的小事（散步/写日记/做饭）。不求有用,求"每天有一件事是为自己做的"'},
+    {day:'第14天',text:'写下"认识TA之前,我是怎样的人"。写多少算多少,写不出来也没关系'},
+    {day:'第21天',text:'见一个陌生人（兴趣班/活动/志愿者）。重新感受"不被审视的自己"'},
+    {day:'第30天',text:'给自己写一封信。开头是"亲爱的,这30天你辛苦了"'}
+  ]
+}
+};
+
+let current=0;
+let total=0;
+
+function startQuiz(){
+  document.getElementById('page-intro').classList.remove('active');
+  document.getElementById('page-quiz').classList.add('active');
+  showQuestion();
+}
+
+function showQuestion(){
+  const q=QUESTIONS[current];
+  document.getElementById('quiz-no').textContent='Q.'+String(current+1).padStart(2,'0');
+  document.getElementById('quiz-dim').textContent=q.dim;
+  document.getElementById('q-os').textContent='内心OS：'+q.os;
+  document.getElementById('q-title').textContent=q.q;
+  document.getElementById('progress-label').textContent=(current+1)+'/12';
+  document.getElementById('progress-fill').style.width=((current+1)/12*100)+'%';
+  const list=document.getElementById('opt-list');
+  list.innerHTML='';
+  const tags=['A','B','C','D'];
+  q.opts.forEach((o,i)=>{
+    const div=document.createElement('div');
+    div.className='opt';
+    div.innerHTML='<span class="opt-tag">'+tags[i]+'</span>'+o.t;
+    div.onclick=()=>selectOpt(div,o.s);
+    list.appendChild(div);
+  });
+}
+
+function selectOpt(el,s){
+  const opts=document.querySelectorAll('.opt');
+  opts.forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(()=>{
+    total+=s;
+    current++;
+    if(current>=12){
+      showLoading();
+    }else{
+      showQuestion();
+    }
+  },280);
+}
+
+function showLoading(){
+  document.getElementById('page-quiz').classList.remove('active');
+  document.getElementById('page-loading').classList.add('active');
+  setTimeout(showResult,2200);
+}
+
+function getLevel(){
+  const idx=Math.floor((total-12)/36*100);
+  if(idx<=25)return 'light';
+  else if(idx<=50)return 'mid';
+  else if(idx<=75)return 'heavy';
+  else return 'extreme';
+}
+
+function showResult(){
+  document.getElementById('page-loading').classList.remove('active');
+  document.getElementById('page-result').classList.add('active');
+  const key=getLevel();
+  const r=LEVELS[key];
+  const score=Math.floor((total-12)/36*100);
+  let html='';
+  html+='<div class="result-emoji">'+r.emoji+'</div>';
+  html+='<div class="result-score-box" style="--score-color:'+r.scoreColor+'">';
+  html+='<div class="score-label">消 耗 指 数</div>';
+  html+='<div class="score-num">'+score+'<span style="font-size:24px">%</span></div>';
+  html+='<div class="score-level">'+r.levelName+' ｜ '+r.scoreMin+'-'+r.scoreMax+'%</div>';
+  html+='</div>';
+
+  // 你现在的状态
+  html+='<div class="sec"><div class="sec-title"><span class="ico">🌙</span>你现在的状态<span class="bar"></span></div>';
+  html+='<div class="state-box">'+r.state+'</div></div>';
+
+  // 信号
+  html+='<div class="sec"><div class="sec-title"><span class="ico">📡</span>你正在经历的信号<span class="bar"></span></div>';
+  r.signals.forEach(s=>{
+    html+='<div class="signal-card"><div class="signal-name">'+s.name+'</div><div class="signal-desc">'+s.desc+'</div></div>';
+  });
+  html+='</div>';
+
+  // 给你的话
+  html+='<div class="sec"><div class="sec-title"><span class="ico">☕</span>给你的话<span class="bar"></span></div>';
+  html+='<div class="words-card"><div class="wc-label">深夜朋友递来的温水</div>';
+  r.words.forEach(w=>{
+    html+='<div class="word-line">'+w+'</div>';
+  });
+  html+='</div></div>';
+
+  // 行动建议
+  html+='<div class="sec"><div class="sec-title"><span class="ico">✓</span>接下来你可以做的事<span class="bar"></span></div>';
+  html+='<div class="action-card"><div class="action-label">今天就能开始</div><div class="action-text">'+r.action+'</div></div></div>';
+
+  // 重度额外:发给TA的话
+  if(r.scripts){
+    html+='<div class="sec"><div class="sec-title"><span class="ico">💬</span>3句你可以发给TA的话<span class="bar"></span></div>';
+    r.scripts.forEach(sc=>{
+      html+='<div class="script-card"><div class="script-tag">'+sc.tag+'</div><div class="script-text">'+sc.text+'</div></div>';
+    });
+    html+='</div>';
+  }
+
+  // 重度额外:15天止损清单
+  if(r.list && key==='heavy'){
+    html+='<div class="sec"><div class="sec-title"><span class="ico">📋</span>15天止损清单（节选5条）<span class="bar"></span></div>';
+    r.list.forEach(it=>{
+      html+='<div class="list-card"><div class="list-row"><span class="list-day">'+it.day+'</span><span class="list-text">'+it.text+'</span></div></div>';
+    });
+    html+='</div>';
+  }
+
+  // 极度额外:3个必须面对的事实
+  if(r.facts){
+    html+='<div class="sec"><div class="sec-title"><span class="ico">⚡</span>3个你必须面对的事实<span class="bar"></span></div>';
+    r.facts.forEach((f,i)=>{
+      html+='<div class="signal-card" style="border-left-color:var(--danger)"><div class="signal-name" style="color:var(--danger)">事实'+(i+1)+'</div><div class="signal-desc">'+f+'</div></div>';
+    });
+    html+='</div>';
+  }
+
+  // 极度额外:3句告别话术
+  if(key==='extreme' && r.scripts){
+    html+='<div class="sec"><div class="sec-title"><span class="ico">🚪</span>3句告别话术<span class="bar"></span></div>';
+    r.scripts.forEach(sc=>{
+      html+='<div class="script-card"><div class="script-tag">'+sc.tag+'</div><div class="script-text">'+sc.text+'</div></div>';
+    });
+    html+='</div>';
+  }
+
+  // 极度额外:30天自我重建清单
+  if(key==='extreme' && r.list){
+    html+='<div class="sec"><div class="sec-title"><span class="ico">🌱</span>30天自我重建清单（节选7条）<span class="bar"></span></div>';
+    r.list.forEach(it=>{
+      html+='<div class="list-card"><div class="list-row"><span class="list-day">'+it.day+'</span><span class="list-text">'+it.text+'</span></div></div>';
+    });
+    html+='</div>';
+  }
+
+  // 关联销售
+  html+='<div class="cross-sell">';
+  html+='<div class="cs-label">关联推荐</div>';
+  html+='<div class="cs-text">如果这个结果让你想了很多<br>或许你还需要测一测<br><b>【沉默断交判断】</b><br>TA是在冷静,还是在冷暴力？</div>';
+  html+='<a class="cs-link" href="https://jhbbjhb.github.io/xinlicest/chenmo/" target="_blank">前往沉默断交判断 →</a>';
+  html+='</div>';
+
+  html+='<div class="result-foot">本测试基于亲密关系心理学维度设计,仅供参考<br>若你正处于严重情绪困扰,请寻求专业帮助</div>';
+
+  document.getElementById('result-content').innerHTML=html;
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
